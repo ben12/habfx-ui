@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Border?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ben12.openhab.controller.impl.TopItemsController"
+	fx:id="infosPane" maxHeight="20" minHeight="20" prefHeight="20">
+	<columnConstraints>
+		<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+		<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+		<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+	</columnConstraints>
+	<rowConstraints>
+		<RowConstraints fillHeight="true" prefHeight="0.0" vgrow="ALWAYS" />
+	</rowConstraints>
+	<children>
+		<Label fx:id="item1Label" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER" GridPane.columnIndex="0" />
+		<Label fx:id="item2Label" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER" GridPane.columnIndex="1" />
+		<Label fx:id="item3Label" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER" GridPane.columnIndex="2" />
+	</children>
+</GridPane>
+
