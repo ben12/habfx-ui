@@ -1,9 +1,29 @@
+// Copyright (C) 2016 Benoît Moreau (ben.12)
+// 
+// This file is part of HABFX-UI (openHAB javaFX User Interface).
+// 
+// HABFX-UI is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// HABFX-UI is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with HABFX-UI.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.ben12.openhab.controller.impl;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.ws.rs.client.InvocationCallback;
 
 import com.ben12.openhab.controller.ContentController;
 import com.ben12.openhab.controller.MainViewController;
+import com.ben12.openhab.model.Item;
 import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Widget;
 
@@ -21,9 +41,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class WidgetController implements ContentController<Widget>
+public abstract class WidgetController implements ContentController<Widget>
 {
 	private final Page				parent;
+
+	private Widget					widget;
 
 	private MainViewController		mainViewController;
 
@@ -41,25 +63,30 @@ public class WidgetController implements ContentController<Widget>
 
 	private ObjectProperty<Image>	iconProperty;
 
+	private StringBinding			itemStateProperty;
+
+	private ItemChangeHandler		itemChangeHandler;
+
 	public WidgetController(final Page parent)
 	{
 		this.parent = parent;
 	}
 
 	@Override
-	public void init(final Widget widget, final MainViewController mainViewController)
+	public void init(final Widget pWidget, final MainViewController pMainViewController)
 	{
-		this.mainViewController = mainViewController;
+		mainViewController = pMainViewController;
+		widget = pWidget;
 
 		labelProperty = Bindings.createStringBinding(() -> {
 			String label = widget.getLabel();
-			label = label.replaceFirst(" \\[(.*?)\\]$", "");
+			label = label.replaceFirst("\\[(.*?)\\]$", "");
 			return label;
 		}, widget.labelProperty());
 
 		valueProperty = Bindings.createStringBinding(() -> {
 			String label = widget.getLabel();
-			label = label.replaceFirst("^.*?(?: \\[(.*?)\\])?$", "$1");
+			label = label.replaceFirst("^.*?(?:\\[(.*?)\\])?$", "$1");
 			return label;
 		}, widget.labelProperty());
 
@@ -83,6 +110,8 @@ public class WidgetController implements ContentController<Widget>
 			return color;
 		}, widget.labelcolorProperty());
 
+		itemStateProperty = Bindings.selectString(widget.itemProperty(), "state");
+
 		iconProperty = new SimpleObjectProperty<>();
 		final InvocationCallback<Image> iconCallback = new InvocationCallback<Image>()
 		{
@@ -98,17 +127,10 @@ public class WidgetController implements ContentController<Widget>
 				Platform.runLater(() -> iconProperty.set(image));
 			}
 		};
-		widget.iconProperty().addListener((e) -> {
-			final String icon = widget.getIcon();
-			if (icon != null && !icon.isEmpty())
-			{
-				mainViewController.getRestClient().getImage(widget, iconCallback);
-			}
-			else
-			{
-				iconProperty.set(null);
-			}
-		});
+
+		widget.iconProperty()
+				.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
+		itemStateProperty.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
 		mainViewController.getRestClient().getImage(widget, iconCallback);
 
 		title = new Label();
@@ -138,9 +160,26 @@ public class WidgetController implements ContentController<Widget>
 		accessView.getChildren().addAll(iconImage, labelLabel, valueLabel);
 		accessView.setAlignment(Pos.CENTER);
 		accessView.getStyleClass().add("widget");
-		accessView.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+		accessView.setMinSize(Region.USE_PREF_SIZE, 50);
 		accessView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		accessView.prefWidth(0);
+
+		widget.itemProperty().addListener((o, oldItem, newItem) -> {
+			if (itemChangeHandler != null)
+			{
+				itemChangeHandler.release();
+				itemChangeHandler = null;
+			}
+			if (newItem != null)
+			{
+				itemChangeHandler = new ItemChangeHandler(newItem.getName());
+			}
+		});
+		final Item item = widget.getItem();
+		if (item != null)
+		{
+			itemChangeHandler = new ItemChangeHandler(item.getName());
+		}
 	}
 
 	@Override
@@ -161,9 +200,50 @@ public class WidgetController implements ContentController<Widget>
 		return accessView;
 	}
 
-	@Override
-	public Region getContentView()
+	public MainViewController getMainViewController()
 	{
-		return null;
+		return mainViewController;
+	}
+
+	public Widget getWidget()
+	{
+		return widget;
+	}
+
+	public Page getParent()
+	{
+		return parent;
+	}
+
+	protected StringBinding itemStateProperty()
+	{
+		return itemStateProperty;
+	}
+
+	protected ObjectProperty<Image> iconProperty()
+	{
+		return iconProperty;
+	}
+
+	private class ItemChangeHandler implements ChangeListener
+	{
+		private final String itemName;
+
+		public ItemChangeHandler(final String pItemName)
+		{
+			itemName = pItemName;
+			mainViewController.getRestClient().addItemStateChangeListener(itemName, this);
+		}
+
+		@Override
+		public void stateChanged(final ChangeEvent e)
+		{
+			reload();
+		}
+
+		public void release()
+		{
+			mainViewController.getRestClient().removeItemStateChangeListener(itemName, this);
+		}
 	}
 }

@@ -1,4 +1,9 @@
 
+.ben12-color-picker .selected-color {
+	-fx-stroke-width: 2;
+	-fx-stroke: black;
+}
+
 .scroll-pane {
     -fx-background-insets: 0.0;
     -fx-padding: 0.0;
@@ -12,6 +17,21 @@
 .scroll-pane .corner {
     -fx-background-insets: 0.0;
     -fx-padding: 0.0;
+}
+
+.spinner .increment-arrow-button {
+    -fx-padding: 0.6em 1.2em 0.6em 1.2em;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-padding: 0.6em 1.2em 0.6em 1.2em;
+}
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
+}
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
 }
 
 .title {

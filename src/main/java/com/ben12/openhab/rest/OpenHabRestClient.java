@@ -1,3 +1,20 @@
+// Copyright (C) 2016 Benoît Moreau (ben.12)
+// 
+// This file is part of HABFX-UI (openHAB javaFX User Interface).
+// 
+// HABFX-UI is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// HABFX-UI is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with HABFX-UI.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.ben12.openhab.rest;
 
 import java.net.URI;
@@ -13,10 +30,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -43,7 +63,7 @@ public class OpenHabRestClient
 
 	private static final String						ITEMS				= "items";
 
-	private static final String						IMAGES				= "images";
+	private static final String						IMAGES				= "icon";
 
 	private static final String						EVENT_KEY			= "smarthome/items/%s/state";
 
@@ -57,7 +77,7 @@ public class OpenHabRestClient
 
 	private final Map<String, List<ChangeListener>>	listeners;
 
-	public OpenHabRestClient(final URI pUri)
+	public OpenHabRestClient(final URI pUri, final String username, final String password)
 	{
 		listeners = Collections.synchronizedMap(new HashMap<>());
 		uri = pUri;
@@ -71,20 +91,22 @@ public class OpenHabRestClient
 				.register(imageProvider)
 				.register(sseFeature);
 
+		if (username != null && !username.isEmpty())
+		{
+			final HttpAuthenticationFeature authentication = HttpAuthenticationFeature.universalBuilder() //
+					.credentials(username, password)
+					.build();
+			client.register(authentication);
+		}
+
 		final WebTarget eventsTarget = client.target(uri) //
 				.path(REST)
 				.path("events");
 		eventSource = EventSource.target(eventsTarget).build();
 		eventSource.register(new EventHandler());
-		eventSource.open();
-	}
 
-	public void setAuthentication(final String username, final String password)
-	{
-		final HttpAuthenticationFeature authentication = HttpAuthenticationFeature.universalBuilder() //
-				.credentials(username, password)
-				.build();
-		client.register(authentication);
+		final Thread async = new Thread(() -> eventSource.open(), "Open SSE");
+		async.start();
 	}
 
 	public void sitemaps(final InvocationCallback<Sitemap[]> callback)
@@ -151,31 +173,35 @@ public class OpenHabRestClient
 
 	public <T extends Linked> void update(final T data)
 	{
-		final GenericType<T> genericType = new GenericType<>(data.getClass());
-		final WebTarget dataTarget = client.target(data.getLink());
-		final Future<T> future = dataTarget.request(MediaType.APPLICATION_JSON) //
-				.buildGet()
-				.submit(genericType);
-
-		new Thread()
+		final String link = data.getLink();
+		if (link != null && !link.isEmpty())
 		{
-			@Override
-			public void run()
+			final GenericType<T> genericType = new GenericType<>(data.getClass());
+			final WebTarget dataTarget = client.target(data.getLink());
+			final Future<T> future = dataTarget.request(MediaType.APPLICATION_JSON) //
+					.buildGet()
+					.submit(genericType);
+
+			new Thread()
 			{
-				try
+				@Override
+				public void run()
 				{
-					final T response = future.get();
-					if (response != null)
+					try
 					{
-						BeanCopy.copy(response, data);
+						final T response = future.get();
+						if (response != null)
+						{
+							BeanCopy.copy(response, data);
+						}
+					}
+					catch (final Exception e)
+					{
+						e.printStackTrace();
 					}
 				}
-				catch (final Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}.start();
+			}.start();
+		}
 	}
 
 	public <T extends Linked> void update(final T data, final InvocationCallback<T> callback)
@@ -191,9 +217,15 @@ public class OpenHabRestClient
 		final String icon = widget.getIcon();
 		if (icon != null && !icon.isEmpty())
 		{
-			final WebTarget imgTarget = client.target(uri) //
+			WebTarget imgTarget = client.target(uri) //
 					.path(IMAGES)
-					.path(icon + ".png");
+					.path(icon)
+					.queryParam("format", "PNG");
+			final Item item = widget.getItem();
+			if (item != null)
+			{
+				imgTarget = imgTarget.queryParam("state", item.getState());
+			}
 			imgTarget.request("image/*") //
 					.buildGet()
 					.submit(callback);
@@ -202,6 +234,35 @@ public class OpenHabRestClient
 		{
 			callback.failed(new NullPointerException("No image"));
 		}
+	}
+
+	public void submit(final Item item, final String state)
+	{
+		final WebTarget target = client.target(uri) //
+				.path(REST)
+				.path(ITEMS)
+				.path(item.getName());
+		target.request() //
+				.accept(MediaType.WILDCARD)
+				.buildPost(Entity.entity(state, MediaType.TEXT_PLAIN))
+				.submit(new InvocationCallback<Response>()
+				{
+					@Override
+					public void failed(final Throwable t)
+					{
+						t.printStackTrace();
+					}
+
+					@Override
+					public void completed(final Response response)
+					{
+						if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
+						{
+							System.err.println(response.getStatusInfo().getStatusCode() + ": "
+									+ response.getStatusInfo().getReasonPhrase());
+						}
+					}
+				});
 	}
 
 	public void addItemStateChangeListener(final String itemName, final ChangeListener l)
@@ -238,6 +299,7 @@ public class OpenHabRestClient
 			final OpenHabEvent event = inboundEvent.readData(OpenHabEvent.class);
 			if (ITEM_STATE_EVENT.equals(event.type))
 			{
+				// System.out.println(event.type + " on " + event.topic);
 				final List<ChangeListener> changeListeners = listeners.get(event.topic);
 				if (changeListeners != null)
 				{

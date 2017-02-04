@@ -14,7 +14,7 @@
 	<children>
 		<BorderPane fx:id="infosPane" styleClass="infos-pane" maxHeight="20" minHeight="20" prefHeight="20">
 		</BorderPane>
-		<GridPane styleClass="navigation-pane" hgap="5" maxHeight="60" minHeight="60" prefHeight="60">
+		<GridPane styleClass="navigation-pane" hgap="4" maxHeight="60" minHeight="60" prefHeight="60">
 			<columnConstraints>
 				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
 				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
@@ -59,7 +59,7 @@
 				</Button>
 			</children>
 		</GridPane>
-		<ScrollPane fx:id="contentPane" hbarPolicy="NEVER" vbarPolicy="NEVER" VBox.vgrow="ALWAYS" styleClass="content-pane">
+		<ScrollPane fx:id="contentPane" hbarPolicy="NEVER" VBox.vgrow="ALWAYS" styleClass="content-pane">
 		</ScrollPane>
 	</children>
 </VBox>
