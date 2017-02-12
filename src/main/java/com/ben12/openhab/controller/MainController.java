@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 
 import javax.ws.rs.client.InvocationCallback;
 
@@ -32,6 +33,7 @@ import com.ben12.openhab.HabApplication;
 import com.ben12.openhab.controller.impl.PageController;
 import com.ben12.openhab.controller.impl.TopItemsController;
 import com.ben12.openhab.model.Page;
+import com.ben12.openhab.plugin.OpenHabRestClientPlugin;
 import com.ben12.openhab.rest.OpenHabRestClient;
 
 import javafx.application.Platform;
@@ -40,7 +42,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 
 public class MainController implements Initializable, MainViewController
@@ -64,7 +66,7 @@ public class MainController implements Initializable, MainViewController
 	private ContentHistory		currentPage;
 
 	@FXML
-	private BorderPane			infosPane;
+	private AnchorPane			infosPane;
 
 	@FXML
 	private ScrollPane			contentPane;
@@ -131,6 +133,14 @@ public class MainController implements Initializable, MainViewController
 			};
 
 			openhabClient.homepage(sitemap, homepageCallback);
+
+			// Starts plugins
+			final ServiceLoader<OpenHabRestClientPlugin> serviceLoader = ServiceLoader
+					.load(OpenHabRestClientPlugin.class);
+			for (final OpenHabRestClientPlugin plugin : serviceLoader)
+			{
+				plugin.init(openhabClient);
+			}
 		}
 		catch (final Exception e)
 		{
@@ -180,7 +190,12 @@ public class MainController implements Initializable, MainViewController
 
 	private void setInfos(final Region content)
 	{
-		infosPane.setCenter(content);
+		AnchorPane.setBottomAnchor(content, 0.0);
+		AnchorPane.setLeftAnchor(content, 0.0);
+		AnchorPane.setTopAnchor(content, 0.0);
+		AnchorPane.setRightAnchor(content, 0.0);
+		infosPane.getChildren().clear();
+		infosPane.getChildren().add(content);
 	}
 
 	private void setContent(final Region content)

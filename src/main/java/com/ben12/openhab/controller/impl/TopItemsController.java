@@ -33,9 +33,13 @@ import com.ben12.openhab.rest.OpenHabRestClient;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
 
 /**
  * Top view custom items controller.
@@ -148,6 +152,32 @@ public class TopItemsController implements ContentController<Void>
 		}
 
 		itemLabel.textProperty().bind(stateProperty);
+
+		// Maximum font height
+		itemLabel.heightProperty().addListener((e, o, n) -> {
+			final Text textUtil = new Text(itemLabel.getText());
+			textUtil.setFont(itemLabel.getFont());
+			final double scale = itemLabel.getHeight() / textUtil.getBoundsInLocal().getHeight();
+			final Node text = itemLabel.lookup(".text");
+			text.setScaleX(scale);
+			text.setScaleY(scale);
+		});
+		itemLabel.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+					final Bounds newValue)
+			{
+				itemLabel.boundsInLocalProperty().removeListener(this);
+				final Text textUtil = new Text(itemLabel.getText());
+				textUtil.setFont(itemLabel.getFont());
+				final double scale = itemLabel.getHeight() / textUtil.getBoundsInLocal().getHeight();
+				final Node text = itemLabel.lookup(".text");
+				text.setScaleX(scale);
+				text.setScaleY(scale);
+				itemLabel.boundsInLocalProperty().addListener(this);
+			}
+		});
 
 		restClient.item(itemName, new InvocationCallback<Item>()
 		{

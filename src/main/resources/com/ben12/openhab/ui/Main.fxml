@@ -12,9 +12,9 @@
 <VBox fillWidth="true" prefHeight="320.0" prefWidth="240.0" stylesheets="com/ben12/openhab/ui/style.css"
 	fx:controller="com.ben12.openhab.controller.MainController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<BorderPane fx:id="infosPane" styleClass="infos-pane" maxHeight="20" minHeight="20" prefHeight="20">
-		</BorderPane>
-		<GridPane styleClass="navigation-pane" hgap="4" maxHeight="60" minHeight="60" prefHeight="60">
+		<AnchorPane fx:id="infosPane" styleClass="infos-pane" maxHeight="20" minHeight="20" prefHeight="20" VBox.vgrow="NEVER">
+		</AnchorPane>
+		<GridPane styleClass="navigation-pane" hgap="4" maxHeight="60" minHeight="60" prefHeight="60" VBox.vgrow="NEVER">
 			<columnConstraints>
 				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
 				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
@@ -24,14 +24,14 @@
 				<RowConstraints fillHeight="true" prefHeight="0.0" vgrow="ALWAYS" />
 			</rowConstraints>
 			<children>
-				<Button maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="0" focusTraversable="false" onAction="#goPrev">
+				<Button styleClass="navigation-prev" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="0" focusTraversable="false" onAction="#goPrev">
 					<graphic>
-						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" stroke="BLACK" fill="TRANSPARENT">
+						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" fill="TRANSPARENT">
 							<content>m41.107 11.383-22.257 18.617 22.257 18.617</content>
 						</SVGPath>
 					</graphic>
 				</Button>
-				<Button maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1" focusTraversable="false" onAction="#goHomepage">
+				<Button styleClass="navigation-home" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1" focusTraversable="false" onAction="#goHomepage">
 					<graphic>
 						<SVGPath>
 							<content>m30.001 6.8431c-0.90924 0-1.6945 0.31294-2.3561 0.93867l-22.3 21.624c-0.20651 0.19219-0.31987
@@ -50,9 +50,9 @@
 						</SVGPath>
 					</graphic>
 				</Button>
-				<Button maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="2" focusTraversable="false" onAction="#goNext">
+				<Button styleClass="navigation-next" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="2" focusTraversable="false" onAction="#goNext">
 					<graphic>
-						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" stroke="BLACK" fill="TRANSPARENT">
+						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" fill="TRANSPARENT">
 							<content>m18.9 48.617 22.257-18.618-22.257-18.616</content>
 						</SVGPath>
 					</graphic>

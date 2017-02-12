@@ -17,6 +17,8 @@
 
 package com.ben12.openhab.controller.impl;
 
+import java.lang.ref.WeakReference;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.ws.rs.client.InvocationCallback;
@@ -26,6 +28,7 @@ import com.ben12.openhab.controller.MainViewController;
 import com.ben12.openhab.model.Item;
 import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Widget;
+import com.ben12.openhab.rest.OpenHabRestClient;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -33,39 +36,46 @@ import javafx.beans.binding.ObjectExpression;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public abstract class WidgetController implements ContentController<Widget>
 {
-	private final Page				parent;
+	private final Page					parent;
 
-	private Widget					widget;
+	private Widget						widget;
 
-	private MainViewController		mainViewController;
+	private MainViewController			mainViewController;
 
-	private Label					title;
+	private Label						title;
 
-	private VBox					accessView;
+	private VBox						accessView;
 
-	private StringBinding			labelProperty;
+	private StringBinding				labelProperty;
 
-	private ObjectExpression<Color>	labelColorProperty;
+	private ObjectExpression<String>	labelStyleProperty;
 
-	private StringBinding			valueProperty;
+	private StringBinding				valueProperty;
 
-	private ObjectExpression<Color>	valueColorProperty;
+	private ObjectExpression<String>	valueStyleProperty;
 
-	private ObjectProperty<Image>	iconProperty;
+	private ObjectProperty<Image>		iconProperty;
 
-	private StringBinding			itemStateProperty;
+	private StringBinding				itemStateProperty;
 
-	private ItemChangeHandler		itemChangeHandler;
+	private ItemChangeHandler			itemChangeHandlerRef;
+
+	private ChangeListener				itemChangeHandler;
+
+	private Label						labelLabel;
 
 	public WidgetController(final Page parent)
 	{
@@ -90,24 +100,24 @@ public abstract class WidgetController implements ContentController<Widget>
 			return label;
 		}, widget.labelProperty());
 
-		labelColorProperty = Bindings.createObjectBinding(() -> {
-			Color color = Color.BLACK;
+		labelStyleProperty = Bindings.createObjectBinding(() -> {
+			String style = "";
 			final String labelcolor = widget.getLabelcolor();
 			if (labelcolor != null)
 			{
-				color = Color.valueOf(labelcolor);
+				style += "-fx-text-fill :" + labelcolor + ";";
 			}
-			return color;
+			return style;
 		}, widget.labelcolorProperty());
 
-		valueColorProperty = Bindings.createObjectBinding(() -> {
-			Color color = Color.BLACK;
+		valueStyleProperty = Bindings.createObjectBinding(() -> {
+			String style = "";
 			final String valuecolor = widget.getValuecolor();
 			if (valuecolor != null)
 			{
-				color = Color.valueOf(valuecolor);
+				style += "-fx-text-fill :" + valuecolor + ";";
 			}
-			return color;
+			return style;
 		}, widget.labelcolorProperty());
 
 		itemStateProperty = Bindings.selectString(widget.itemProperty(), "state");
@@ -137,9 +147,35 @@ public abstract class WidgetController implements ContentController<Widget>
 		title.getStyleClass().add("title");
 		title.textProperty().bind(labelProperty);
 
-		final Label labelLabel = new Label();
+		// Maximum font height
+		title.heightProperty().addListener((e, o, n) -> {
+			final Text textUtil = new Text(title.getText());
+			textUtil.setFont(title.getFont());
+			final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+			final Node text = title.lookup(".text");
+			text.setScaleX(scale);
+			text.setScaleY(scale);
+		});
+		title.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+					final Bounds newValue)
+			{
+				title.boundsInLocalProperty().removeListener(this);
+				final Text textUtil = new Text(title.getText());
+				textUtil.setFont(title.getFont());
+				final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+				final Node text = title.lookup(".text");
+				text.setScaleX(scale);
+				text.setScaleY(scale);
+				title.boundsInLocalProperty().addListener(this);
+			}
+		});
+
+		labelLabel = new Label();
 		labelLabel.textProperty().bind(labelProperty);
-		labelLabel.textFillProperty().bind(labelColorProperty);
+		labelLabel.styleProperty().bind(labelStyleProperty);
 		labelLabel.setMinSize(0, 0);
 		labelLabel.prefHeightProperty().bind(Bindings.createDoubleBinding(() -> {
 			return labelProperty.isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0;
@@ -147,7 +183,7 @@ public abstract class WidgetController implements ContentController<Widget>
 
 		final Label valueLabel = new Label();
 		valueLabel.textProperty().bind(valueProperty);
-		valueLabel.textFillProperty().bind(valueColorProperty);
+		valueLabel.styleProperty().bind(valueStyleProperty);
 		valueLabel.setMinSize(0, 0);
 		valueLabel.prefHeightProperty().bind(Bindings.createDoubleBinding(() -> {
 			return valueProperty.isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0;
@@ -164,21 +200,32 @@ public abstract class WidgetController implements ContentController<Widget>
 		accessView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		accessView.prefWidth(0);
 
-		widget.itemProperty().addListener((o, oldItem, newItem) -> {
-			if (itemChangeHandler != null)
+		itemChangeHandler = new ChangeListener()
+		{
+			@Override
+			public void stateChanged(final ChangeEvent e)
 			{
-				itemChangeHandler.release();
-				itemChangeHandler = null;
+				reload();
+			}
+		};
+
+		widget.itemProperty().addListener((o, oldItem, newItem) -> {
+			if (itemChangeHandlerRef != null)
+			{
+				itemChangeHandlerRef.release();
+				itemChangeHandlerRef = null;
 			}
 			if (newItem != null)
 			{
-				itemChangeHandler = new ItemChangeHandler(newItem.getName());
+				itemChangeHandlerRef = new ItemChangeHandler(mainViewController.getRestClient(), newItem.getName(),
+						itemChangeHandler);
 			}
 		});
 		final Item item = widget.getItem();
 		if (item != null)
 		{
-			itemChangeHandler = new ItemChangeHandler(item.getName());
+			itemChangeHandlerRef = new ItemChangeHandler(mainViewController.getRestClient(), item.getName(),
+					itemChangeHandler);
 		}
 	}
 
@@ -189,13 +236,13 @@ public abstract class WidgetController implements ContentController<Widget>
 	}
 
 	@Override
-	public Region getInfosView()
+	public Label getInfosView()
 	{
 		return title;
 	}
 
 	@Override
-	public Region getAccessView()
+	public VBox getAccessView()
 	{
 		return accessView;
 	}
@@ -225,25 +272,39 @@ public abstract class WidgetController implements ContentController<Widget>
 		return iconProperty;
 	}
 
-	private class ItemChangeHandler implements ChangeListener
+	private static class ItemChangeHandler extends WeakReference<ChangeListener> implements ChangeListener
 	{
-		private final String itemName;
+		private final String			itemName;
 
-		public ItemChangeHandler(final String pItemName)
+		private final OpenHabRestClient	openHabRestClient;
+
+		public ItemChangeHandler(final OpenHabRestClient pOpenHabRestClient, final String pItemName,
+				final ChangeListener l)
 		{
+			super(l);
+
+			openHabRestClient = pOpenHabRestClient;
 			itemName = pItemName;
-			mainViewController.getRestClient().addItemStateChangeListener(itemName, this);
+			openHabRestClient.addItemStateChangeListener(itemName, this);
 		}
 
 		@Override
 		public void stateChanged(final ChangeEvent e)
 		{
-			reload();
+			final ChangeListener l = get();
+			if (l != null)
+			{
+				l.stateChanged(e);
+			}
+			else
+			{
+				release();
+			}
 		}
 
 		public void release()
 		{
-			mainViewController.getRestClient().removeItemStateChangeListener(itemName, this);
+			openHabRestClient.removeItemStateChangeListener(itemName, this);
 		}
 	}
 }

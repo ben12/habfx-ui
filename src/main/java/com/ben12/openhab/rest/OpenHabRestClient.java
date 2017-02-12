@@ -265,6 +265,35 @@ public class OpenHabRestClient
 				});
 	}
 
+	public void submitPut(final Item item, final String state)
+	{
+		final WebTarget target = client.target(uri) //
+				.path(REST)
+				.path(ITEMS)
+				.path(item.getName());
+		target.request() //
+				.accept(MediaType.WILDCARD)
+				.buildPut(Entity.entity(state, MediaType.TEXT_PLAIN))
+				.submit(new InvocationCallback<Response>()
+				{
+					@Override
+					public void failed(final Throwable t)
+					{
+						t.printStackTrace();
+					}
+
+					@Override
+					public void completed(final Response response)
+					{
+						if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
+						{
+							System.err.println(response.getStatusInfo().getStatusCode() + ": "
+									+ response.getStatusInfo().getReasonPhrase());
+						}
+					}
+				});
+	}
+
 	public void addItemStateChangeListener(final String itemName, final ChangeListener l)
 	{
 		final String key = String.format(EVENT_KEY, itemName);

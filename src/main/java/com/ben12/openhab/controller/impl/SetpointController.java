@@ -72,7 +72,7 @@ public class SetpointController extends WidgetController
 			((Spinner<Double>) spinner).setValueFactory(spinnerValueFactory);
 
 			final Timeline submitState = new Timeline(
-					new KeyFrame(Duration.millis(200), (ea) -> getMainViewController().getRestClient() //
+					new KeyFrame(Duration.millis(1000), (ea) -> getMainViewController().getRestClient() //
 							.submit(getWidget().getItem(), Double.toString((Double) spinner.getValue()))));
 
 			final ChangeListener<Number> spinnerListener = (i, oldState, newState) -> submitState.play();
@@ -111,7 +111,7 @@ public class SetpointController extends WidgetController
 			((Spinner<Mapping>) spinner).setValueFactory(spinnerValueFactory);
 
 			final Timeline submitState = new Timeline(
-					new KeyFrame(Duration.millis(200), (ea) -> getMainViewController().getRestClient() //
+					new KeyFrame(Duration.millis(1000), (ea) -> getMainViewController().getRestClient() //
 							.submit(getWidget().getItem(), ((Mapping) spinner.getValue()).getCommand())));
 
 			final ChangeListener<Mapping> spinnerListener = (i, oldState, newState) -> submitState.play();

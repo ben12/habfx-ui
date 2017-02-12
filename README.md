@@ -28,3 +28,5 @@ Execute the command line :<br />
 ![Screenshot 003](https://raw.githubusercontent.com/ben12/habfx-ui/first-dev/doc/screenshots/003.png)
 ![Screenshot 004](https://raw.githubusercontent.com/ben12/habfx-ui/first-dev/doc/screenshots/004.png)
 ![Screenshot 005](https://raw.githubusercontent.com/ben12/habfx-ui/first-dev/doc/screenshots/005.png)
+![Screenshot 006](https://raw.githubusercontent.com/ben12/habfx-ui/first-dev/doc/screenshots/006.png)
+![Screenshot 007](https://raw.githubusercontent.com/ben12/habfx-ui/first-dev/doc/screenshots/007.png)

@@ -17,6 +17,8 @@
 
 package com.ben12.openhab.controller.impl;
 
+import org.controlsfx.control.ToggleSwitch;
+
 import com.ben12.openhab.controller.MainViewController;
 import com.ben12.openhab.model.Mapping;
 import com.ben12.openhab.model.Page;
@@ -65,6 +67,16 @@ public class SwitchController extends WidgetController
 									"ON".equalsIgnoreCase(getWidget().getItem().getState()) ? "OFF" : "ON");
 				}
 			});
+
+			final ToggleSwitch stateButton = new ToggleSwitch();
+			stateButton.textProperty().bind(itemStateProperty());
+			stateButton.selectedProperty().bind(Bindings
+					.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
+			stateButton.setMinSize(0, 0);
+			stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+			stateButton.setMouseTransparent(true);
+			getAccessView().getChildren().add(stateButton);
+
 		}
 		else
 		{

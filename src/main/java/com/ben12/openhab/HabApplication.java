@@ -17,6 +17,10 @@
 
 package com.ben12.openhab;
 
+import java.util.ServiceLoader;
+
+import com.ben12.openhab.plugin.HabApplicationPlugin;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -34,7 +38,6 @@ import javafx.stage.WindowEvent;
  */
 public class HabApplication extends Application
 {
-
 	@Override
 	public void start(final Stage primaryStage) throws Exception
 	{
@@ -59,6 +62,13 @@ public class HabApplication extends Application
 		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (e) -> System.exit(0));
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
+		// Starts plugins
+		final ServiceLoader<HabApplicationPlugin> serviceLoader = ServiceLoader.load(HabApplicationPlugin.class);
+		for (final HabApplicationPlugin plugin : serviceLoader)
+		{
+			plugin.init(primaryStage);
+		}
 	}
 
 	/**

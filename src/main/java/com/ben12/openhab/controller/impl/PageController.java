@@ -27,11 +27,14 @@ import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Widget;
 import com.ben12.openhab.ui.FullWidthTilePane;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
 
 public class PageController implements ContentController<Page>
 {
@@ -52,6 +55,31 @@ public class PageController implements ContentController<Page>
 		title = new Label();
 		title.getStyleClass().add("title");
 		title.textProperty().bind(page.titleProperty());
+
+		title.heightProperty().addListener((e, o, n) -> {
+			final Text textUtil = new Text(title.getText());
+			textUtil.setFont(title.getFont());
+			final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+			final Node text = title.lookup(".text");
+			text.setScaleX(scale);
+			text.setScaleY(scale);
+		});
+		title.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+					final Bounds newValue)
+			{
+				title.boundsInLocalProperty().removeListener(this);
+				final Text textUtil = new Text(title.getText());
+				textUtil.setFont(title.getFont());
+				final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+				final Node text = title.lookup(".text");
+				text.setScaleX(scale);
+				text.setScaleY(scale);
+				title.boundsInLocalProperty().addListener(this);
+			}
+		});
 
 		pane = new FullWidthTilePane();
 
