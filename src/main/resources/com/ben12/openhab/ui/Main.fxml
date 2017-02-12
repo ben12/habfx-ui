@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+
+<VBox fillWidth="true" prefHeight="320.0" prefWidth="240.0" stylesheets="com/ben12/openhab/ui/style.css"
+	fx:controller="com.ben12.openhab.controller.MainController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<AnchorPane fx:id="infosPane" styleClass="infos-pane" maxHeight="20" minHeight="20" prefHeight="20" VBox.vgrow="NEVER">
+		</AnchorPane>
+		<GridPane styleClass="navigation-pane" hgap="4" maxHeight="60" minHeight="60" prefHeight="60" VBox.vgrow="NEVER">
+			<columnConstraints>
+				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+				<ColumnConstraints fillWidth="true" hgrow="ALWAYS" prefWidth="0.0" />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints fillHeight="true" prefHeight="0.0" vgrow="ALWAYS" />
+			</rowConstraints>
+			<children>
+				<Button styleClass="navigation-prev" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="0" focusTraversable="false" onAction="#goPrev">
+					<graphic>
+						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" fill="TRANSPARENT">
+							<content>m41.107 11.383-22.257 18.617 22.257 18.617</content>
+						</SVGPath>
+					</graphic>
+				</Button>
+				<Button styleClass="navigation-home" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1" focusTraversable="false" onAction="#goHomepage">
+					<graphic>
+						<SVGPath>
+							<content>m30.001 6.8431c-0.90924 0-1.6945 0.31294-2.3561 0.93867l-22.3 21.624c-0.20651 0.19219-0.31987
+								0.45013-0.34095 0.77509-0.020933 0.32496 0.051399 0.60945 0.21704 0.84965l1.9227 2.6706c0.16565 0.21748 0.38258
+								0.34897 0.65142 0.3983 0.24821 0.02406 0.4962-0.06068 0.74439-0.25289l21.46-20.831 21.461 20.83c0.16511 0.16816
+								0.38236 0.25163 0.65067 0.25163h0.09341c0.26831-0.04803 0.48556-0.1808
+								0.65176-0.39702l1.9226-2.6706c0.16512-0.2415 0.23788-0.52474
+								0.21617-0.84965-0.02067-0.3237-0.1347-0.58291-0.34109-0.77509l-6.7911-6.5699v-14.729c0-0.33697-0.09342-0.61375-0.27917-0.83046-0.18644-0.21742-0.42458-0.32563-0.71441-0.32563h-5.9537c-0.29003
+								0-0.52792 0.10823-0.71365 0.32469-0.18575 0.21673-0.27917 0.49363-0.27917
+								0.83023v7.0392l-7.5676-7.3644c-0.659-0.6255-1.446-0.9384-2.357-0.9384zm0 9.3503-17.832 17.11c-0.000441
+								0.02406-0.0053 0.06068-0.01607 0.10873-0.01022 0.04803-0.01573 0.08219-0.01573 0.10748v17.327c0 0.62589 0.1965
+								1.1684 0.58939 1.6247 0.39278 0.45645 0.85806 0.68658 1.3956 0.68658h11.909v-13.863h7.9406v13.863h11.909c0.53661
+								0 1.0026-0.22886 1.3948-0.68658 0.39322-0.45645 0.59092-0.99889
+								0.59092-1.6247v-17.327c0-0.0961-0.01193-0.16817-0.03147-0.2162l-17.836-17.11z
+							</content>
+						</SVGPath>
+					</graphic>
+				</Button>
+				<Button styleClass="navigation-next" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="2" focusTraversable="false" onAction="#goNext">
+					<graphic>
+						<SVGPath strokeLineJoin="ROUND" strokeLineCap="ROUND" strokeWidth="9" fill="TRANSPARENT">
+							<content>m18.9 48.617 22.257-18.618-22.257-18.616</content>
+						</SVGPath>
+					</graphic>
+				</Button>
+			</children>
+		</GridPane>
+		<ScrollPane fx:id="contentPane" hbarPolicy="NEVER" VBox.vgrow="ALWAYS" styleClass="content-pane">
+		</ScrollPane>
+	</children>
+</VBox>

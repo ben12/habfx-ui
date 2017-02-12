@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Border?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ben12.openhab.controller.impl.TopItemsController"
+	fx:id="infosPane" fillHeight="true">
+
+	<children>
+		<Label fx:id="item1Label" prefHeight="${infosPane.height}" maxWidth="Infinity" prefWidth="${infosPane.width/3}" alignment="CENTER" />
+		<Label fx:id="item2Label" prefHeight="${infosPane.height}" maxWidth="Infinity" prefWidth="${infosPane.width/3}" alignment="CENTER" />
+		<Label fx:id="item3Label" prefHeight="${infosPane.height}" maxWidth="Infinity" prefWidth="${infosPane.width/3}" alignment="CENTER" />
+	</children>
+</HBox>
+

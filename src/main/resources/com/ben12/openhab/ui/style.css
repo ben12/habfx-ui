@@ -1,0 +1,144 @@
+
+.root {
+	-fx-base: rgb(50, 50, 50);
+ 	-fx-background: rgb(65, 65, 65);
+	-fx-control-inner-background:  rgb(70, 70, 70);
+	
+	-fx-font-size: 14 px;
+	
+	-fx-hover-base: -fx-base;
+    -fx-pressed-base: ladder(
+        -fx-base,
+        derive(-fx-base,20%) 20%,
+        derive(-fx-base,30%) 35%,
+        derive(-fx-base,40%) 50%
+     );
+}
+
+.ben12-color-picker .selected-color {
+	-fx-stroke-width: 2;
+	-fx-stroke: -fx-outer-border;
+}
+
+.scroll-pane {
+    -fx-background-insets: 0.0;
+    -fx-padding: 0.0;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0.0;
+    -fx-padding: 0.0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0.0;
+    -fx-padding: 0.0;
+}
+
+.spinner .increment-arrow-button {
+    -fx-padding: 1.2em 2.4em 1.2em 2.4em;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-padding: 1.2em 2.4em 1.2em 2.4em;
+}
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-padding: 0.6em 1.2em 0.6em 1.2em;
+}
+
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 0.6em 1.2em 0.6em 1.2em;
+}
+
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-background-color:
+        linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+        linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 3, 2;
+}
+
+.spinner:focused > .text-field,
+.spinner:contains-focus > .text-field {
+    -fx-background-color:
+        linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+        linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+    -fx-background-insets: 0, 1 0 1 1;
+    -fx-background-radius: 3 0 0 3, 2 0 0 2;
+}
+
+.spinner:focused .increment-arrow-button,
+.spinner:contains-focus .increment-arrow-button,
+.spinner:focused .decrement-arrow-button,
+.spinner:contains-focus .decrement-arrow-button {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+.spinner.split-arrows-vertical:focused > .text-field,
+.spinner.split-arrows-vertical:contains-focus > .text-field {
+    -fx-background-insets: 0, 0 1 0 1;
+}
+
+.button:hover {
+    -fx-color: -fx-base;
+}
+
+.button:pressed {
+    -fx-color: -fx-pressed-base;
+}
+
+.slider .thumb {
+    -fx-padding: 1.0em;
+}
+
+.slider .thumb:hover {
+    -fx-color: -fx-base;
+}
+
+.slider .track {
+    -fx-padding: 0.5em;
+}
+
+.slider:focused .thumb:pressed {
+    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+    -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
+    -fx-background-radius: 1.0em;
+}
+
+.slider:focused .thumb {
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-fx-text-box-border, -20%), derive(-fx-text-box-border, -30%)),
+        -fx-inner-border,
+        -fx-body-color;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 1.0em;
+}
+
+.navigation-pane SVGPath {
+	-fx-stroke : -fx-text-base-color;
+	-fx-fill : transparent;
+}
+
+.navigation-home SVGPath {
+	-fx-stroke : -fx-text-base-color;
+	-fx-fill : -fx-text-base-color;
+}
+
+.infos-pane Label {
+	-fx-font-weight: bold;
+	-fx-font-size: 5px;
+	-fx-alignment: center;
+}
+
+.widget {
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+        linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 3, 2;
+}
+
+.content-pane {
+	-fx-padding: 5.0 0.0 0.0 0.0 !important;
+}
