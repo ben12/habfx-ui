@@ -27,7 +27,7 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
-import javafx.scene.image.ImageView;
+import javafx.scene.Node;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -54,13 +54,12 @@ public class ColorpickerController extends WidgetController
 	{
 		super.init(pWidget, pMainViewController);
 
-		final ImageView iconImage = new ImageView();
-		iconImage.imageProperty().bind(iconProperty());
+		final Node iconImage = createIconNode();
 
 		final ColorPicker colorpicker = new ColorPicker();
 
 		final Timeline submitState = new Timeline(
-				new KeyFrame(Duration.millis(200), (ea) -> getMainViewController().getRestClient() //
+				new KeyFrame(Duration.millis(200), ea -> getMainViewController().getRestClient() //
 						.submit(getWidget().getItem(), toState(colorpicker.getColor()))));
 
 		final ChangeListener<Color> colorListener = (i, oldState, newState) -> submitState.play();
@@ -83,13 +82,6 @@ public class ColorpickerController extends WidgetController
 		content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
 		content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 		content.prefWidth(0);
-
-		getAccessView().setOnMouseClicked((e) -> {
-			if (e.isStillSincePress())
-			{
-				getMainViewController().display(ColorpickerController.this);
-			}
-		});
 	}
 
 	private Color parseColor(final String value)

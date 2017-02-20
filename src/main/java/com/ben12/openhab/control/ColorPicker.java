@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
  */
 public class ColorPicker extends Control
 {
-	private final ObjectProperty<Color> color = new SimpleObjectProperty<Color>(this, "value");;
+	private final ObjectProperty<Color> color = new SimpleObjectProperty<>(this, "value");
 
 	public ColorPicker()
 	{
@@ -43,7 +43,6 @@ public class ColorPicker extends Control
 		setColor(c);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	protected Skin<?> createDefaultSkin()
 	{

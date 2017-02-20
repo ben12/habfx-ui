@@ -59,7 +59,7 @@ public class HabApplication extends Application
 			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		}
 
-		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (e) -> System.exit(0));
+		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> System.exit(0));
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.ben12.openhab.model.util.BeanCopy;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,10 +38,9 @@ import javafx.collections.ObservableList;
  */
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class GroupItem extends Item
 {
-	public ObservableList<Item> members = FXCollections.observableArrayList();
+	public final ObservableList<Item> members = FXCollections.observableArrayList();
 
 	public ObservableList<Item> membersProperty()
 	{
@@ -54,12 +53,11 @@ public class GroupItem extends Item
 		return members;
 	}
 
-	public void setMembers(final List<Item> members)
+	public void setMembers(final List<Item> pMembers)
 	{
-		if (this.members != members)
+		if (members != pMembers)
 		{
-			this.members.clear();
-			this.members.addAll(members);
+			BeanCopy.copy(pMembers, members, Item::getName);
 		}
 	}
 }

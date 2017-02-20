@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import com.ben12.openhab.model.util.BeanCopy;
 
 import javafx.beans.property.BooleanProperty;
@@ -51,7 +49,6 @@ import javafx.collections.ObservableList;
  */
 @XmlRootElement(name = "widget")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Widget
 {
 	private final StringProperty				widgetId		= new SimpleStringProperty();

@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -38,7 +36,6 @@ import javafx.beans.property.StringProperty;
  */
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Item implements Linked
 {
 	private final StringProperty					type				= new SimpleStringProperty();

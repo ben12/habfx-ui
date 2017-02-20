@@ -21,11 +21,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.client.InvocationCallback;
 
@@ -47,6 +48,8 @@ import javafx.scene.layout.Region;
 
 public class MainController implements Initializable, MainViewController
 {
+	private static final Logger	LOGGER					= Logger.getLogger(MainController.class.getName());
+
 	private static final String	CONFIG_FILE				= "config.properties";
 
 	private static final String	OPENHAB_URL_CFG			= "openhab.url";
@@ -82,7 +85,7 @@ public class MainController implements Initializable, MainViewController
 			config = CONFIG_FILE;
 		}
 
-		if (Files.exists(Paths.get(config)))
+		if (Paths.get(config).toFile().exists())
 		{
 			try (FileReader reader = new FileReader(config))
 			{
@@ -90,7 +93,7 @@ public class MainController implements Initializable, MainViewController
 			}
 			catch (final IOException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Cannot read config file", e);
 			}
 		}
 
@@ -116,7 +119,7 @@ public class MainController implements Initializable, MainViewController
 				@Override
 				public void failed(final Throwable t)
 				{
-					t.printStackTrace();
+					LOGGER.log(Level.WARNING, "Cannot load homepage", t);
 				}
 
 				@Override
@@ -144,7 +147,7 @@ public class MainController implements Initializable, MainViewController
 		}
 		catch (final Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Cannot start the client", e);
 			System.exit(1);
 		}
 	}

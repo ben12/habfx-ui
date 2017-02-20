@@ -22,6 +22,7 @@ import javafx.stage.Window;
 /**
  * @author Benoît Moreau (ben.12)
  */
+@FunctionalInterface
 public interface HabApplicationPlugin
 {
 	void init(Window window);

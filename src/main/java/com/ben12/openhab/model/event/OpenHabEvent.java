@@ -17,15 +17,38 @@
 
 package com.ben12.openhab.model.event;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import com.sun.xml.txw2.annotation.XmlElement;
-
-@XmlElement
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class OpenHabEvent
 {
-	public String	topic;
+	private String	topic;
 
-	public String	type;
+	private String	type;
+
+	@XmlElement
+	public String getTopic()
+	{
+		return topic;
+	}
+
+	public void setTopic(final String topic)
+	{
+		this.topic = topic;
+	}
+
+	@XmlElement
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(final String type)
+	{
+		this.type = type;
+	}
 }

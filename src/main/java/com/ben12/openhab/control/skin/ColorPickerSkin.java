@@ -47,7 +47,7 @@ public class ColorPickerSkin extends SkinBase<ColorPicker>
 
 	private final Rectangle				secondColor;
 
-	private final ObjectProperty<Color>	color	= new SimpleObjectProperty<Color>(this, "value");;
+	private final ObjectProperty<Color>	color	= new SimpleObjectProperty<>(this, "value");
 
 	/**
 	 * @param control
@@ -74,9 +74,9 @@ public class ColorPickerSkin extends SkinBase<ColorPicker>
 		mainColor.getStyleClass().add("main-color");
 
 		secondColor = new Rectangle();
-		secondColor.layoutBoundsProperty().addListener((r, o, n) -> Platform.runLater(() -> updateSecondColorShape()));
+		secondColor.layoutBoundsProperty().addListener((r, o, n) -> Platform.runLater(this::updateSecondColorShape));
 		secondColor.getStyleClass().add("second-color");
-		color.addListener((r, o, n) -> Platform.runLater(() -> updateSecondColorShape()));
+		color.addListener((r, o, n) -> Platform.runLater(this::updateSecondColorShape));
 
 		final VBox box = new VBox(2);
 		VBox.setVgrow(secondColor, Priority.ALWAYS);
@@ -120,7 +120,7 @@ public class ColorPickerSkin extends SkinBase<ColorPicker>
 
 	private void initListeners()
 	{
-		final EventHandler<MouseEvent> mainColorEvent = (e) -> {
+		final EventHandler<MouseEvent> mainColorEvent = e -> {
 			final double width = mainColor.getWidth();
 			final double height = mainColor.getHeight();
 			final double x = adjust(e.getX(), 0.0, width);
@@ -136,7 +136,7 @@ public class ColorPickerSkin extends SkinBase<ColorPicker>
 		mainColor.setOnMouseDragged(mainColorEvent);
 		mainColor.setOnMouseClicked(mainColorEvent);
 
-		final EventHandler<MouseEvent> secondColorEvent = (e) -> {
+		final EventHandler<MouseEvent> secondColorEvent = e -> {
 			final double width = secondColor.getWidth();
 			final double height = secondColor.getHeight();
 			final double x = adjust(e.getX(), 0.0, width);

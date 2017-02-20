@@ -18,6 +18,8 @@
 package com.ben12.openhab.controller.impl;
 
 import java.lang.ref.WeakReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -49,13 +51,15 @@ import javafx.scene.text.Text;
 
 public abstract class WidgetController implements ContentController<Widget>
 {
+	private static final Logger			LOGGER	= Logger.getLogger(WidgetController.class.getName());
+
 	private final Page					parent;
 
 	private Widget						widget;
 
 	private MainViewController			mainViewController;
 
-	private Label						title;
+	private Region						title;
 
 	private VBox						accessView;
 
@@ -73,10 +77,6 @@ public abstract class WidgetController implements ContentController<Widget>
 
 	private ItemChangeHandler			itemChangeHandlerRef;
 
-	private ChangeListener				itemChangeHandler;
-
-	private Label						labelLabel;
-
 	public WidgetController(final Page parent)
 	{
 		this.parent = parent;
@@ -88,109 +88,11 @@ public abstract class WidgetController implements ContentController<Widget>
 		mainViewController = pMainViewController;
 		widget = pWidget;
 
-		labelProperty = Bindings.createStringBinding(() -> {
-			String label = widget.getLabel();
-			label = label.replaceFirst("\\[(.*?)\\]$", "");
-			return label;
-		}, widget.labelProperty());
+		title = createTitleNode();
 
-		valueProperty = Bindings.createStringBinding(() -> {
-			String label = widget.getLabel();
-			label = label.replaceFirst("^.*?(?:\\[(.*?)\\])?$", "$1");
-			return label;
-		}, widget.labelProperty());
-
-		labelStyleProperty = Bindings.createObjectBinding(() -> {
-			String style = "";
-			final String labelcolor = widget.getLabelcolor();
-			if (labelcolor != null)
-			{
-				style += "-fx-text-fill :" + labelcolor + ";";
-			}
-			return style;
-		}, widget.labelcolorProperty());
-
-		valueStyleProperty = Bindings.createObjectBinding(() -> {
-			String style = "";
-			final String valuecolor = widget.getValuecolor();
-			if (valuecolor != null)
-			{
-				style += "-fx-text-fill :" + valuecolor + ";";
-			}
-			return style;
-		}, widget.labelcolorProperty());
-
-		itemStateProperty = Bindings.selectString(widget.itemProperty(), "state");
-
-		iconProperty = new SimpleObjectProperty<>();
-		final InvocationCallback<Image> iconCallback = new InvocationCallback<Image>()
-		{
-			@Override
-			public void failed(final Throwable t)
-			{
-				t.printStackTrace();
-			}
-
-			@Override
-			public void completed(final Image image)
-			{
-				Platform.runLater(() -> iconProperty.set(image));
-			}
-		};
-
-		widget.iconProperty()
-				.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
-		itemStateProperty.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
-		mainViewController.getRestClient().getImage(widget, iconCallback);
-
-		title = new Label();
-		title.getStyleClass().add("title");
-		title.textProperty().bind(labelProperty);
-
-		// Maximum font height
-		title.heightProperty().addListener((e, o, n) -> {
-			final Text textUtil = new Text(title.getText());
-			textUtil.setFont(title.getFont());
-			final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
-			final Node text = title.lookup(".text");
-			text.setScaleX(scale);
-			text.setScaleY(scale);
-		});
-		title.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
-		{
-			@Override
-			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
-					final Bounds newValue)
-			{
-				title.boundsInLocalProperty().removeListener(this);
-				final Text textUtil = new Text(title.getText());
-				textUtil.setFont(title.getFont());
-				final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
-				final Node text = title.lookup(".text");
-				text.setScaleX(scale);
-				text.setScaleY(scale);
-				title.boundsInLocalProperty().addListener(this);
-			}
-		});
-
-		labelLabel = new Label();
-		labelLabel.textProperty().bind(labelProperty);
-		labelLabel.styleProperty().bind(labelStyleProperty);
-		labelLabel.setMinSize(0, 0);
-		labelLabel.prefHeightProperty().bind(Bindings.createDoubleBinding(() -> {
-			return labelProperty.isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0;
-		}, labelProperty));
-
-		final Label valueLabel = new Label();
-		valueLabel.textProperty().bind(valueProperty);
-		valueLabel.styleProperty().bind(valueStyleProperty);
-		valueLabel.setMinSize(0, 0);
-		valueLabel.prefHeightProperty().bind(Bindings.createDoubleBinding(() -> {
-			return valueProperty.isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0;
-		}, valueProperty));
-
-		final ImageView iconImage = new ImageView();
-		iconImage.imageProperty().bind(iconProperty);
+		final Node labelLabel = createLabelNode();
+		final Node valueLabel = createValueNode();
+		final Node iconImage = createIconNode();
 
 		accessView = new VBox(2);
 		accessView.getChildren().addAll(iconImage, labelLabel, valueLabel);
@@ -199,15 +101,14 @@ public abstract class WidgetController implements ContentController<Widget>
 		accessView.setMinSize(Region.USE_PREF_SIZE, 50);
 		accessView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		accessView.prefWidth(0);
-
-		itemChangeHandler = new ChangeListener()
-		{
-			@Override
-			public void stateChanged(final ChangeEvent e)
+		accessView.setOnMouseClicked(e -> {
+			if (e.isStillSincePress())
 			{
-				reload();
+				display();
 			}
-		};
+		});
+
+		final ChangeListener itemChangeHandler = e -> reload();
 
 		widget.itemProperty().addListener((o, oldItem, newItem) -> {
 			if (itemChangeHandlerRef != null)
@@ -229,6 +130,112 @@ public abstract class WidgetController implements ContentController<Widget>
 		}
 	}
 
+	protected void display()
+	{
+		if (getContentView() != null)
+		{
+			getMainViewController().display(WidgetController.this);
+		}
+	}
+
+	public ObjectProperty<Image> iconProperty()
+	{
+		if (iconProperty == null)
+		{
+			iconProperty = new SimpleObjectProperty<>();
+			final InvocationCallback<Image> iconCallback = new InvocationCallback<Image>()
+			{
+				@Override
+				public void failed(final Throwable t)
+				{
+					LOGGER.log(Level.WARNING, "Cannot load image", t);
+				}
+
+				@Override
+				public void completed(final Image image)
+				{
+					Platform.runLater(() -> iconProperty.set(image));
+				}
+			};
+
+			widget.iconProperty()
+					.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
+			itemStateProperty()
+					.addListener((w, o, n) -> mainViewController.getRestClient().getImage(widget, iconCallback));
+			mainViewController.getRestClient().getImage(widget, iconCallback);
+		}
+		return iconProperty;
+	}
+
+	protected Region createTitleNode()
+	{
+		final Label titleNode = new Label();
+		titleNode.getStyleClass().add("title");
+		titleNode.textProperty().bind(labelProperty());
+
+		// Maximum font height
+		titleNode.heightProperty().addListener((e, o, n) -> {
+			final Text textUtil = new Text(titleNode.getText());
+			textUtil.setFont(titleNode.getFont());
+			final double scale = titleNode.getHeight() / textUtil.getBoundsInLocal().getHeight();
+			final Node text = titleNode.lookup(".text");
+			text.setScaleX(scale);
+			text.setScaleY(scale);
+		});
+		titleNode.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+					final Bounds newValue)
+			{
+				titleNode.boundsInLocalProperty().removeListener(this);
+				final Text textUtil = new Text(titleNode.getText());
+				textUtil.setFont(titleNode.getFont());
+				final double scale = titleNode.getHeight() / textUtil.getBoundsInLocal().getHeight();
+				final Node text = titleNode.lookup(".text");
+				text.setScaleX(scale);
+				text.setScaleY(scale);
+				titleNode.boundsInLocalProperty().addListener(this);
+			}
+		});
+
+		return titleNode;
+	}
+
+	protected Node createIconNode()
+	{
+		final ImageView iconImage = new ImageView();
+		iconImage.imageProperty().bind(iconProperty());
+
+		return iconImage;
+	}
+
+	protected Node createLabelNode()
+	{
+		final Label labelNode = new Label();
+		labelNode.getStyleClass().add("label-label");
+		labelNode.textProperty().bind(labelProperty());
+		labelNode.styleProperty().bind(labelStyleProperty());
+		labelNode.setMinSize(0, 0);
+		labelNode.prefHeightProperty().bind(Bindings.createDoubleBinding(
+				() -> (labelProperty().isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0), labelProperty()));
+
+		return labelNode;
+	}
+
+	protected Node createValueNode()
+	{
+		final Label valueNode = new Label();
+		valueNode.getStyleClass().add("value-label");
+		valueNode.textProperty().bind(valueProperty());
+		valueNode.styleProperty().bind(valueStyleProperty());
+		valueNode.setMinSize(0, 0);
+		valueNode.prefHeightProperty().bind(Bindings.createDoubleBinding(
+				() -> (valueProperty().isNotEmpty().get() ? Region.USE_COMPUTED_SIZE : 0), valueProperty()));
+
+		return valueNode;
+	}
+
 	@Override
 	public void reload()
 	{
@@ -236,13 +243,13 @@ public abstract class WidgetController implements ContentController<Widget>
 	}
 
 	@Override
-	public Label getInfosView()
+	public Region getInfosView()
 	{
 		return title;
 	}
 
 	@Override
-	public VBox getAccessView()
+	public Region getAccessView()
 	{
 		return accessView;
 	}
@@ -264,12 +271,71 @@ public abstract class WidgetController implements ContentController<Widget>
 
 	protected StringBinding itemStateProperty()
 	{
+		if (itemStateProperty == null)
+		{
+			itemStateProperty = Bindings.selectString(widget.itemProperty(), "state");
+		}
 		return itemStateProperty;
 	}
 
-	protected ObjectProperty<Image> iconProperty()
+	private StringBinding labelProperty()
 	{
-		return iconProperty;
+		if (labelProperty == null)
+		{
+			labelProperty = Bindings.createStringBinding(() -> {
+				String label = widget.getLabel();
+				label = label.replaceFirst("\\[(.*?)\\]$", "");
+				return label;
+			}, widget.labelProperty());
+		}
+		return labelProperty;
+	}
+
+	public ObjectExpression<String> labelStyleProperty()
+	{
+		if (labelStyleProperty == null)
+		{
+			labelStyleProperty = Bindings.createObjectBinding(() -> {
+				String style = "";
+				final String labelcolor = widget.getLabelcolor();
+				if (labelcolor != null)
+				{
+					style += "-fx-text-fill :" + labelcolor + ";";
+				}
+				return style;
+			}, widget.labelcolorProperty());
+		}
+		return labelStyleProperty;
+	}
+
+	public StringBinding valueProperty()
+	{
+		if (valueProperty == null)
+		{
+			valueProperty = Bindings.createStringBinding(() -> {
+				String label = widget.getLabel();
+				label = label.replaceFirst("^.*?(?:\\[(.*?)\\])?$", "$1");
+				return label;
+			}, widget.labelProperty());
+		}
+		return valueProperty;
+	}
+
+	public ObjectExpression<String> valueStyleProperty()
+	{
+		if (valueStyleProperty == null)
+		{
+			valueStyleProperty = Bindings.createObjectBinding(() -> {
+				String style = "";
+				final String valuecolor = widget.getValuecolor();
+				if (valuecolor != null)
+				{
+					style += "-fx-text-fill :" + valuecolor + ";";
+				}
+				return style;
+			}, widget.labelcolorProperty());
+		}
+		return valueStyleProperty;
 	}
 
 	private static class ItemChangeHandler extends WeakReference<ChangeListener> implements ChangeListener

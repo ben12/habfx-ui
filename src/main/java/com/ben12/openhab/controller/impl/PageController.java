@@ -17,6 +17,7 @@
 
 package com.ben12.openhab.controller.impl;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ import com.ben12.openhab.model.Widget;
 import com.ben12.openhab.ui.FullWidthTilePane;
 
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -83,7 +84,7 @@ public class PageController implements ContentController<Page>
 
 		pane = new FullWidthTilePane();
 
-		final Function<Widget, Node> mapper = (widget) -> {
+		final Function<Widget, Node> mapper = widget -> {
 			Node view = null;
 			final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(), page);
 			if (controller != null)
@@ -94,27 +95,22 @@ public class PageController implements ContentController<Page>
 			return view;
 		};
 
-		page.widgetsProperty().addListener(new ListChangeListener<Widget>()
-		{
-			@Override
-			public void onChanged(final Change<? extends Widget> c)
+		page.widgetsProperty().addListener((final Change<? extends Widget> c) -> {
+			while (c.next())
 			{
-				while (c.next())
-				{
-					final int from = c.getFrom();
+				final int from = c.getFrom();
 
-					if (c.wasRemoved())
-					{
-						pane.getChildren().remove(from, from + c.getRemovedSize());
-					}
-					if (c.wasAdded())
-					{
-						pane.getChildren().addAll(from, c.getAddedSubList() //
-								.stream()
-								.map(mapper)
-								.filter(o -> o != null)
-								.collect(Collectors.toList()));
-					}
+				if (c.wasRemoved())
+				{
+					pane.getChildren().remove(from, from + c.getRemovedSize());
+				}
+				if (c.wasAdded())
+				{
+					pane.getChildren().addAll(from, c.getAddedSubList() //
+							.stream()
+							.map(mapper)
+							.filter(Objects::nonNull)
+							.collect(Collectors.toList()));
 				}
 			}
 		});
@@ -122,7 +118,7 @@ public class PageController implements ContentController<Page>
 		pane.getChildren().addAll(page.widgetsProperty() //
 				.stream()
 				.map(mapper)
-				.filter(o -> o != null)
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList()));
 	}
 

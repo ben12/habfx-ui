@@ -22,6 +22,7 @@ import com.ben12.openhab.rest.OpenHabRestClient;
 /**
  * @author Benoît Moreau (ben.12)
  */
+@FunctionalInterface
 public interface OpenHabRestClientPlugin
 {
 	void init(OpenHabRestClient restClient);

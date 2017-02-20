@@ -56,15 +56,14 @@ public class TextController extends WidgetController
 			frameController.init(pWidget, pMainViewController);
 			controller = frameController;
 		}
+	}
 
+	@Override
+	protected void display()
+	{
 		if (controller != null)
 		{
-			getAccessView().setOnMouseClicked((e) -> {
-				if (e.isStillSincePress())
-				{
-					getMainViewController().display(controller);
-				}
-			});
+			getMainViewController().display(controller);
 		}
 	}
 

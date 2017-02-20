@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.WrapDynaBean;
@@ -32,7 +34,9 @@ import javafx.application.Platform;
 
 public class BeanCopy extends WrapDynaBean
 {
-	private static final long serialVersionUID = 365623528334534437L;
+	private static final long	serialVersionUID	= 365623528334534437L;
+
+	private static final Logger	LOGGER				= Logger.getLogger(BeanCopy.class.getName());
 
 	private BeanCopy(final Object instance)
 	{
@@ -44,31 +48,27 @@ public class BeanCopy extends WrapDynaBean
 		for (int i = 0; i < source.size(); i++)
 		{
 			final T newWidget = source.get(i);
-			T actualWidget = (i < destination.size() ? destination.get(i) : null);
-			if (actualWidget != null && Objects.equals(idGetter.apply(newWidget), idGetter.apply(actualWidget)))
+
+			boolean found = false;
+			int j = i;
+
+			while (j < destination.size()
+					&& !(found = Objects.equals(idGetter.apply(newWidget), idGetter.apply(destination.get(j)))))
 			{
-				BeanCopy.copy(newWidget, actualWidget);
+				j++;
+			}
+
+			if (found)
+			{
+				BeanCopy.copy(newWidget, destination.get(j));
+				if (i != j)
+				{
+					destination.add(i, destination.remove(j));
+				}
 			}
 			else
 			{
-				boolean found = false;
-				for (int j = 0; j < destination.size(); j++)
-				{
-					actualWidget = destination.get(j);
-					if (Objects.equals(idGetter.apply(newWidget), idGetter.apply(actualWidget)))
-					{
-						BeanCopy.copy(newWidget, actualWidget);
-						destination.remove(j);
-						destination.add(i, actualWidget);
-						found = true;
-						break;
-					}
-				}
-
-				if (!found)
-				{
-					destination.add(i, newWidget);
-				}
+				destination.add(i, newWidget);
 			}
 		}
 
@@ -96,7 +96,7 @@ public class BeanCopy extends WrapDynaBean
 		}
 		catch (final Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Cannot copy bean", e);
 		}
 	}
 
@@ -111,8 +111,8 @@ public class BeanCopy extends WrapDynaBean
 		if (value != null)
 		{
 			final Class<?> type = value.getClass();
-			final XmlElement xmlElement = type.getAnnotation(XmlElement.class);
-			copyable = (xmlElement != null);
+			final XmlRootElement xmlElement = type.getAnnotation(XmlRootElement.class);
+			copyable = Objects.nonNull(xmlElement);
 		}
 		return copyable;
 	}
@@ -135,11 +135,12 @@ public class BeanCopy extends WrapDynaBean
 		catch (final InvocationTargetException ite)
 		{
 			final Throwable cause = ite.getTargetException();
-			throw new IllegalArgumentException("Error setting property '" + name + "' nested exception -" + cause);
+			throw new IllegalArgumentException("Error setting property '" + name + "' nested exception - " + cause,
+					ite);
 		}
-		catch (final Throwable t)
+		catch (final Exception e)
 		{
-			throw new IllegalArgumentException("Error setting property '" + name + "', exception - " + t);
+			throw new IllegalArgumentException("Error setting property '" + name + "', exception - " + e, e);
 		}
 	}
 }

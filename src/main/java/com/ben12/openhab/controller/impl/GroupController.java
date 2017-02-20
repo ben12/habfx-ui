@@ -39,13 +39,12 @@ public class GroupController extends WidgetController
 
 		pageController = new PageController();
 		pageController.init(getWidget().getLinkedPage(), getMainViewController());
+	}
 
-		getAccessView().setOnMouseClicked((e) -> {
-			if (e.isStillSincePress())
-			{
-				getMainViewController().display(pageController);
-			}
-		});
+	@Override
+	protected void display()
+	{
+		getMainViewController().display(pageController);
 	}
 
 	@Override

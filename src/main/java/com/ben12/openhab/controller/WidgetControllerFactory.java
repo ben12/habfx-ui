@@ -20,6 +20,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.ben12.openhab.controller.impl.ColorpickerController;
 import com.ben12.openhab.controller.impl.FrameController;
@@ -34,6 +36,9 @@ import com.ben12.openhab.model.Page;
 
 public final class WidgetControllerFactory
 {
+	private static final Logger											LOGGER	= Logger
+			.getLogger(WidgetControllerFactory.class.getName());
+
 	private static final Map<String, Class<? extends WidgetController>>	CONTROLLERS;
 
 	private static final MethodType										CONSTRUCTOR;
@@ -70,8 +75,12 @@ public final class WidgetControllerFactory
 			}
 			catch (final Throwable e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Cannot display widget", e);
 			}
+		}
+		else
+		{
+			LOGGER.log(Level.WARNING, "Not yet implemented widget type %s", type);
 		}
 		return controller;
 	}

@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import com.ben12.openhab.model.util.BeanCopy;
 
 import javafx.beans.property.BooleanProperty;
@@ -41,7 +39,6 @@ import javafx.collections.ObservableList;
  */
 @XmlRootElement(name = "page")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Page implements Linked
 {
 	private final StringProperty			id		= new SimpleStringProperty();
@@ -151,7 +148,8 @@ public class Page implements Linked
 
 	public void setWidgets(final List<Widget> pWidgets)
 	{
-		if (widgets != pWidgets)
+		// pWidgets is empty when parent page is refreshed
+		if (widgets != pWidgets && !pWidgets.isEmpty())
 		{
 			BeanCopy.copy(pWidgets, widgets, Widget::getWidgetId);
 		}

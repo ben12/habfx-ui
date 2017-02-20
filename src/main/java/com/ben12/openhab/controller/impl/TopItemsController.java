@@ -20,9 +20,9 @@ package com.ben12.openhab.controller.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.ws.rs.client.InvocationCallback;
 
 import com.ben12.openhab.controller.ContentController;
@@ -33,6 +33,7 @@ import com.ben12.openhab.rest.OpenHabRestClient;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -48,6 +49,8 @@ import javafx.scene.text.Text;
  */
 public class TopItemsController implements ContentController<Void>
 {
+	private static final Logger		LOGGER		= Logger.getLogger(TopItemsController.class.getName());
+
 	/** First item configuration key. */
 	private static final String		ITEM1_CFG	= "item1";
 
@@ -124,6 +127,10 @@ public class TopItemsController implements ContentController<Void>
 			createItem(item3Name, item3Pattern, item3, item3Label);
 		}
 
+		bindFitText(item1Label);
+		bindFitText(item2Label);
+		bindFitText(item3Label);
+
 		if (isEmpty())
 		{
 			infosPane = null;
@@ -153,38 +160,12 @@ public class TopItemsController implements ContentController<Void>
 
 		itemLabel.textProperty().bind(stateProperty);
 
-		// Maximum font height
-		itemLabel.heightProperty().addListener((e, o, n) -> {
-			final Text textUtil = new Text(itemLabel.getText());
-			textUtil.setFont(itemLabel.getFont());
-			final double scale = itemLabel.getHeight() / textUtil.getBoundsInLocal().getHeight();
-			final Node text = itemLabel.lookup(".text");
-			text.setScaleX(scale);
-			text.setScaleY(scale);
-		});
-		itemLabel.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
-		{
-			@Override
-			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
-					final Bounds newValue)
-			{
-				itemLabel.boundsInLocalProperty().removeListener(this);
-				final Text textUtil = new Text(itemLabel.getText());
-				textUtil.setFont(itemLabel.getFont());
-				final double scale = itemLabel.getHeight() / textUtil.getBoundsInLocal().getHeight();
-				final Node text = itemLabel.lookup(".text");
-				text.setScaleX(scale);
-				text.setScaleY(scale);
-				itemLabel.boundsInLocalProperty().addListener(this);
-			}
-		});
-
 		restClient.item(itemName, new InvocationCallback<Item>()
 		{
 			@Override
 			public void failed(final Throwable t)
 			{
-				t.printStackTrace();
+				LOGGER.log(Level.WARNING, "Cannot get item", t);
 			}
 
 			@Override
@@ -194,21 +175,42 @@ public class TopItemsController implements ContentController<Void>
 				{
 					BeanCopy.copy(response, item);
 
-					restClient.addItemStateChangeListener(item.getName(), new ChangeListener()
-					{
-						@Override
-						public void stateChanged(final ChangeEvent e)
-						{
-							restClient.update(item);
-						}
-					});
+					restClient.addItemStateChangeListener(item.getName(), e -> restClient.update(item));
 				}
 				catch (final Exception e)
 				{
-					e.printStackTrace();
+					LOGGER.log(Level.WARNING, "Cannot get item", e);
 				}
 			}
 		});
+	}
+
+	private void bindFitText(final Label itemLabel)
+	{
+		itemLabel.heightProperty().addListener((e, o, n) -> scaleFitText(itemLabel));
+		itemLabel.boundsInLocalProperty().addListener(new ChangeListener<Bounds>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+					final Bounds newValue)
+			{
+				itemLabel.boundsInLocalProperty().removeListener(this);
+				scaleFitText(itemLabel);
+				itemLabel.boundsInLocalProperty().addListener(this);
+			}
+		});
+	}
+
+	private void scaleFitText(final Label itemLabel)
+	{
+		final Text textUtil = new Text(itemLabel.getText());
+		textUtil.setFont(itemLabel.getFont());
+		final double scaleY = itemLabel.getHeight() / textUtil.getBoundsInLocal().getHeight();
+		final double scaleX = itemLabel.getWidth() / textUtil.getBoundsInLocal().getWidth();
+		final double scale = Math.min(scaleX, scaleY);
+		final Node text = itemLabel.lookup(".text");
+		text.setScaleX(scale);
+		text.setScaleY(scale);
 	}
 
 	/**

@@ -17,6 +17,9 @@
 
 package com.ben12.openhab.controller.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.ben12.openhab.controller.MainViewController;
 import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Widget;
@@ -27,15 +30,18 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import jersey.repackaged.com.google.common.base.Objects;
 
 /**
  * @author Benoît Moreau (ben.12)
  */
 public class WebviewController extends WidgetController
 {
-	private VBox	content;
+	private static final Logger	LOGGER	= Logger.getLogger(WebviewController.class.getName());
 
-	private WebView	webView;
+	private VBox				content;
+
+	private WebView				webView;
 
 	/**
 	 * @param parent
@@ -51,16 +57,8 @@ public class WebviewController extends WidgetController
 	{
 		super.init(widget, mainViewController);
 
-		getAccessView().setOnMouseClicked(e -> {
-			if (e.isStillSincePress())
-			{
-				getMainViewController().display(this);
-				webView.getEngine().load(widget.getUrl());
-			}
-		});
-
 		webView = new WebView();
-		webView.getEngine().setOnError((e) -> e.getException().printStackTrace());
+		webView.getEngine().setOnError(e -> LOGGER.log(Level.WARNING, e.getMessage(), e.getException()));
 
 		content = new VBox(webView);
 		VBox.setVgrow(webView, Priority.ALWAYS);
@@ -68,6 +66,32 @@ public class WebviewController extends WidgetController
 		content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
 		content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 		content.prefWidth(0);
+	}
+
+	protected void loadURL()
+	{
+		if (Objects.equal(webView.getEngine().getLocation(), getWidget().getUrl()))
+		{
+			webView.getEngine().reload();
+		}
+		else
+		{
+			webView.getEngine().load(getWidget().getUrl());
+		}
+	}
+
+	@Override
+	protected void display()
+	{
+		super.display();
+		loadURL();
+	}
+
+	@Override
+	public void reload()
+	{
+		super.reload();
+		loadURL();
 	}
 
 	@Override

@@ -19,12 +19,16 @@ package com.ben12.openhab.rest;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -38,12 +42,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
-import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.ben12.openhab.model.Item;
 import com.ben12.openhab.model.Linked;
@@ -57,6 +59,9 @@ import javafx.scene.image.Image;
 
 public class OpenHabRestClient
 {
+	private static final Logger						LOGGER				= Logger
+			.getLogger(OpenHabRestClient.class.getName());
+
 	private static final String						REST				= "rest";
 
 	private static final String						SITEMAPS			= "sitemaps";
@@ -82,14 +87,10 @@ public class OpenHabRestClient
 		listeners = Collections.synchronizedMap(new HashMap<>());
 		uri = pUri;
 
-		final JacksonJaxbJsonProvider xmlJaxbProvider = new JacksonJaxbJsonProvider();
 		final ImageProvider imageProvider = new ImageProvider();
-		final SseFeature sseFeature = new SseFeature();
 
 		client = ClientBuilder.newClient() //
-				.register(xmlJaxbProvider)
-				.register(imageProvider)
-				.register(sseFeature);
+				.register(imageProvider);
 
 		if (username != null && !username.isEmpty())
 		{
@@ -105,7 +106,7 @@ public class OpenHabRestClient
 		eventSource = EventSource.target(eventsTarget).build();
 		eventSource.register(new EventHandler());
 
-		final Thread async = new Thread(() -> eventSource.open(), "Open SSE");
+		final Thread async = new Thread(eventSource::open, "Open SSE");
 		async.start();
 	}
 
@@ -143,27 +144,18 @@ public class OpenHabRestClient
 			@Override
 			public void completed(final Sitemap[] sitemapList)
 			{
-				if (sitemapList != null)
+				final Optional<Page> homepage = Arrays.stream(sitemapList == null ? new Sitemap[0] : sitemapList) //
+						.filter(e -> Objects.equals(e.getName(), sitemapName))
+						.map(Sitemap::getHomepage)
+						.findFirst();
+
+				if (homepage.isPresent())
 				{
-					Page homepage = null;
-
-					for (final Sitemap sitemapBean : sitemapList)
-					{
-						if (Objects.equals(sitemapBean.getName(), sitemapName))
-						{
-							homepage = sitemapBean.getHomepage();
-							break;
-						}
-					}
-
-					if (homepage != null)
-					{
-						update(homepage, callback);
-					}
-					else
-					{
-						callback.failed(new IllegalArgumentException("Sitemap not found."));
-					}
+					update(homepage.get(), callback);
+				}
+				else
+				{
+					callback.failed(new IllegalArgumentException("Sitemap not found."));
 				}
 			}
 		};
@@ -197,7 +189,7 @@ public class OpenHabRestClient
 					}
 					catch (final Exception e)
 					{
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Cannot update data", e);
 					}
 				}
 			}.start();
@@ -250,7 +242,7 @@ public class OpenHabRestClient
 					@Override
 					public void failed(final Throwable t)
 					{
-						t.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Cannot submit item", t);
 					}
 
 					@Override
@@ -258,36 +250,7 @@ public class OpenHabRestClient
 					{
 						if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
 						{
-							System.err.println(response.getStatusInfo().getStatusCode() + ": "
-									+ response.getStatusInfo().getReasonPhrase());
-						}
-					}
-				});
-	}
-
-	public void submitPut(final Item item, final String state)
-	{
-		final WebTarget target = client.target(uri) //
-				.path(REST)
-				.path(ITEMS)
-				.path(item.getName());
-		target.request() //
-				.accept(MediaType.WILDCARD)
-				.buildPut(Entity.entity(state, MediaType.TEXT_PLAIN))
-				.submit(new InvocationCallback<Response>()
-				{
-					@Override
-					public void failed(final Throwable t)
-					{
-						t.printStackTrace();
-					}
-
-					@Override
-					public void completed(final Response response)
-					{
-						if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
-						{
-							System.err.println(response.getStatusInfo().getStatusCode() + ": "
+							LOGGER.log(Level.SEVERE, () -> response.getStatusInfo().getStatusCode() + ": "
 									+ response.getStatusInfo().getReasonPhrase());
 						}
 					}
@@ -326,10 +289,9 @@ public class OpenHabRestClient
 		public void onEvent(final InboundEvent inboundEvent)
 		{
 			final OpenHabEvent event = inboundEvent.readData(OpenHabEvent.class);
-			if (ITEM_STATE_EVENT.equals(event.type))
+			if (ITEM_STATE_EVENT.equals(event.getType()))
 			{
-				// System.out.println(event.type + " on " + event.topic);
-				final List<ChangeListener> changeListeners = listeners.get(event.topic);
+				final List<ChangeListener> changeListeners = listeners.get(event.getTopic());
 				if (changeListeners != null)
 				{
 					final ChangeEvent e = new ChangeEvent(OpenHabRestClient.this);

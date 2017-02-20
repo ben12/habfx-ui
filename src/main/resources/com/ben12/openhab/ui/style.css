@@ -128,7 +128,6 @@
 
 .infos-pane Label {
 	-fx-font-weight: bold;
-	-fx-font-size: 5px;
 	-fx-alignment: center;
 }
 
@@ -137,6 +136,11 @@
         linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
     -fx-background-insets: 0, 1;
     -fx-background-radius: 3, 2;
+}
+
+.widget .value-label {
+	-fx-font-size: 110%;
+	-fx-font-weight: bold;
 }
 
 .content-pane {

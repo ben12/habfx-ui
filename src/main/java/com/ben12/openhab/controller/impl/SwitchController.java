@@ -31,19 +31,22 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class SwitchController extends WidgetController
 {
-	private VBox content;
+	private VBox	content;
+
+	private boolean	isOnOff;
 
 	public SwitchController(final Page parent)
 	{
@@ -56,107 +59,118 @@ public class SwitchController extends WidgetController
 		super.init(pWidget, pMainViewController);
 
 		// ON/OFF Switch
-		if (pWidget.getMappings().isEmpty())
+		isOnOff = pWidget.getMappings().isEmpty();
+
+		if (!isOnOff)
 		{
-			getAccessView().setOnMouseClicked((e) -> {
-				if (e.isStillSincePress())
-				{
-					getMainViewController() //
-							.getRestClient().submit( //
-									getWidget().getItem(),
-									"ON".equalsIgnoreCase(getWidget().getItem().getState()) ? "OFF" : "ON");
-				}
-			});
+			initSwitchWithMapping(pWidget.mappingsProperty());
+		}
+	}
 
-			final ToggleSwitch stateButton = new ToggleSwitch();
-			stateButton.textProperty().bind(itemStateProperty());
-			stateButton.selectedProperty().bind(Bindings
-					.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
-			stateButton.setMinSize(0, 0);
-			stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-			stateButton.setMouseTransparent(true);
-			getAccessView().getChildren().add(stateButton);
+	@Override
+	protected Node createValueNode()
+	{
+		final ToggleSwitch stateButton = new ToggleSwitch();
+		stateButton.getStyleClass().add("value-label");
+		stateButton.textProperty().bind(itemStateProperty());
+		stateButton.selectedProperty().bind(Bindings
+				.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
+		stateButton.setMinSize(0, 0);
+		stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+		stateButton.setMouseTransparent(true);
 
+		return stateButton;
+	}
+
+	@Override
+	protected void display()
+	{
+		if (isOnOff)
+		{
+			getMainViewController() //
+					.getRestClient().submit( //
+							getWidget().getItem(),
+							"ON".equalsIgnoreCase(getWidget().getItem().getState()) ? "OFF" : "ON");
 		}
 		else
 		{
-			final ImageView iconImage = new ImageView();
-			iconImage.imageProperty().bind(iconProperty());
-
-			final ListView<Mapping> listView = new ListView<>(pWidget.mappingsProperty());
-			listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-			listView.setCellFactory((l) -> new MappingListCell());
-			listView.setMinSize(0, Region.USE_PREF_SIZE);
-			listView.setMaxSize(Double.MAX_VALUE, Region.USE_PREF_SIZE);
-			listView.setFixedCellSize(25);
-			listView.prefHeightProperty()
-					.bind(Bindings.size(pWidget.mappingsProperty())
-							.multiply(listView.getFixedCellSize()) //
-							.add(Bindings.selectDouble(listView.insetsProperty(), "top"))
-							.add(Bindings.selectDouble(listView.insetsProperty(), "bottom")));
-
-			final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(200), (ea) -> {
-				final Mapping mapping = listView.getSelectionModel().getSelectedItem();
-				if (mapping != null)
-				{
-					getMainViewController().getRestClient() //
-							.submit(getWidget().getItem(), mapping.getCommand());
-				}
-			}));
-
-			final ChangeListener<Mapping> listViewListener = new ChangeListener<Mapping>()
-			{
-				@Override
-				public void changed(final ObservableValue<? extends Mapping> o, final Mapping oldValue,
-						final Mapping newValue)
-				{
-					if (listView.getSelectionModel().isEmpty())
-					{
-						Platform.runLater(() -> {
-							listView.getSelectionModel().selectedItemProperty().removeListener(this);
-							listView.getSelectionModel().select(getMapping(itemStateProperty().get()));
-							listView.getSelectionModel().selectedItemProperty().addListener(this);
-						});
-					}
-					else
-					{
-						submitState.play();
-					}
-				}
-			};
-
-			itemStateProperty().addListener((i, oldState, newState) -> {
-				if (submitState.getStatus() != Status.RUNNING)
-				{
-					listView.getSelectionModel().selectedItemProperty().removeListener(listViewListener);
-					listView.getSelectionModel().select(getMapping(newState));
-					listView.getSelectionModel().selectedItemProperty().addListener(listViewListener);
-				}
-			});
-			listView.getSelectionModel().select(getMapping(itemStateProperty().get()));
-			listView.getSelectionModel().selectedItemProperty().addListener(listViewListener);
-
-			content = new VBox(iconImage, listView);
-			content.setAlignment(Pos.CENTER);
-			content.setMinSize(50, 50);
-			content.setMaxSize(Double.MAX_VALUE, Region.USE_PREF_SIZE);
-			content.prefWidth(0);
-			content.setPadding(new Insets(0, 5, 0, 5));
-
-			getAccessView().setOnMouseClicked((e) -> {
-				if (e.isStillSincePress())
-				{
-					getMainViewController().display(SwitchController.this);
-				}
-			});
+			super.display();
 		}
+	}
+
+	/**
+	 * @param mappings
+	 */
+	private void initSwitchWithMapping(final ObservableList<Mapping> mappings)
+	{
+		final Node iconImage = createIconNode();
+
+		final ListView<Mapping> listView = new ListView<>(mappings);
+		listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		listView.setCellFactory(l -> new MappingListCell());
+		listView.setMinSize(0, Region.USE_PREF_SIZE);
+		listView.setMaxSize(Double.MAX_VALUE, Region.USE_PREF_SIZE);
+		listView.setFixedCellSize(25);
+		listView.prefHeightProperty()
+				.bind(Bindings.size(mappings)
+						.multiply(listView.getFixedCellSize()) //
+						.add(Bindings.selectDouble(listView.insetsProperty(), "top"))
+						.add(Bindings.selectDouble(listView.insetsProperty(), "bottom")));
+
+		final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(200), ea -> {
+			final Mapping mapping = listView.getSelectionModel().getSelectedItem();
+			if (mapping != null)
+			{
+				getMainViewController().getRestClient() //
+						.submit(getWidget().getItem(), mapping.getCommand());
+			}
+		}));
+
+		final ChangeListener<Mapping> listViewListener = new ChangeListener<Mapping>()
+		{
+			@Override
+			public void changed(final ObservableValue<? extends Mapping> o, final Mapping oldValue,
+					final Mapping newValue)
+			{
+				if (listView.getSelectionModel().isEmpty())
+				{
+					Platform.runLater(() -> {
+						listView.getSelectionModel().selectedItemProperty().removeListener(this);
+						listView.getSelectionModel().select(getMapping(itemStateProperty().get()));
+						listView.getSelectionModel().selectedItemProperty().addListener(this);
+					});
+				}
+				else
+				{
+					submitState.play();
+				}
+			}
+		};
+
+		itemStateProperty().addListener((i, oldState, newState) -> {
+			if (submitState.getStatus() != Status.RUNNING)
+			{
+				listView.getSelectionModel().selectedItemProperty().removeListener(listViewListener);
+				listView.getSelectionModel().select(getMapping(newState));
+				listView.getSelectionModel().selectedItemProperty().addListener(listViewListener);
+			}
+		});
+		listView.getSelectionModel().select(getMapping(itemStateProperty().get()));
+		listView.getSelectionModel().selectedItemProperty().addListener(listViewListener);
+
+		content = new VBox(iconImage, listView);
+		content.setAlignment(Pos.CENTER);
+		content.setMinSize(50, 50);
+		content.setMaxSize(Double.MAX_VALUE, Region.USE_PREF_SIZE);
+		content.prefWidth(0);
+		content.setPadding(new Insets(0, 5, 0, 5));
 	}
 
 	private Mapping getMapping(final String command)
 	{
 		return getWidget().getMappings()
-				.stream()
-				.filter((m) -> m.getCommand().equals(command))
+				.stream() //
+				.filter(m -> m.getCommand().equals(command))
 				.findFirst()
 				.orElse(null);
 	}
