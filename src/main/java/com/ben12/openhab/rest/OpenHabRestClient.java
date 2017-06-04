@@ -260,27 +260,21 @@ public class OpenHabRestClient
 	public void addItemStateChangeListener(final String itemName, final ChangeListener l)
 	{
 		final String key = String.format(EVENT_KEY, itemName);
-		List<ChangeListener> changeListeners = listeners.get(key);
-		if (changeListeners == null)
-		{
-			changeListeners = new ArrayList<>();
-			listeners.put(key, changeListeners);
-		}
-		changeListeners.add(l);
+		listeners.computeIfAbsent(key, k -> new ArrayList<>()).add(l);
 	}
 
 	public void removeItemStateChangeListener(final String itemName, final ChangeListener l)
 	{
 		final String key = String.format(EVENT_KEY, itemName);
-		final List<ChangeListener> changeListeners = listeners.get(key);
-		if (changeListeners != null)
-		{
-			changeListeners.remove(l);
-			if (changeListeners.isEmpty())
+
+		listeners.computeIfPresent(key, (k, v) -> {
+			v.remove(l);
+			if (v.isEmpty())
 			{
-				listeners.remove(key);
+				v = null;
 			}
-		}
+			return v;
+		});
 	}
 
 	private class EventHandler implements EventListener

@@ -16,10 +16,9 @@
 // along with HABFX-UI.  If not, see <http://www.gnu.org/licenses/>.
 package com.ben12.openhab.controller;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,27 +35,23 @@ import com.ben12.openhab.model.Page;
 
 public final class WidgetControllerFactory
 {
-	private static final Logger											LOGGER	= Logger
+	private static final Logger														LOGGER	= Logger
 			.getLogger(WidgetControllerFactory.class.getName());
 
-	private static final Map<String, Class<? extends WidgetController>>	CONTROLLERS;
-
-	private static final MethodType										CONSTRUCTOR;
+	private static final Map<String, Function<Page, ? extends WidgetController>>	CONTROLLERS;
 
 	static
 	{
 		CONTROLLERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-		CONTROLLERS.put("Frame", FrameController.class);
-		CONTROLLERS.put("Group", GroupController.class);
-		CONTROLLERS.put("Text", TextController.class);
-		CONTROLLERS.put("Switch", SwitchController.class);
-		CONTROLLERS.put("Setpoint", SetpointController.class);
-		CONTROLLERS.put("Selection", SetpointController.class);
-		CONTROLLERS.put("Slider", SliderController.class);
-		CONTROLLERS.put("Colorpicker", ColorpickerController.class);
-		CONTROLLERS.put("Webview", WebviewController.class);
-
-		CONSTRUCTOR = MethodType.methodType(void.class, Page.class);
+		CONTROLLERS.put("Frame", FrameController::new);
+		CONTROLLERS.put("Group", GroupController::new);
+		CONTROLLERS.put("Text", TextController::new);
+		CONTROLLERS.put("Switch", SwitchController::new);
+		CONTROLLERS.put("Setpoint", SetpointController::new);
+		CONTROLLERS.put("Selection", SetpointController::new);
+		CONTROLLERS.put("Slider", SliderController::new);
+		CONTROLLERS.put("Colorpicker", ColorpickerController::new);
+		CONTROLLERS.put("Webview", WebviewController::new);
 	}
 
 	private WidgetControllerFactory()
@@ -66,17 +61,10 @@ public final class WidgetControllerFactory
 	public static WidgetController createWidgetController(final String type, final Page page)
 	{
 		WidgetController controller = null;
-		final Class<? extends WidgetController> clazz = CONTROLLERS.get(type);
-		if (clazz != null)
+		final Function<Page, ? extends WidgetController> constructor = CONTROLLERS.get(type);
+		if (constructor != null)
 		{
-			try
-			{
-				controller = (WidgetController) MethodHandles.lookup().findConstructor(clazz, CONSTRUCTOR).invoke(page);
-			}
-			catch (final Throwable e)
-			{
-				LOGGER.log(Level.SEVERE, "Cannot display widget", e);
-			}
+			controller = constructor.apply(page);
 		}
 		else
 		{
