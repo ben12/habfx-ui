@@ -70,16 +70,23 @@ public class SwitchController extends WidgetController
 	@Override
 	protected Node createValueNode()
 	{
-		final ToggleSwitch stateButton = new ToggleSwitch();
-		stateButton.getStyleClass().add("value-label");
-		stateButton.textProperty().bind(itemStateProperty());
-		stateButton.selectedProperty().bind(Bindings
-				.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
-		stateButton.setMinSize(0, 0);
-		stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-		stateButton.setMouseTransparent(true);
+		if (isOnOff)
+		{
+			final ToggleSwitch stateButton = new ToggleSwitch();
+			stateButton.getStyleClass().add("value-label");
+			stateButton.textProperty().bind(itemStateProperty());
+			stateButton.selectedProperty().bind(Bindings
+					.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
+			stateButton.setMinSize(0, 0);
+			stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+			stateButton.setMouseTransparent(true);
 
-		return stateButton;
+			return stateButton;
+		}
+		else
+		{
+			return super.createValueNode();
+		}
 	}
 
 	@Override
