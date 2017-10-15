@@ -20,6 +20,7 @@ package com.ben12.openhab.rest;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
@@ -27,12 +28,25 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
 
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import jfxtras.util.PlatformUtil;
 
 @Provider
 @Consumes("image/*")
 public class ImageProvider implements MessageBodyReader<Image>
 {
+	private final double	imageMinSize;
+
+	private final double	imageMaxSize;
+
+	public ImageProvider(final double imgMinSize, final double imgMaxSize)
+	{
+		imageMinSize = imgMinSize;
+		imageMaxSize = imgMaxSize;
+	}
 
 	@Override
 	public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations,
@@ -45,7 +59,22 @@ public class ImageProvider implements MessageBodyReader<Image>
 	public Image readFrom(final Class<Image> type, final Type genericType, final Annotation[] annotations,
 			final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
 	{
-		return new Image(entityStream);
-	}
+		final AtomicReference<Image> image = new AtomicReference<>(new Image(entityStream));
+		final double size = Math.max(image.get().getWidth(), image.get().getHeight());
 
+		if (size < imageMinSize || size > imageMaxSize)
+		{
+			PlatformUtil.runAndWait(() -> {
+				final ImageView view = new ImageView(image.get());
+				view.setPreserveRatio(true);
+				view.setFitWidth(size < imageMinSize ? imageMinSize : imageMaxSize);
+				view.setFitHeight(size < imageMinSize ? imageMinSize : imageMaxSize);
+				final SnapshotParameters params = new SnapshotParameters();
+				params.setFill(Color.TRANSPARENT);
+				image.set(view.snapshot(params, null));
+			});
+		}
+
+		return image.get();
+	}
 }

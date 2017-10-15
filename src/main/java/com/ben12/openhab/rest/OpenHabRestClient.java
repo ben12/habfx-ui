@@ -93,12 +93,13 @@ public class OpenHabRestClient
 
 	private final Map<String, List<ChangeListener>>	listeners;
 
-	public OpenHabRestClient(final URI pUri, final String username, final String password)
+	public OpenHabRestClient(final URI pUri, final String username, final String password, final double imgMinSize,
+			final double imgMaxSize)
 	{
 		listeners = Collections.synchronizedMap(new HashMap<>());
 		uri = pUri;
 
-		final ImageProvider imageProvider = new ImageProvider();
+		final ImageProvider imageProvider = new ImageProvider(imgMinSize, imgMaxSize);
 
 		client = ClientBuilder.newClient() //
 				.register(imageProvider);

@@ -99,7 +99,8 @@ public abstract class WidgetController implements ContentController<Widget>
 		accessView.setAlignment(Pos.CENTER);
 		accessView.getStyleClass().add("widget");
 		accessView.setMinSize(Region.USE_PREF_SIZE, 50);
-		accessView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		accessView.setMaxHeight(Double.MAX_VALUE);
+		accessView.maxWidthProperty().bind(Bindings.selectDouble(accessView.parentProperty(), "layoutBounds", "width"));
 		accessView.prefWidth(0);
 		accessView.setOnMouseClicked(e -> {
 			if (e.isStillSincePress())

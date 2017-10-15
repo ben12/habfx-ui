@@ -60,6 +60,10 @@ public class MainController implements Initializable, MainViewController
 
 	private static final String	SITEMAP_CFG				= "sitemap";
 
+	private static final String	IMAGE_MIN_SIZE			= "image.min.size";
+
+	private static final String	IMAGE_MAX_SIZE			= "image.max.size";
+
 	private final Properties	configuration			= new Properties();
 
 	private Page				homepage;
@@ -103,8 +107,20 @@ public class MainController implements Initializable, MainViewController
 			final URI uri = new URI(uriCfg);
 			final String user = configuration.getProperty(OPENHAB_USER_CFG);
 			final String password = configuration.getProperty(OPENHAB_PASSWORD_CFG);
+			double imgMinSize;
+			double imgMaxSize;
+			try
+			{
+				imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE, "20"));
+				imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE, "100"));
+			}
+			catch (final Throwable e)
+			{
+				imgMinSize = 20;
+				imgMaxSize = 100;
+			}
 
-			openhabClient = new OpenHabRestClient(uri, user, password);
+			openhabClient = new OpenHabRestClient(uri, user, password, imgMinSize, imgMaxSize);
 
 			final FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(HabApplication.class.getResource("ui/TopItems.fxml"));
