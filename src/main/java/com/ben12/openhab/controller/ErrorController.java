@@ -99,7 +99,7 @@ public class ErrorController implements ContentController<Throwable>
 	@Override
 	public Region getInfosView()
 	{
-		return null;
+		return new Label("ERROR!");
 	}
 
 	@Override

@@ -169,12 +169,6 @@ public class MainController implements Initializable, MainViewController
 		return topItemsController.getInfosView();
 	}
 
-	public void showDefaultInfos()
-	{
-		topItemsController.reload();
-		setInfos(topItemsController.getInfosView());
-	}
-
 	@Override
 	public void display(final ContentController<?> contentController)
 	{
@@ -191,9 +185,10 @@ public class MainController implements Initializable, MainViewController
 	public void displayCurrentPage()
 	{
 		final ContentController<?> contentController = currentPage.getPage();
-		if (currentPage.getPrevious() == null)
+		if (currentPage.getPrevious() == null && !topItemsController.isEmpty())
 		{
-			showDefaultInfos();
+			topItemsController.reload();
+			setInfos(topItemsController.getInfosView());
 		}
 		else
 		{
@@ -205,12 +200,15 @@ public class MainController implements Initializable, MainViewController
 
 	private void setInfos(final Region content)
 	{
-		AnchorPane.setBottomAnchor(content, 0.0);
-		AnchorPane.setLeftAnchor(content, 0.0);
-		AnchorPane.setTopAnchor(content, 0.0);
-		AnchorPane.setRightAnchor(content, 0.0);
 		infosPane.getChildren().clear();
-		infosPane.getChildren().add(content);
+		if (content != null)
+		{
+			AnchorPane.setBottomAnchor(content, 0.0);
+			AnchorPane.setLeftAnchor(content, 0.0);
+			AnchorPane.setTopAnchor(content, 0.0);
+			AnchorPane.setRightAnchor(content, 0.0);
+			infosPane.getChildren().add(content);
+		}
 	}
 
 	private void setContent(final Region content)
