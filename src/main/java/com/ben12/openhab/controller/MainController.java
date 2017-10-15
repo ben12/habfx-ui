@@ -60,9 +60,9 @@ public class MainController implements Initializable, MainViewController
 
 	private static final String	SITEMAP_CFG				= "sitemap";
 
-	private static final String	IMAGE_MIN_SIZE			= "image.min.size";
+	private static final String	IMAGE_MIN_SIZE_CFG		= "image.min.size";
 
-	private static final String	IMAGE_MAX_SIZE			= "image.max.size";
+	private static final String	IMAGE_MAX_SIZE_CFG		= "image.max.size";
 
 	private final Properties	configuration			= new Properties();
 
@@ -111,8 +111,8 @@ public class MainController implements Initializable, MainViewController
 			double imgMaxSize;
 			try
 			{
-				imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE, "20"));
-				imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE, "100"));
+				imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE_CFG, "20"));
+				imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE_CFG, "100"));
 			}
 			catch (final Throwable e)
 			{

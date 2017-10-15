@@ -49,21 +49,40 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<outputDirectory>${project.build.directory}/libs</outputDirectory>
-				</configuration>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>2.0.0</version>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
 						<phase>package</phase>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>assemble</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<configurationSourceDirectory>conf</configurationSourceDirectory>
+					<configurationDirectory>conf</configurationDirectory>
+					<copyConfigurationDirectory>true</copyConfigurationDirectory>
+					<showConsoleWindow>false</showConsoleWindow>
+					<includeConfigurationDirectoryInClasspath>false</includeConfigurationDirectoryInClasspath>
+					<repositoryLayout>flat</repositoryLayout>
+					<licenseHeaderFile>LICENSE</licenseHeaderFile>
+					<programs>
+						<program>
+							<id>habfx-ui</id>
+							<jvmSettings>
+								<extraArguments>
+									<extraArgument>-Dfile.encoding=UTF-8</extraArgument>
+									<extraArgument>-Dsun.net.http.allowRestrictedHeaders=true</extraArgument>
+									<extraArgument>-Dconfig.file=@BASEDIR@/conf/config.properties</extraArgument>
+									<extraArgument>-Djava.util.logging.config.file=@BASEDIR@/conf/logging.properties</extraArgument>
+								</extraArguments>
+							</jvmSettings>
+							<mainClass>com.ben12.openhab.HabApplication</mainClass>
+						</program>
+					</programs>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

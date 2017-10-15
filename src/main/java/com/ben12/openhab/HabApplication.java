@@ -17,8 +17,10 @@
 
 package com.ben12.openhab;
 
+import java.util.Properties;
 import java.util.ServiceLoader;
 
+import com.ben12.openhab.controller.MainController;
 import com.ben12.openhab.plugin.HabApplicationPlugin;
 
 import javafx.application.Application;
@@ -38,27 +40,39 @@ import javafx.stage.WindowEvent;
  */
 public class HabApplication extends Application
 {
+	private static final String	FULLSCREEN_CFG		= "fullscreen";
+
+	private static final String	HIDE_CURSOR_CFG		= "hide.cursor";
+
+	private static final String	ALWAYS_ON_TOP_CFG	= "always.on.top";
+
 	@Override
 	public void start(final Stage primaryStage) throws Exception
 	{
-		final boolean debug = System.getProperty("debug") != null;
+		final MainController mainController = new MainController();
+		final Properties config = mainController.getConfig();
 
 		final FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(HabApplication.class.getResource("ui/Main.fxml"));
+		loader.setControllerFactory(c -> mainController);
 		final Parent root = loader.load();
 		final Scene scene = new Scene(root);
 
-		if (!debug)
+		if (Boolean.valueOf(config.getProperty(FULLSCREEN_CFG, "false")))
 		{
-			scene.setCursor(Cursor.NONE);
 			primaryStage.initStyle(StageStyle.UNDECORATED);
-			primaryStage.setAlwaysOnTop(true);
 			primaryStage.setX(0);
 			primaryStage.setY(0);
 			primaryStage.setFullScreen(true);
 			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		}
 
+		if (Boolean.valueOf(config.getProperty(HIDE_CURSOR_CFG, "false")))
+		{
+			scene.setCursor(Cursor.NONE);
+		}
+
+		primaryStage.setAlwaysOnTop(Boolean.valueOf(config.getProperty(ALWAYS_ON_TOP_CFG, "false")));
 		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> System.exit(0));
 		primaryStage.setScene(scene);
 		primaryStage.show();
