@@ -166,7 +166,7 @@ public class OpenHabRestClient
 				}
 				else
 				{
-					callback.failed(new IllegalArgumentException("Sitemap not found."));
+					callback.failed(new IllegalArgumentException("Sitemap '" + sitemapName + "' not found."));
 				}
 			}
 		};

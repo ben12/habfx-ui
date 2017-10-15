@@ -45,7 +45,7 @@ public class HabApplication extends Application
 
 		final FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(HabApplication.class.getResource("ui/Main.fxml"));
-		final Parent root = (Parent) loader.load();
+		final Parent root = loader.load();
 		final Scene scene = new Scene(root);
 
 		if (!debug)

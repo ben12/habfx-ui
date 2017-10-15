@@ -120,6 +120,12 @@ public class MainController implements Initializable, MainViewController
 				public void failed(final Throwable t)
 				{
 					LOGGER.log(Level.WARNING, "Cannot load homepage", t);
+					Platform.runLater(() -> {
+						final ErrorController errorController = new ErrorController();
+						errorController.init(t, MainController.this);
+
+						display(errorController);
+					});
 				}
 
 				@Override
@@ -148,7 +154,12 @@ public class MainController implements Initializable, MainViewController
 		catch (final Exception e)
 		{
 			LOGGER.log(Level.SEVERE, "Cannot start the client", e);
-			System.exit(1);
+			Platform.runLater(() -> {
+				final ErrorController errorController = new ErrorController();
+				errorController.init(e, MainController.this);
+
+				display(errorController);
+			});
 		}
 	}
 
