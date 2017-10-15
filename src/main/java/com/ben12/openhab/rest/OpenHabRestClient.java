@@ -18,6 +18,8 @@
 package com.ben12.openhab.rest;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,6 +55,7 @@ import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Sitemap;
 import com.ben12.openhab.model.Widget;
 import com.ben12.openhab.model.event.OpenHabEvent;
+import com.ben12.openhab.model.persistence.Persistence;
 import com.ben12.openhab.model.util.BeanCopy;
 
 import javafx.scene.image.Image;
@@ -69,6 +72,14 @@ public class OpenHabRestClient
 	private static final String						ITEMS				= "items";
 
 	private static final String						IMAGES				= "icon";
+
+	private static final String						PERSISTENCE			= "persistence";
+
+	private static final String						STARTTIME			= "starttime";
+
+	private static final String						ENDTIME				= "endtime";
+
+	private static final String						SERVICE_ID			= "serviceId";
 
 	private static final String						EVENT_KEY			= "smarthome/items/%s/state";
 
@@ -161,6 +172,22 @@ public class OpenHabRestClient
 		};
 
 		sitemaps(sitemapListCallback);
+	}
+
+	public void persistence(final String itemName, final String service, final LocalDateTime start,
+			final LocalDateTime end, final InvocationCallback<Persistence> callback)
+	{
+		final WebTarget sitemapsTarget = client.target(uri) //
+				.path(REST)
+				.path(PERSISTENCE)
+				.path(ITEMS)
+				.path(itemName)
+				.queryParam(SERVICE_ID, service)
+				.queryParam(STARTTIME, start == null ? null : DateTimeFormatter.ISO_DATE_TIME.format(start))
+				.queryParam(ENDTIME, end == null ? null : DateTimeFormatter.ISO_DATE_TIME.format(end));
+		sitemapsTarget.request(MediaType.APPLICATION_JSON) //
+				.buildGet()
+				.submit(callback);
 	}
 
 	public <T extends Linked> void update(final T data)

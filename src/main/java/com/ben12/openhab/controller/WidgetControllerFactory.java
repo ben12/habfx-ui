@@ -22,6 +22,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.ben12.openhab.controller.impl.ChartController;
 import com.ben12.openhab.controller.impl.ColorpickerController;
 import com.ben12.openhab.controller.impl.FrameController;
 import com.ben12.openhab.controller.impl.GroupController;
@@ -52,6 +53,11 @@ public final class WidgetControllerFactory
 		CONTROLLERS.put("Slider", SliderController::new);
 		CONTROLLERS.put("Colorpicker", ColorpickerController::new);
 		CONTROLLERS.put("Webview", WebviewController::new);
+		CONTROLLERS.put("Chart", ChartController::new);
+
+		// TODO ...
+		CONTROLLERS.put("Image", null);
+		CONTROLLERS.put("Video", null);
 	}
 
 	private WidgetControllerFactory()
@@ -68,7 +74,7 @@ public final class WidgetControllerFactory
 		}
 		else
 		{
-			LOGGER.log(Level.WARNING, "Not yet implemented widget type %s", type);
+			LOGGER.log(Level.WARNING, "Not yet implemented widget type {0}", type);
 		}
 		return controller;
 	}

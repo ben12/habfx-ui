@@ -13,6 +13,8 @@
         derive(-fx-base,30%) 35%,
         derive(-fx-base,40%) 50%
      );
+     
+    CHART_COLOR_1: rgb(50,100,200);
 }
 
 .ben12-color-picker .selected-color {
@@ -145,4 +147,18 @@
 
 .content-pane {
 	-fx-padding: 5.0 0.0 0.0 0.0 !important;
+}
+
+.chart {
+    -fx-padding: 0px;
+    -fx-legend-visible: false;
+    -fx-create-symbols: false;
+}
+
+.chart-content {
+    -fx-padding: 0.5em 0.5em 1px 1px;
+}
+
+.axis {
+	-fx-tick-label-gap: 1px;
 }

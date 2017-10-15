@@ -7,6 +7,18 @@ It use OpenHAB2 REST-API and SSE.
 UI is written in JavaFX and designed for small touch screen.<br />
 I use it with an adafruit PiTFT of 2.8" plugged on a Raspberry Pi 3.
 
+Supported sitemap widgets :
+* Frame
+* Group
+* Text
+* Switch
+* Setpoint
+* Selection
+* Slider
+* Colorpicker
+* Webview
+* Chart (for 'Number' item)
+
 ## Build HABFX-UI :
 
 Execute the command line :<br />

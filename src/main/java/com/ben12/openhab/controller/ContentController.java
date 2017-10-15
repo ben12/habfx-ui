@@ -25,6 +25,8 @@ public interface ContentController<T>
 
 	void reload();
 
+	void hidding();
+
 	Region getInfosView();
 
 	Region getAccessView();

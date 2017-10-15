@@ -172,6 +172,7 @@ public class MainController implements Initializable, MainViewController
 		if (previous != null)
 		{
 			previous.setNext(currentPage);
+			previous.getPage().hidding();
 		}
 		displayCurrentPage();
 	}
@@ -219,6 +220,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goHomepage(final ActionEvent event)
 	{
+		currentPage.getPage().hidding();
 		ContentHistory prev = currentPage.getPrevious();
 		while (prev != null)
 		{
@@ -231,6 +233,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goPrev(final ActionEvent event)
 	{
+		currentPage.getPage().hidding();
 		final ContentHistory prev = currentPage.getPrevious();
 		if (prev != null)
 		{
@@ -242,6 +245,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goNext(final ActionEvent event)
 	{
+		currentPage.getPage().hidding();
 		final ContentHistory next = currentPage.getNext();
 		if (next != null)
 		{

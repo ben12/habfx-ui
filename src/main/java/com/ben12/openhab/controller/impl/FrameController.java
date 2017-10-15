@@ -17,7 +17,6 @@
 
 package com.ben12.openhab.controller.impl;
 
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,11 +50,15 @@ public class FrameController extends WidgetController
 		final Function<Widget, Node> mapper = widget -> {
 			final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(),
 					getParent());
-			Node view = null;
+			final Node view;
 			if (controller != null)
 			{
 				controller.init(widget, getMainViewController());
 				view = controller.getAccessView();
+			}
+			else
+			{
+				view = new Pane();
 			}
 			return view;
 		};
@@ -74,7 +77,6 @@ public class FrameController extends WidgetController
 					pane.getChildren().addAll(from, c.getAddedSubList() //
 							.stream()
 							.map(mapper)
-							.filter(Objects::nonNull)
 							.collect(Collectors.toList()));
 				}
 			}
@@ -83,7 +85,6 @@ public class FrameController extends WidgetController
 		pane.getChildren().addAll(getWidget().widgetsProperty() //
 				.stream()
 				.map(mapper)
-				.filter(Objects::nonNull)
 				.collect(Collectors.toList()));
 	}
 

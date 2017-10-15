@@ -244,6 +244,11 @@ public class TopItemsController implements ContentController<Void>
 	}
 
 	@Override
+	public void hidding()
+	{
+	}
+
+	@Override
 	public Region getInfosView()
 	{
 		return infosPane;

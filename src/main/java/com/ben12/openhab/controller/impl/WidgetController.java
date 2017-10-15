@@ -243,6 +243,11 @@ public abstract class WidgetController implements ContentController<Widget>
 	}
 
 	@Override
+	public void hidding()
+	{
+	}
+
+	@Override
 	public Region getInfosView()
 	{
 		return title;
@@ -278,13 +283,13 @@ public abstract class WidgetController implements ContentController<Widget>
 		return itemStateProperty;
 	}
 
-	private StringBinding labelProperty()
+	protected StringBinding labelProperty()
 	{
 		if (labelProperty == null)
 		{
 			labelProperty = Bindings.createStringBinding(() -> {
 				String label = widget.getLabel();
-				label = label.replaceFirst("\\[(.*?)\\]$", "");
+				label = label.replaceFirst("\\s*\\[(.*?)\\]$", "");
 				return label;
 			}, widget.labelProperty());
 		}

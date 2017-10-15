@@ -17,7 +17,6 @@
 
 package com.ben12.openhab.controller.impl;
 
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -85,12 +84,16 @@ public class PageController implements ContentController<Page>
 		pane = new FullWidthTilePane();
 
 		final Function<Widget, Node> mapper = widget -> {
-			Node view = null;
+			final Node view;
 			final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(), page);
 			if (controller != null)
 			{
 				controller.init(widget, mainViewController);
 				view = controller.getAccessView();
+			}
+			else
+			{
+				view = new Pane();
 			}
 			return view;
 		};
@@ -109,7 +112,6 @@ public class PageController implements ContentController<Page>
 					pane.getChildren().addAll(from, c.getAddedSubList() //
 							.stream()
 							.map(mapper)
-							.filter(Objects::nonNull)
 							.collect(Collectors.toList()));
 				}
 			}
@@ -118,7 +120,6 @@ public class PageController implements ContentController<Page>
 		pane.getChildren().addAll(page.widgetsProperty() //
 				.stream()
 				.map(mapper)
-				.filter(Objects::nonNull)
 				.collect(Collectors.toList()));
 	}
 
@@ -126,6 +127,11 @@ public class PageController implements ContentController<Page>
 	public void reload()
 	{
 		mainViewController.getRestClient().update(page);
+	}
+
+	@Override
+	public void hidding()
+	{
 	}
 
 	@Override
