@@ -28,11 +28,10 @@ Execute the command line :<br />
 
 ## Launch HABFX-UI :
 
+* Go to _target/appassembler/conf_
 * Configure the application using _config.properties_ file.
-* Execute the command line :
-```
-  java -cp libs/*:./* -Dconfig.file=config.properties com.ben12.openhab.HabApplication
-```
+* Go to _target/appassembler/bin_
+* Execute _habfx-ui_
 
 ## Screenshots :
 ![Screenshot 001](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/001.png)
@@ -43,3 +42,4 @@ Execute the command line :<br />
 ![Screenshot 006](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/006.png)
 ![Screenshot 007](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/007.png)
 ![Screenshot 008](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/008.png)
+![Screenshot 009](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/009.png)

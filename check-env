@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ];  then
+  export PATH=$PATH:$JAVA_HOME/bin
+fi
+
+if java -version 1>/dev/null 2>&1 ; then
+  _java=java
+fi
+if [ "$_java" != "" ]; then
+  jver=$(java -version 2>&1 | sed -n ';s/.* version "\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+_\([0-9]\+\)"/\1\2/p;')
+  jupd=$(java -version 2>&1 | sed -n ';s/.* version "\([0-9]\+\)\.\([0-9]\+\)\.[0-9]\+_\([0-9]\+\)"/\3/p;')
+  if [ "$jver" = "" ] || [ "$jver" -lt 18 ]; then
+    echo Java 8 update 40 or newer version must be installed
+    exit 1
+  fi
+  if [ "$jupd" != "" ] && [ "$jver" -eq 18 ] && [ "$jupd" -lt 40 ]; then
+    echo Java 8 update 40 or newer version must be installed
+    exit 1
+  fi
+else
+  echo Java 8 update 40 or newer version must be installed
+  exit 1
+fi
