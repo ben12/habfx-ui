@@ -17,6 +17,8 @@
 
 package com.ben12.openhab.controller.impl;
 
+import java.util.Objects;
+
 import org.controlsfx.control.ToggleSwitch;
 
 import com.ben12.openhab.controller.MainViewController;
@@ -35,6 +37,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -48,6 +52,8 @@ public class SwitchController extends WidgetController
 
 	private boolean	isOnOff;
 
+	private boolean	isButton;
+
 	public SwitchController(final Page parent)
 	{
 		super(parent);
@@ -56,12 +62,17 @@ public class SwitchController extends WidgetController
 	@Override
 	public void init(final Widget pWidget, final MainViewController pMainViewController)
 	{
-		// ON/OFF Switch
-		isOnOff = pWidget.getMappings().isEmpty();
+		final boolean isRollershutter = "Rollershutter".equals(pWidget.getItem().getType());
+		isOnOff = !isRollershutter && pWidget.getMappings().isEmpty();
+		isButton = !isRollershutter && pWidget.getMappings().size() == 1;
 
 		super.init(pWidget, pMainViewController);
 
-		if (!isOnOff)
+		if (isRollershutter)
+		{
+			initRollershutter();
+		}
+		else if (!isOnOff && !isButton)
 		{
 			initSwitchWithMapping(pWidget.mappingsProperty());
 		}
@@ -74,14 +85,30 @@ public class SwitchController extends WidgetController
 		{
 			final ToggleSwitch stateButton = new ToggleSwitch();
 			stateButton.getStyleClass().add("value-label");
-			stateButton.textProperty().bind(itemStateProperty());
-			stateButton.selectedProperty().bind(Bindings
-					.createBooleanBinding(() -> "ON".equalsIgnoreCase(itemStateProperty().get()), itemStateProperty()));
+			stateButton.textProperty()
+					.bind(Bindings.createStringBinding(
+							() -> getWidget().getMappings()
+									.stream()
+									.filter(m -> Objects.equals(itemStateProperty().get(), m.getCommand()))
+									.map(Mapping::getLabel)
+									.findFirst()
+									.orElse(itemStateProperty().get()),
+							itemStateProperty()));
+			stateButton.selectedProperty().bind(itemStateProperty().isEqualToIgnoreCase("ON"));
 			stateButton.setMinSize(0, 0);
 			stateButton.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 			stateButton.setMouseTransparent(true);
 
 			return stateButton;
+		}
+		else if (isButton)
+		{
+			final Label label = new Label();
+			label.textProperty().bind(Bindings.concat(getWidget().getMappings().get(0).getLabel(),
+					Bindings.when(valueProperty().isEmpty()).then("").otherwise(" "), valueProperty()));
+			label.styleProperty().bind(valueStyleProperty());
+			label.getStyleClass().add("value-label");
+			return label;
 		}
 		else
 		{
@@ -99,10 +126,66 @@ public class SwitchController extends WidgetController
 							getWidget().getItem(),
 							"ON".equalsIgnoreCase(getWidget().getItem().getState()) ? "OFF" : "ON");
 		}
+		else if (isButton)
+		{
+			getMainViewController() //
+					.getRestClient().submit( //
+							getWidget().getItem(), //
+							getWidget().getMappings().get(0).getCommand());
+		}
 		else
 		{
 			super.display();
 		}
+	}
+
+	private void initRollershutter()
+	{
+		final Node iconImage = createIconNode();
+
+		final Button upCommand = new Button(getWidget().getMappings()
+				.stream()
+				.filter(m -> "UP".equals(m.getCommand()))
+				.map(Mapping::getLabel)
+				.findFirst()
+				.orElse("UP"));
+		upCommand.setOnAction(e -> getMainViewController().getRestClient() //
+				.submit(getWidget().getItem(), "UP"));
+		upCommand.setMinSize(50, 40);
+		upCommand.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+		final Button stopCommand = new Button(getWidget().getMappings()
+				.stream()
+				.filter(m -> "STOP".equals(m.getCommand()))
+				.map(Mapping::getLabel)
+				.findFirst()
+				.orElse("STOP"));
+		stopCommand.setOnAction(e -> getMainViewController().getRestClient() //
+				.submit(getWidget().getItem(), "STOP"));
+		stopCommand.setMinSize(50, 40);
+		stopCommand.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+		final Button downCommand = new Button(getWidget().getMappings()
+				.stream()
+				.filter(m -> "DOWN".equals(m.getCommand()))
+				.map(Mapping::getLabel)
+				.findFirst()
+				.orElse("DOWN"));
+		downCommand.setOnAction(e -> getMainViewController().getRestClient() //
+				.submit(getWidget().getItem(), "DOWN"));
+		downCommand.setMinSize(50, 40);
+		downCommand.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+		final VBox commands = new VBox(2, upCommand, stopCommand, downCommand);
+		commands.setFillWidth(true);
+
+		content = new VBox(iconImage, commands);
+		content.setFillWidth(false);
+		content.setAlignment(Pos.CENTER);
+		content.setMinSize(50, 50);
+		content.setMaxSize(Double.MAX_VALUE, Region.USE_PREF_SIZE);
+		content.prefWidth(0);
+		content.setPadding(new Insets(0, 5, 0, 5));
 	}
 
 	/**

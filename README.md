@@ -11,7 +11,7 @@ Supported sitemap widgets :
 * Frame
 * Group
 * Text
-* Switch
+* Switch (On/Off, Up/Stop/Down and mappings supported)
 * Setpoint
 * Selection
 * Slider
@@ -19,7 +19,7 @@ Supported sitemap widgets :
 * Webview
 * Chart (for 'Number' item)
 
-## Build HABFX-UI :
+## Build HABFX-UI with Maven :
 
 Execute the command line :<br />
 ```
