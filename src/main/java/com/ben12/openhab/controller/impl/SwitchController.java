@@ -56,10 +56,10 @@ public class SwitchController extends WidgetController
 	@Override
 	public void init(final Widget pWidget, final MainViewController pMainViewController)
 	{
-		super.init(pWidget, pMainViewController);
-
 		// ON/OFF Switch
 		isOnOff = pWidget.getMappings().isEmpty();
+
+		super.init(pWidget, pMainViewController);
 
 		if (!isOnOff)
 		{
