@@ -27,6 +27,8 @@ import com.ben12.openhab.model.Page;
 import com.ben12.openhab.model.Widget;
 import com.ben12.openhab.ui.FullWidthTilePane;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener.Change;
 import javafx.geometry.Bounds;
@@ -42,6 +44,8 @@ public class PageController implements ContentController<Page>
 
 	private Label				title;
 
+	private StringBinding		titleProperty;
+
 	private Page				page;
 
 	private Pane				pane;
@@ -54,7 +58,7 @@ public class PageController implements ContentController<Page>
 
 		title = new Label();
 		title.getStyleClass().add("title");
-		title.textProperty().bind(page.titleProperty());
+		title.textProperty().bind(titleProperty());
 
 		title.heightProperty().addListener((e, o, n) -> {
 			final Text textUtil = new Text(title.getText());
@@ -121,6 +125,19 @@ public class PageController implements ContentController<Page>
 				.stream()
 				.map(mapper)
 				.collect(Collectors.toList()));
+	}
+
+	protected StringBinding titleProperty()
+	{
+		if (titleProperty == null)
+		{
+			titleProperty = Bindings.createStringBinding(() -> {
+				String label = page.getTitle();
+				label = label.replaceFirst("\\[(.*?)\\]$", "$1");
+				return label;
+			}, page.titleProperty());
+		}
+		return titleProperty;
 	}
 
 	@Override

@@ -20,7 +20,6 @@ package com.ben12.openhab.model.util;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.WrapDynaBean;
 
-import javafx.application.Platform;
+import jfxtras.util.PlatformUtil;
 
 public class BeanCopy extends WrapDynaBean
 {
@@ -80,24 +79,16 @@ public class BeanCopy extends WrapDynaBean
 
 	public static void copy(final Object source, final Object destination)
 	{
-		try
-		{
-			if (!Platform.isFxApplicationThread())
+		PlatformUtil.runAndWait(() -> {
+			try
 			{
-				final CountDownLatch done = new CountDownLatch(1);
-				Platform.runLater(() -> {
-					copy(source, destination);
-					done.countDown();
-				});
-				done.await();
-				return;
+				BeanUtils.copyProperties(wrap(destination), source);
 			}
-			BeanUtils.copyProperties(wrap(destination), source);
-		}
-		catch (final Exception e)
-		{
-			LOGGER.log(Level.SEVERE, "Cannot copy bean", e);
-		}
+			catch (final Exception e)
+			{
+				LOGGER.log(Level.SEVERE, "Cannot copy bean", e);
+			}
+		});
 	}
 
 	private static BeanCopy wrap(final Object value)

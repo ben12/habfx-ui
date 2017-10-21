@@ -1,4 +1,4 @@
-# habfx-ui
+# HABFX-UI
 openHAB2 javaFX User Interface
 
 HABFX-UI is an OpenHAB2 client.<br />

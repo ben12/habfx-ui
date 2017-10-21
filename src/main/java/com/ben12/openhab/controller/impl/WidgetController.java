@@ -290,14 +290,14 @@ public abstract class WidgetController implements ContentController<Widget>
 		{
 			labelProperty = Bindings.createStringBinding(() -> {
 				String label = widget.getLabel();
-				label = label.replaceFirst("\\s*\\[(.*?)\\]$", "");
+				label = label.replaceFirst("\\s*\\[.*?\\]$", "");
 				return label;
 			}, widget.labelProperty());
 		}
 		return labelProperty;
 	}
 
-	public ObjectExpression<String> labelStyleProperty()
+	protected ObjectExpression<String> labelStyleProperty()
 	{
 		if (labelStyleProperty == null)
 		{
@@ -314,7 +314,7 @@ public abstract class WidgetController implements ContentController<Widget>
 		return labelStyleProperty;
 	}
 
-	public StringBinding valueProperty()
+	protected StringBinding valueProperty()
 	{
 		if (valueProperty == null)
 		{
@@ -327,7 +327,7 @@ public abstract class WidgetController implements ContentController<Widget>
 		return valueProperty;
 	}
 
-	public ObjectExpression<String> valueStyleProperty()
+	protected ObjectExpression<String> valueStyleProperty()
 	{
 		if (valueStyleProperty == null)
 		{
@@ -344,7 +344,7 @@ public abstract class WidgetController implements ContentController<Widget>
 		return valueStyleProperty;
 	}
 
-	private static class ItemChangeHandler extends WeakReference<ChangeListener> implements ChangeListener
+	protected static class ItemChangeHandler extends WeakReference<ChangeListener> implements ChangeListener
 	{
 		private final String			itemName;
 

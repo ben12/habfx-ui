@@ -17,15 +17,21 @@
 
 package com.ben12.openhab.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.ben12.openhab.model.util.BeanCopy;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * This is a java bean that is used with JAXB to serialize items
@@ -47,6 +53,8 @@ public class Item implements Linked
 	private final ObjectProperty<StateDescription>	stateDescription	= new SimpleObjectProperty<>();
 
 	private final StringProperty					link				= new SimpleStringProperty();
+
+	public final ObservableList<Item>				members				= FXCollections.observableArrayList();
 
 	public final StringProperty typeProperty()
 	{
@@ -128,5 +136,24 @@ public class Item implements Linked
 	public final void setLink(final String link)
 	{
 		linkProperty().set(link);
+	}
+
+	public ObservableList<Item> membersProperty()
+	{
+		return members;
+	}
+
+	@XmlElement
+	public List<Item> getMembers()
+	{
+		return members;
+	}
+
+	public void setMembers(final List<Item> pMembers)
+	{
+		if (members != pMembers)
+		{
+			BeanCopy.copy(pMembers, members, Item::getName);
+		}
 	}
 }

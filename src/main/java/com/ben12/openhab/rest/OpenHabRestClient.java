@@ -288,7 +288,7 @@ public class OpenHabRestClient
 	public void addItemStateChangeListener(final String itemName, final ChangeListener l)
 	{
 		final String key = String.format(EVENT_KEY, itemName);
-		listeners.computeIfAbsent(key, k -> new ArrayList<>()).add(l);
+		listeners.computeIfAbsent(key, k -> new ArrayList<>(1)).add(l);
 	}
 
 	public void removeItemStateChangeListener(final String itemName, final ChangeListener l)
