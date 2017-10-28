@@ -91,7 +91,7 @@ public class ErrorController implements ContentController<Throwable>
 	}
 
 	@Override
-	public void hidding()
+	public void hiding()
 	{
 		blink.stop();
 	}

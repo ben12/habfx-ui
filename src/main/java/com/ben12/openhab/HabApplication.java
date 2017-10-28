@@ -58,7 +58,7 @@ public class HabApplication extends Application
 		final Parent root = loader.load();
 		final Scene scene = new Scene(root);
 
-		if (Boolean.valueOf(config.getProperty(FULLSCREEN_CFG, "false")))
+		if (Boolean.valueOf(config.getProperty(FULLSCREEN_CFG, Boolean.FALSE.toString())))
 		{
 			primaryStage.initStyle(StageStyle.UNDECORATED);
 			primaryStage.setX(0);
@@ -67,12 +67,12 @@ public class HabApplication extends Application
 			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		}
 
-		if (Boolean.valueOf(config.getProperty(HIDE_CURSOR_CFG, "false")))
+		if (Boolean.valueOf(config.getProperty(HIDE_CURSOR_CFG, Boolean.FALSE.toString())))
 		{
 			scene.setCursor(Cursor.NONE);
 		}
 
-		primaryStage.setAlwaysOnTop(Boolean.valueOf(config.getProperty(ALWAYS_ON_TOP_CFG, "false")));
+		primaryStage.setAlwaysOnTop(Boolean.valueOf(config.getProperty(ALWAYS_ON_TOP_CFG, Boolean.FALSE.toString())));
 		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> System.exit(0));
 		primaryStage.setScene(scene);
 		primaryStage.show();

@@ -244,8 +244,9 @@ public class TopItemsController implements ContentController<Void>
 	}
 
 	@Override
-	public void hidding()
+	public void hiding()
 	{
+		// Nothing to do when hiding
 	}
 
 	@Override

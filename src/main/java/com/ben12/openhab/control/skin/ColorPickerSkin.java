@@ -47,7 +47,7 @@ public class ColorPickerSkin extends SkinBase<ColorPicker>
 
 	private final Rectangle				secondColor;
 
-	private final ObjectProperty<Color>	color	= new SimpleObjectProperty<>(this, "value");
+	private final ObjectProperty<Color>	color	= new SimpleObjectProperty<>(this, "color");
 
 	/**
 	 * @param control

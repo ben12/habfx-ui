@@ -244,7 +244,7 @@ public abstract class WidgetController implements ContentController<Widget>
 	}
 
 	@Override
-	public void hidding()
+	public void hiding()
 	{
 	}
 
