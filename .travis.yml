@@ -8,11 +8,11 @@ addons:
     token:
       secure: "${SONAR_TOKEN}"
     branches:
-      - master
-      - 1.x.x
+    - master
+    - 1.x.x
 install: true
 script:
 - mvn install sonar:sonar
 env:
   global:
-    secure: ShRhWu7UltW/3WWxGwpnH125x77gODZruhg+64mgbcuYYcVJ4LZnZGZvDvdinClsUU2hGkG1s/KySFDLH3s074C5oiofrU0jaJpjvyxc5Tds5DZiBxx8tBXoQtobbGsoaW3qAQ/fd37FyzG0pHBiQyxEvihieregzbWURSyicMJ0DVGA26tJ+pN2kENfiv83UlM7CBSrcI+1Zk+bNgd1kh2PaA99jrNzkijVsR8bBscjY7J+t4/Bo0HEjzEvR1rmBYWDMNmlYULGWm069MNpKvGP+pR4+UVh1jfRp+rPXzEBkf9zvDjuDwHeIFOd67Vv8KqgcbzV1tcBrk5/yaoCEF9xPyi4evJI4//R7Z/QQSuiO9x0ASrb59Nt0aTCkIjti245FGo8g4cHSpO5DSgig/Gsd0zJuMCe7LUEbrkccKklKxdRN8hkespoQPC0LTn5rgQ+gj1t5gX5my/rATQViIGt/zgiJ4MRXhIAk/3kTcR8hiImFtGbj5RC2uUDIIgIQUIq6tAK2EW4tDpvJWSlhXFPgi8cdG/JEa8FRSD3ceyPnbnseC5k1zPkl1I+pMDAa/6Co87EWEPk1GgLreJrDJtw+a+SDGLt/dNxZFod8i29fqNQ4oMwqpwMX+X42pvtKG6O2mnc0u3Dd6ELh6gvJCrLBiOPX+m47uftuV/qBpc=
+  - secure: XRHD4hPQtO80SaGwi4ooO/17fYC44a+/AqQw9etc73I/CCimgb3GFTFR99HCPKM0sxLlUxnOFy39GRU02XGs+urcM5ymU1hYl2sD9En3GWLquDBtLJeTnNh+pE9P8gxYt4p/11Mbt31cQnw8AdCIK2xZixZ48BGzEIjVGhhhj03IAqlbc54GuJ0G9BfpaRkGaEyzdZPVWboUOZko5qZbFB/VlElUZVmnkbHP3YzP4qTjC4Eq6AI3KqtwYyAR8KETw+5IxgPFe3cr2zTyIaRKCO01GGlueeut0hXVNz2/LsJgqKfAMt87Hdy/49FAZpQw/HTWYVuEG+gEAmNEBJuLktk9rWD6feexnJQhu3PBSzrzlXZojF075sxVMpLZn9ivbwdu1iaU1PtVdGEkkwhskF6CQQSOb04LlA9nBFdd9MA4EZoCMLGKAuVREWX3m2oHB72ie5bawZSVP/dREY/tMLRtgB/i5uEPKUfJH2Dg5l7ZmFYlSgrgTUogr5NVfOjIYs6LJ5FiBaOLhkZOdMTa0K8546k/3x3N4xPCuGE/8UzUh7wYXtI5e/guf6MvqmGbQXUogV7jeUzJtyel8rP+Ly2fNodCglKuwJ4CDhmAGFVJqZt71Nh//L+YaFBLM6ZxpWflpAwttttc4XGmw/pjAfxWlvmAWBqH7HGprvZ0olY=
