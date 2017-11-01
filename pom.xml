@@ -5,7 +5,22 @@
 	<artifactId>habfx-ui</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<name>OpenHab JavaFX UI</name>
+	<contributors>
+		<contributor>
+			<name>ben.12</name>
+			<url>https://github.com/ben12</url>
+			<timezone>Europe/Paris</timezone>
+		</contributor>
+	</contributors>
+	<developers>
+		<developer>
+			<name>ben.12</name>
+			<url>https://github.com/ben12</url>
+			<timezone>Europe/Paris</timezone>
+		</developer>
+	</developers>
 	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>default</sonar.organization>
 	</properties>
