@@ -2,6 +2,7 @@
 openHAB2 javaFX User Interface
 
 [![GitHub license](https://img.shields.io/github/license/ben12/habfx-ui.svg)](https://github.com/ben12/habfx-ui/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/ben12/habfx-ui.svg?branch=master)](https://travis-ci.org/ben12/habfx-ui)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=com.ben12:habfx-ui&metric=coverage)](https://sonarcloud.io/dashboard?id=com.ben12%3Ahabfx-ui)
 [![GitHub version](https://badge.fury.io/gh/ben12%2Fhabfx-ui.svg)](https://github.com/ben12/habfx-ui/releases)
 
