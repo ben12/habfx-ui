@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.InvocationCallback;
@@ -105,10 +106,6 @@ public class ChartController extends WidgetController
 
 		scheduler = new ScheduledService<Persistence>()
 		{
-			{
-				setDelay(Duration.millis(100));
-			}
-
 			@Override
 			protected Task<Persistence> createTask()
 			{
@@ -153,13 +150,19 @@ public class ChartController extends WidgetController
 									}
 								});
 
-						latch.await(1, TimeUnit.MINUTES);
+						if (!latch.await(1, TimeUnit.MINUTES))
+						{
+							Logger.getLogger(getClass().getName())
+									.warning(() -> "Timeout expired during persistence recovery for "
+											+ getWidget().getItem().getName());
+						}
 
 						return result.get();
 					}
 				};
 			}
 		};
+		scheduler.setDelay(Duration.millis(100));
 
 		scheduler.valueProperty().addListener((o, oldValue, newValue) -> {
 			if (newValue != null)
@@ -213,7 +216,7 @@ public class ChartController extends WidgetController
 	}
 
 	@Override
-	public void hidding()
+	public void hiding()
 	{
 		scheduler.cancel();
 	}

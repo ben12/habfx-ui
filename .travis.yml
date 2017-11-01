@@ -7,9 +7,6 @@ addons:
     organization: ben12-github
     token:
       secure: "${SONAR_TOKEN}"
-    branches:
-    - master
-    - 1.x.x
 install: true
 script:
 - mvn install sonar:sonar

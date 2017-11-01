@@ -17,19 +17,7 @@
 
 package com.ben12.openhab.controller;
 
-import javafx.scene.layout.Region;
-
-public interface ContentController<T>
+public interface ContentController<T> extends ContentAccessor
 {
 	void init(T data, MainViewController mainViewController);
-
-	void reload();
-
-	void hidding();
-
-	Region getInfosView();
-
-	Region getAccessView();
-
-	Region getContentView();
 }

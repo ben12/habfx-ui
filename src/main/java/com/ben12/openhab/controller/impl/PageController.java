@@ -147,8 +147,9 @@ public class PageController implements ContentController<Page>
 	}
 
 	@Override
-	public void hidding()
+	public void hiding()
 	{
+		// Nothing to do when hiding
 	}
 
 	@Override

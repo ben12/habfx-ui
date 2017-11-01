@@ -114,8 +114,10 @@ public class MainController implements Initializable, MainViewController
 				imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE_CFG, "20"));
 				imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE_CFG, "100"));
 			}
-			catch (final Throwable e)
+			catch (final Exception e)
 			{
+				LOGGER.log(Level.WARNING, "Cannot read image sizing, use defaults 20 < size < 100", e);
+
 				imgMinSize = 20;
 				imgMaxSize = 100;
 			}
@@ -193,14 +195,14 @@ public class MainController implements Initializable, MainViewController
 		if (previous != null)
 		{
 			previous.setNext(currentPage);
-			previous.getPage().hidding();
+			previous.getPage().hiding();
 		}
 		displayCurrentPage();
 	}
 
 	public void displayCurrentPage()
 	{
-		final ContentController<?> contentController = currentPage.getPage();
+		final ContentAccessor contentAccessor = currentPage.getPage();
 		if (currentPage.getPrevious() == null && !topItemsController.isEmpty())
 		{
 			topItemsController.reload();
@@ -208,10 +210,10 @@ public class MainController implements Initializable, MainViewController
 		}
 		else
 		{
-			setInfos(contentController.getInfosView());
+			setInfos(contentAccessor.getInfosView());
 		}
-		setContent(contentController.getContentView());
-		contentController.reload();
+		setContent(contentAccessor.getContentView());
+		contentAccessor.reload();
 	}
 
 	private void setInfos(final Region content)
@@ -245,7 +247,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goHomepage(final ActionEvent event)
 	{
-		currentPage.getPage().hidding();
+		currentPage.getPage().hiding();
 		ContentHistory prev = currentPage.getPrevious();
 		while (prev != null)
 		{
@@ -258,7 +260,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goPrev(final ActionEvent event)
 	{
-		currentPage.getPage().hidding();
+		currentPage.getPage().hiding();
 		final ContentHistory prev = currentPage.getPrevious();
 		if (prev != null)
 		{
@@ -270,7 +272,7 @@ public class MainController implements Initializable, MainViewController
 	@FXML
 	protected void goNext(final ActionEvent event)
 	{
-		currentPage.getPage().hidding();
+		currentPage.getPage().hiding();
 		final ContentHistory next = currentPage.getNext();
 		if (next != null)
 		{
