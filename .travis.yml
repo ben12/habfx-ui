@@ -4,7 +4,7 @@ addons:
     packages:
     - oracle-java8-installer
   sonarcloud:
-    organization: default
+    organization: ben12-github
     token:
       secure: "${SONAR_TOKEN}"
     branches:
