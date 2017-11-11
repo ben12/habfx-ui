@@ -48,6 +48,8 @@ public class Item implements Linked
 
 	private final StringProperty					name				= new SimpleStringProperty();
 
+	private final StringProperty					label				= new SimpleStringProperty();
+
 	private final StringProperty					state				= new SimpleStringProperty();
 
 	private final ObjectProperty<StateDescription>	stateDescription	= new SimpleObjectProperty<>();
@@ -86,6 +88,22 @@ public class Item implements Linked
 	public final void setName(final String name)
 	{
 		nameProperty().set(name);
+	}
+
+	public final StringProperty labelProperty()
+	{
+		return label;
+	}
+
+	@XmlElement
+	public final String getLabel()
+	{
+		return labelProperty().get();
+	}
+
+	public final void setLabel(final String label)
+	{
+		labelProperty().set(label);
 	}
 
 	public final StringProperty stateProperty()
