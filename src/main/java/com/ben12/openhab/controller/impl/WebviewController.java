@@ -37,66 +37,66 @@ import jersey.repackaged.com.google.common.base.Objects;
  */
 public class WebviewController extends WidgetController
 {
-	private static final Logger	LOGGER	= Logger.getLogger(WebviewController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WebviewController.class.getName());
 
-	private VBox				content;
+    private VBox                content;
 
-	private WebView				webView;
+    private WebView             webView;
 
-	/**
-	 * @param parent
-	 *            parent page
-	 */
-	public WebviewController(final Page parent)
-	{
-		super(parent);
-	}
+    /**
+     * @param parent
+     *            parent page
+     */
+    public WebviewController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget widget, final MainViewController mainViewController)
-	{
-		super.init(widget, mainViewController);
+    @Override
+    public void init(final Widget widget, final MainViewController mainViewController)
+    {
+        super.init(widget, mainViewController);
 
-		webView = new WebView();
-		webView.getEngine().setOnError(e -> LOGGER.log(Level.WARNING, e.getMessage(), e.getException()));
+        webView = new WebView();
+        webView.getEngine().setOnError(e -> LOGGER.log(Level.WARNING, e.getMessage(), e.getException()));
 
-		content = new VBox(webView);
-		VBox.setVgrow(webView, Priority.ALWAYS);
-		content.setAlignment(Pos.CENTER);
-		content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
-		content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-		content.prefWidth(0);
-	}
+        content = new VBox(webView);
+        VBox.setVgrow(webView, Priority.ALWAYS);
+        content.setAlignment(Pos.CENTER);
+        content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
+        content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        content.prefWidth(0);
+    }
 
-	protected void loadURL()
-	{
-		if (Objects.equal(webView.getEngine().getLocation(), getWidget().getUrl()))
-		{
-			webView.getEngine().reload();
-		}
-		else
-		{
-			webView.getEngine().load(getWidget().getUrl());
-		}
-	}
+    protected void loadURL()
+    {
+        if (Objects.equal(webView.getEngine().getLocation(), getWidget().getUrl()))
+        {
+            webView.getEngine().reload();
+        }
+        else
+        {
+            webView.getEngine().load(getWidget().getUrl());
+        }
+    }
 
-	@Override
-	protected void display()
-	{
-		super.display();
-		loadURL();
-	}
+    @Override
+    protected void display()
+    {
+        super.display();
+        loadURL();
+    }
 
-	@Override
-	public void reload()
-	{
-		super.reload();
-		loadURL();
-	}
+    @Override
+    public void reload()
+    {
+        super.reload();
+        loadURL();
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return content;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return content;
+    }
 }

@@ -29,40 +29,40 @@ import javafx.beans.property.StringProperty;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class StateOption
 {
-	private final StringProperty	value	= new SimpleStringProperty();
+    private final StringProperty value = new SimpleStringProperty();
 
-	private final StringProperty	label	= new SimpleStringProperty();
+    private final StringProperty label = new SimpleStringProperty();
 
-	public final StringProperty valueProperty()
-	{
-		return value;
-	}
+    public final StringProperty valueProperty()
+    {
+        return value;
+    }
 
-	@XmlElement
-	public final String getValue()
-	{
-		return valueProperty().get();
-	}
+    @XmlElement
+    public final String getValue()
+    {
+        return valueProperty().get();
+    }
 
-	public final void setValue(final String value)
-	{
-		valueProperty().set(value);
-	}
+    public final void setValue(final String value)
+    {
+        valueProperty().set(value);
+    }
 
-	public final StringProperty labelProperty()
-	{
-		return label;
-	}
+    public final StringProperty labelProperty()
+    {
+        return label;
+    }
 
-	@XmlElement
-	public final String getLabel()
-	{
-		return labelProperty().get();
-	}
+    @XmlElement
+    public final String getLabel()
+    {
+        return labelProperty().get();
+    }
 
-	public final void setLabel(final String label)
-	{
-		labelProperty().set(label);
-	}
+    public final void setLabel(final String label)
+    {
+        labelProperty().set(label);
+    }
 
 }

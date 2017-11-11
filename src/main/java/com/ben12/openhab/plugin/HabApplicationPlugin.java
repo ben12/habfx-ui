@@ -25,5 +25,5 @@ import javafx.stage.Window;
 @FunctionalInterface
 public interface HabApplicationPlugin
 {
-	void init(Window window);
+    void init(Window window);
 }

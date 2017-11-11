@@ -39,95 +39,95 @@ import javafx.beans.property.StringProperty;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Sitemap implements Linked
 {
-	private final StringProperty		name		= new SimpleStringProperty();
+    private final StringProperty       name     = new SimpleStringProperty();
 
-	private final StringProperty		icon		= new SimpleStringProperty();
+    private final StringProperty       icon     = new SimpleStringProperty();
 
-	private final StringProperty		label		= new SimpleStringProperty();
+    private final StringProperty       label    = new SimpleStringProperty();
 
-	private final StringProperty		link		= new SimpleStringProperty();
+    private final StringProperty       link     = new SimpleStringProperty();
 
-	private final ObjectProperty<Page>	homepage	= new SimpleObjectProperty<>();
+    private final ObjectProperty<Page> homepage = new SimpleObjectProperty<>();
 
-	public final StringProperty nameProperty()
-	{
-		return name;
-	}
+    public final StringProperty nameProperty()
+    {
+        return name;
+    }
 
-	@XmlElement
-	public final String getName()
-	{
-		return nameProperty().get();
-	}
+    @XmlElement
+    public final String getName()
+    {
+        return nameProperty().get();
+    }
 
-	public final void setName(final String name)
-	{
-		nameProperty().set(name);
-	}
+    public final void setName(final String name)
+    {
+        nameProperty().set(name);
+    }
 
-	public final StringProperty iconProperty()
-	{
-		return icon;
-	}
+    public final StringProperty iconProperty()
+    {
+        return icon;
+    }
 
-	@XmlElement
-	public final String getIcon()
-	{
-		return iconProperty().get();
-	}
+    @XmlElement
+    public final String getIcon()
+    {
+        return iconProperty().get();
+    }
 
-	public final void setIcon(final String icon)
-	{
-		iconProperty().set(icon);
-	}
+    public final void setIcon(final String icon)
+    {
+        iconProperty().set(icon);
+    }
 
-	public final StringProperty labelProperty()
-	{
-		return label;
-	}
+    public final StringProperty labelProperty()
+    {
+        return label;
+    }
 
-	@XmlElement
-	public final String getLabel()
-	{
-		return labelProperty().get();
-	}
+    @XmlElement
+    public final String getLabel()
+    {
+        return labelProperty().get();
+    }
 
-	public final void setLabel(final String label)
-	{
-		labelProperty().set(label);
-	}
+    public final void setLabel(final String label)
+    {
+        labelProperty().set(label);
+    }
 
-	public final StringProperty linkProperty()
-	{
-		return link;
-	}
+    public final StringProperty linkProperty()
+    {
+        return link;
+    }
 
-	@Override
-	@XmlElement
-	public final String getLink()
-	{
-		return linkProperty().get();
-	}
+    @Override
+    @XmlElement
+    public final String getLink()
+    {
+        return linkProperty().get();
+    }
 
-	@Override
-	public final void setLink(final String link)
-	{
-		linkProperty().set(link);
-	}
+    @Override
+    public final void setLink(final String link)
+    {
+        linkProperty().set(link);
+    }
 
-	public final ObjectProperty<Page> homepageProperty()
-	{
-		return homepage;
-	}
+    public final ObjectProperty<Page> homepageProperty()
+    {
+        return homepage;
+    }
 
-	@XmlElement
-	public final Page getHomepage()
-	{
-		return homepageProperty().get();
-	}
+    @XmlElement
+    public final Page getHomepage()
+    {
+        return homepageProperty().get();
+    }
 
-	public final void setHomepage(final Page homepage)
-	{
-		homepageProperty().set(homepage);
-	}
+    public final void setHomepage(final Page homepage)
+    {
+        homepageProperty().set(homepage);
+    }
 }

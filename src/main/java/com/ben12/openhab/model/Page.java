@@ -41,117 +41,117 @@ import javafx.collections.ObservableList;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Page implements Linked
 {
-	private final StringProperty			id		= new SimpleStringProperty();
+    private final StringProperty         id      = new SimpleStringProperty();
 
-	private final StringProperty			title	= new SimpleStringProperty();
+    private final StringProperty         title   = new SimpleStringProperty();
 
-	private final StringProperty			icon	= new SimpleStringProperty();
+    private final StringProperty         icon    = new SimpleStringProperty();
 
-	private final StringProperty			link	= new SimpleStringProperty();
+    private final StringProperty         link    = new SimpleStringProperty();
 
-	private final BooleanProperty			leaf	= new SimpleBooleanProperty();
+    private final BooleanProperty        leaf    = new SimpleBooleanProperty();
 
-	private final ObservableList<Widget>	widgets	= FXCollections.observableArrayList();
+    private final ObservableList<Widget> widgets = FXCollections.observableArrayList();
 
-	public final StringProperty idProperty()
-	{
-		return id;
-	}
+    public final StringProperty idProperty()
+    {
+        return id;
+    }
 
-	@XmlElement
-	public final String getId()
-	{
-		return idProperty().get();
-	}
+    @XmlElement
+    public final String getId()
+    {
+        return idProperty().get();
+    }
 
-	public final void setId(final String id)
-	{
-		idProperty().set(id);
-	}
+    public final void setId(final String id)
+    {
+        idProperty().set(id);
+    }
 
-	public final StringProperty titleProperty()
-	{
-		return title;
-	}
+    public final StringProperty titleProperty()
+    {
+        return title;
+    }
 
-	@XmlElement
-	public final String getTitle()
-	{
-		return titleProperty().get();
-	}
+    @XmlElement
+    public final String getTitle()
+    {
+        return titleProperty().get();
+    }
 
-	public final void setTitle(final String title)
-	{
-		titleProperty().set(title);
-	}
+    public final void setTitle(final String title)
+    {
+        titleProperty().set(title);
+    }
 
-	public final StringProperty iconProperty()
-	{
-		return icon;
-	}
+    public final StringProperty iconProperty()
+    {
+        return icon;
+    }
 
-	@XmlElement
-	public final String getIcon()
-	{
-		return iconProperty().get();
-	}
+    @XmlElement
+    public final String getIcon()
+    {
+        return iconProperty().get();
+    }
 
-	public final void setIcon(final String icon)
-	{
-		iconProperty().set(icon);
-	}
+    public final void setIcon(final String icon)
+    {
+        iconProperty().set(icon);
+    }
 
-	public final StringProperty linkProperty()
-	{
-		return link;
-	}
+    public final StringProperty linkProperty()
+    {
+        return link;
+    }
 
-	@Override
-	@XmlElement
-	public final String getLink()
-	{
-		return linkProperty().get();
-	}
+    @Override
+    @XmlElement
+    public final String getLink()
+    {
+        return linkProperty().get();
+    }
 
-	@Override
-	public final void setLink(final String link)
-	{
-		linkProperty().set(link);
-	}
+    @Override
+    public final void setLink(final String link)
+    {
+        linkProperty().set(link);
+    }
 
-	public final BooleanProperty leafProperty()
-	{
-		return leaf;
-	}
+    public final BooleanProperty leafProperty()
+    {
+        return leaf;
+    }
 
-	@XmlElement
-	public final boolean isLeaf()
-	{
-		return leafProperty().get();
-	}
+    @XmlElement
+    public final boolean isLeaf()
+    {
+        return leafProperty().get();
+    }
 
-	public final void setLeaf(final boolean leaf)
-	{
-		leafProperty().set(leaf);
-	}
+    public final void setLeaf(final boolean leaf)
+    {
+        leafProperty().set(leaf);
+    }
 
-	public ObservableList<Widget> widgetsProperty()
-	{
-		return widgets;
-	}
+    public ObservableList<Widget> widgetsProperty()
+    {
+        return widgets;
+    }
 
-	@XmlElement(name = "widgets")
-	public List<Widget> getWidgets()
-	{
-		return widgets;
-	}
+    @XmlElement(name = "widgets")
+    public List<Widget> getWidgets()
+    {
+        return widgets;
+    }
 
-	public void setWidgets(final List<Widget> pWidgets)
-	{
-		// pWidgets is empty when parent page is refreshed
-		if (widgets != pWidgets && !pWidgets.isEmpty())
-		{
-			BeanCopy.copy(pWidgets, widgets, Widget::getWidgetId);
-		}
-	}
+    public void setWidgets(final List<Widget> pWidgets)
+    {
+        // pWidgets is empty when parent page is refreshed
+        if (widgets != pWidgets && !pWidgets.isEmpty())
+        {
+            BeanCopy.copy(pWidgets, widgets, Widget::getWidgetId);
+        }
+    }
 }

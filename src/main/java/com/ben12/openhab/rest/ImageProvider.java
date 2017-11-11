@@ -38,43 +38,43 @@ import jfxtras.util.PlatformUtil;
 @Consumes("image/*")
 public class ImageProvider implements MessageBodyReader<Image>
 {
-	private final double	imageMinSize;
+    private final double imageMinSize;
 
-	private final double	imageMaxSize;
+    private final double imageMaxSize;
 
-	public ImageProvider(final double imgMinSize, final double imgMaxSize)
-	{
-		imageMinSize = imgMinSize;
-		imageMaxSize = imgMaxSize;
-	}
+    public ImageProvider(final double imgMinSize, final double imgMaxSize)
+    {
+        imageMinSize = imgMinSize;
+        imageMaxSize = imgMaxSize;
+    }
 
-	@Override
-	public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations,
-			final MediaType mediaType)
-	{
-		return Image.class == type;
-	}
+    @Override
+    public boolean isReadable(final Class<?> type, final Type genericType, final Annotation[] annotations,
+            final MediaType mediaType)
+    {
+        return Image.class == type;
+    }
 
-	@Override
-	public Image readFrom(final Class<Image> type, final Type genericType, final Annotation[] annotations,
-			final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
-	{
-		final AtomicReference<Image> image = new AtomicReference<>(new Image(entityStream));
-		final double size = Math.max(image.get().getWidth(), image.get().getHeight());
+    @Override
+    public Image readFrom(final Class<Image> type, final Type genericType, final Annotation[] annotations,
+            final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders, final InputStream entityStream)
+    {
+        final AtomicReference<Image> image = new AtomicReference<>(new Image(entityStream));
+        final double size = Math.max(image.get().getWidth(), image.get().getHeight());
 
-		if (size < imageMinSize || size > imageMaxSize)
-		{
-			PlatformUtil.runAndWait(() -> {
-				final ImageView view = new ImageView(image.get());
-				view.setPreserveRatio(true);
-				view.setFitWidth(size < imageMinSize ? imageMinSize : imageMaxSize);
-				view.setFitHeight(size < imageMinSize ? imageMinSize : imageMaxSize);
-				final SnapshotParameters params = new SnapshotParameters();
-				params.setFill(Color.TRANSPARENT);
-				image.set(view.snapshot(params, null));
-			});
-		}
+        if (size < imageMinSize || size > imageMaxSize)
+        {
+            PlatformUtil.runAndWait(() -> {
+                final ImageView view = new ImageView(image.get());
+                view.setPreserveRatio(true);
+                view.setFitWidth(size < imageMinSize ? imageMinSize : imageMaxSize);
+                view.setFitHeight(size < imageMinSize ? imageMinSize : imageMaxSize);
+                final SnapshotParameters params = new SnapshotParameters();
+                params.setFill(Color.TRANSPARENT);
+                image.set(view.snapshot(params, null));
+            });
+        }
 
-		return image.get();
-	}
+        return image.get();
+    }
 }

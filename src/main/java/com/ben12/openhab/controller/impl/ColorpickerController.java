@@ -39,79 +39,79 @@ import javafx.util.Duration;
  */
 public class ColorpickerController extends WidgetController
 {
-	private VBox content;
+    private VBox content;
 
-	/**
-	 * @param parent
-	 */
-	public ColorpickerController(final Page parent)
-	{
-		super(parent);
-	}
+    /**
+     * @param parent
+     */
+    public ColorpickerController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget pWidget, final MainViewController pMainViewController)
-	{
-		super.init(pWidget, pMainViewController);
+    @Override
+    public void init(final Widget pWidget, final MainViewController pMainViewController)
+    {
+        super.init(pWidget, pMainViewController);
 
-		final Node iconImage = createIconNode();
+        final Node iconImage = createIconNode();
 
-		final ColorPicker colorpicker = new ColorPicker();
+        final ColorPicker colorpicker = new ColorPicker();
 
-		final Timeline submitState = new Timeline(
-				new KeyFrame(Duration.millis(200), ea -> getMainViewController().getRestClient() //
-						.submit(getWidget().getItem(), toState(colorpicker.getColor()))));
+        final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(200),
+                ea -> getMainViewController().getRestClient() //
+                                             .submit(getWidget().getItem(), toState(colorpicker.getColor()))));
 
-		final ChangeListener<Color> colorListener = (i, oldState, newState) -> submitState.play();
+        final ChangeListener<Color> colorListener = (i, oldState, newState) -> submitState.play();
 
-		itemStateProperty().addListener((i, oldState, newState) -> {
-			if (submitState.getStatus() != Status.RUNNING)
-			{
-				colorpicker.colorProperty().removeListener(colorListener);
-				colorpicker.setColor(parseColor(itemStateProperty().getValue()));
-				colorpicker.colorProperty().addListener(colorListener);
-			}
-		});
+        itemStateProperty().addListener((i, oldState, newState) -> {
+            if (submitState.getStatus() != Status.RUNNING)
+            {
+                colorpicker.colorProperty().removeListener(colorListener);
+                colorpicker.setColor(parseColor(itemStateProperty().getValue()));
+                colorpicker.colorProperty().addListener(colorListener);
+            }
+        });
 
-		colorpicker.setColor(parseColor(itemStateProperty().getValue()));
-		colorpicker.colorProperty().addListener(colorListener);
+        colorpicker.setColor(parseColor(itemStateProperty().getValue()));
+        colorpicker.colorProperty().addListener(colorListener);
 
-		content = new VBox(iconImage, colorpicker);
-		VBox.setVgrow(colorpicker, Priority.ALWAYS);
-		content.setAlignment(Pos.CENTER);
-		content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
-		content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-		content.prefWidth(0);
-	}
+        content = new VBox(iconImage, colorpicker);
+        VBox.setVgrow(colorpicker, Priority.ALWAYS);
+        content.setAlignment(Pos.CENTER);
+        content.prefHeightProperty().bind(Bindings.selectDouble(content.parentProperty(), "layoutBounds", "height"));
+        content.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        content.prefWidth(0);
+    }
 
-	private Color parseColor(final String value)
-	{
-		Color color = Color.WHITE;
-		if (value != null)
-		{
-			final String[] hsb = value.split(",");
-			if (hsb.length == 3)
-			{
-				color = Color.hsb(Double.parseDouble(hsb[0]), Double.parseDouble(hsb[1]) / 100.0,
-						Double.parseDouble(hsb[2]) / 100.0);
-			}
-		}
-		return color;
-	}
+    private Color parseColor(final String value)
+    {
+        Color color = Color.WHITE;
+        if (value != null)
+        {
+            final String[] hsb = value.split(",");
+            if (hsb.length == 3)
+            {
+                color = Color.hsb(Double.parseDouble(hsb[0]), Double.parseDouble(hsb[1]) / 100.0,
+                                  Double.parseDouble(hsb[2]) / 100.0);
+            }
+        }
+        return color;
+    }
 
-	private String toState(final Color color)
-	{
-		String state = "0,0,0";
-		if (color != null)
-		{
-			state = color.getHue() + "," + (color.getSaturation() * 100) + "," + (color.getBrightness() * 100);
-		}
-		return state;
-	}
+    private String toState(final Color color)
+    {
+        String state = "0,0,0";
+        if (color != null)
+        {
+            state = color.getHue() + "," + (color.getSaturation() * 100) + "," + (color.getBrightness() * 100);
+        }
+        return state;
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return content;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return content;
+    }
 }

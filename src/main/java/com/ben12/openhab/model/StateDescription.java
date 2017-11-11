@@ -37,115 +37,115 @@ import javafx.collections.ObservableList;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class StateDescription
 {
-	private final DoubleProperty				minimum		= new SimpleDoubleProperty();
+    private final DoubleProperty              minimum  = new SimpleDoubleProperty();
 
-	private final DoubleProperty				maximum		= new SimpleDoubleProperty();
+    private final DoubleProperty              maximum  = new SimpleDoubleProperty();
 
-	private final DoubleProperty				step		= new SimpleDoubleProperty();
+    private final DoubleProperty              step     = new SimpleDoubleProperty();
 
-	private final BooleanProperty				readOnly	= new SimpleBooleanProperty();
+    private final BooleanProperty             readOnly = new SimpleBooleanProperty();
 
-	private final StringProperty				pattern		= new SimpleStringProperty();
+    private final StringProperty              pattern  = new SimpleStringProperty();
 
-	private final ObservableList<StateOption>	options		= FXCollections.observableArrayList();
+    private final ObservableList<StateOption> options  = FXCollections.observableArrayList();
 
-	public final DoubleProperty minimumProperty()
-	{
-		return minimum;
-	}
+    public final DoubleProperty minimumProperty()
+    {
+        return minimum;
+    }
 
-	@XmlElement
-	public final double getMinimum()
-	{
-		return minimumProperty().get();
-	}
+    @XmlElement
+    public final double getMinimum()
+    {
+        return minimumProperty().get();
+    }
 
-	public final void setMinimum(final double minimum)
-	{
-		minimumProperty().set(minimum);
-	}
+    public final void setMinimum(final double minimum)
+    {
+        minimumProperty().set(minimum);
+    }
 
-	public final DoubleProperty maximumProperty()
-	{
-		return maximum;
-	}
+    public final DoubleProperty maximumProperty()
+    {
+        return maximum;
+    }
 
-	@XmlElement
-	public final double getMaximum()
-	{
-		return maximumProperty().get();
-	}
+    @XmlElement
+    public final double getMaximum()
+    {
+        return maximumProperty().get();
+    }
 
-	public final void setMaximum(final double maximum)
-	{
-		maximumProperty().set(maximum);
-	}
+    public final void setMaximum(final double maximum)
+    {
+        maximumProperty().set(maximum);
+    }
 
-	public final DoubleProperty stepProperty()
-	{
-		return step;
-	}
+    public final DoubleProperty stepProperty()
+    {
+        return step;
+    }
 
-	@XmlElement
-	public final double getStep()
-	{
-		return stepProperty().get();
-	}
+    @XmlElement
+    public final double getStep()
+    {
+        return stepProperty().get();
+    }
 
-	public final void setStep(final double step)
-	{
-		stepProperty().set(step);
-	}
+    public final void setStep(final double step)
+    {
+        stepProperty().set(step);
+    }
 
-	public final BooleanProperty readOnlyProperty()
-	{
-		return readOnly;
-	}
+    public final BooleanProperty readOnlyProperty()
+    {
+        return readOnly;
+    }
 
-	@XmlElement
-	public final boolean isReadOnly()
-	{
-		return readOnlyProperty().get();
-	}
+    @XmlElement
+    public final boolean isReadOnly()
+    {
+        return readOnlyProperty().get();
+    }
 
-	public final void setReadOnly(final boolean readOnly)
-	{
-		readOnlyProperty().set(readOnly);
-	}
+    public final void setReadOnly(final boolean readOnly)
+    {
+        readOnlyProperty().set(readOnly);
+    }
 
-	public final StringProperty patternProperty()
-	{
-		return pattern;
-	}
+    public final StringProperty patternProperty()
+    {
+        return pattern;
+    }
 
-	@XmlElement
-	public final String getPattern()
-	{
-		return patternProperty().get();
-	}
+    @XmlElement
+    public final String getPattern()
+    {
+        return patternProperty().get();
+    }
 
-	public final void setPattern(final String pattern)
-	{
-		patternProperty().set(pattern);
-	}
+    public final void setPattern(final String pattern)
+    {
+        patternProperty().set(pattern);
+    }
 
-	public ObservableList<StateOption> optionsProperty()
-	{
-		return options;
-	}
+    public ObservableList<StateOption> optionsProperty()
+    {
+        return options;
+    }
 
-	@XmlElement
-	public List<StateOption> getOptions()
-	{
-		return options;
-	}
+    @XmlElement
+    public List<StateOption> getOptions()
+    {
+        return options;
+    }
 
-	public void setOptions(final List<StateOption> options)
-	{
-		if (this.options != options)
-		{
-			this.options.clear();
-			this.options.addAll(options);
-		}
-	}
+    public void setOptions(final List<StateOption> options)
+    {
+        if (this.options != options)
+        {
+            this.options.clear();
+            this.options.addAll(options);
+        }
+    }
 }

@@ -44,134 +44,134 @@ import javafx.collections.ObservableList;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Item implements Linked
 {
-	private final StringProperty					type				= new SimpleStringProperty();
+    private final StringProperty                   type             = new SimpleStringProperty();
 
-	private final StringProperty					name				= new SimpleStringProperty();
+    private final StringProperty                   name             = new SimpleStringProperty();
 
-	private final StringProperty					label				= new SimpleStringProperty();
+    private final StringProperty                   label            = new SimpleStringProperty();
 
-	private final StringProperty					state				= new SimpleStringProperty();
+    private final StringProperty                   state            = new SimpleStringProperty();
 
-	private final ObjectProperty<StateDescription>	stateDescription	= new SimpleObjectProperty<>();
+    private final ObjectProperty<StateDescription> stateDescription = new SimpleObjectProperty<>();
 
-	private final StringProperty					link				= new SimpleStringProperty();
+    private final StringProperty                   link             = new SimpleStringProperty();
 
-	public final ObservableList<Item>				members				= FXCollections.observableArrayList();
+    public final ObservableList<Item>              members          = FXCollections.observableArrayList();
 
-	public final StringProperty typeProperty()
-	{
-		return type;
-	}
+    public final StringProperty typeProperty()
+    {
+        return type;
+    }
 
-	@XmlElement
-	public final String getType()
-	{
-		return typeProperty().get();
-	}
+    @XmlElement
+    public final String getType()
+    {
+        return typeProperty().get();
+    }
 
-	public final void setType(final String type)
-	{
-		typeProperty().set(type);
-	}
+    public final void setType(final String type)
+    {
+        typeProperty().set(type);
+    }
 
-	public final StringProperty nameProperty()
-	{
-		return name;
-	}
+    public final StringProperty nameProperty()
+    {
+        return name;
+    }
 
-	@XmlElement
-	public final String getName()
-	{
-		return nameProperty().get();
-	}
+    @XmlElement
+    public final String getName()
+    {
+        return nameProperty().get();
+    }
 
-	public final void setName(final String name)
-	{
-		nameProperty().set(name);
-	}
+    public final void setName(final String name)
+    {
+        nameProperty().set(name);
+    }
 
-	public final StringProperty labelProperty()
-	{
-		return label;
-	}
+    public final StringProperty labelProperty()
+    {
+        return label;
+    }
 
-	@XmlElement
-	public final String getLabel()
-	{
-		return labelProperty().get();
-	}
+    @XmlElement
+    public final String getLabel()
+    {
+        return labelProperty().get();
+    }
 
-	public final void setLabel(final String label)
-	{
-		labelProperty().set(label);
-	}
+    public final void setLabel(final String label)
+    {
+        labelProperty().set(label);
+    }
 
-	public final StringProperty stateProperty()
-	{
-		return state;
-	}
+    public final StringProperty stateProperty()
+    {
+        return state;
+    }
 
-	@XmlElement
-	public final String getState()
-	{
-		return stateProperty().get();
-	}
+    @XmlElement
+    public final String getState()
+    {
+        return stateProperty().get();
+    }
 
-	public final void setState(final String state)
-	{
-		stateProperty().set(state);
-	}
+    public final void setState(final String state)
+    {
+        stateProperty().set(state);
+    }
 
-	public final ObjectProperty<StateDescription> stateDescriptionProperty()
-	{
-		return stateDescription;
-	}
+    public final ObjectProperty<StateDescription> stateDescriptionProperty()
+    {
+        return stateDescription;
+    }
 
-	@XmlElement
-	public final StateDescription getStateDescription()
-	{
-		return stateDescriptionProperty().get();
-	}
+    @XmlElement
+    public final StateDescription getStateDescription()
+    {
+        return stateDescriptionProperty().get();
+    }
 
-	public final void setStateDescription(final StateDescription stateDescription)
-	{
-		stateDescriptionProperty().set(stateDescription);
-	}
+    public final void setStateDescription(final StateDescription stateDescription)
+    {
+        stateDescriptionProperty().set(stateDescription);
+    }
 
-	public final StringProperty linkProperty()
-	{
-		return link;
-	}
+    public final StringProperty linkProperty()
+    {
+        return link;
+    }
 
-	@Override
-	@XmlElement
-	public final String getLink()
-	{
-		return linkProperty().get();
-	}
+    @Override
+    @XmlElement
+    public final String getLink()
+    {
+        return linkProperty().get();
+    }
 
-	@Override
-	public final void setLink(final String link)
-	{
-		linkProperty().set(link);
-	}
+    @Override
+    public final void setLink(final String link)
+    {
+        linkProperty().set(link);
+    }
 
-	public ObservableList<Item> membersProperty()
-	{
-		return members;
-	}
+    public ObservableList<Item> membersProperty()
+    {
+        return members;
+    }
 
-	@XmlElement
-	public List<Item> getMembers()
-	{
-		return members;
-	}
+    @XmlElement
+    public List<Item> getMembers()
+    {
+        return members;
+    }
 
-	public void setMembers(final List<Item> pMembers)
-	{
-		if (members != pMembers)
-		{
-			BeanCopy.copy(pMembers, members, Item::getName);
-		}
-	}
+    public void setMembers(final List<Item> pMembers)
+    {
+        if (members != pMembers)
+        {
+            BeanCopy.copy(pMembers, members, Item::getName);
+        }
+    }
 }

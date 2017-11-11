@@ -29,39 +29,39 @@ import javafx.scene.paint.Color;
  */
 public class ColorPicker extends Control
 {
-	private final ObjectProperty<Color> color = new SimpleObjectProperty<>(this, "value");
+    private final ObjectProperty<Color> color = new SimpleObjectProperty<>(this, "value");
 
-	public ColorPicker()
-	{
-		this(Color.RED);
+    public ColorPicker()
+    {
+        this(Color.RED);
 
-		setPrefSize(200, 200);
-	}
+        setPrefSize(200, 200);
+    }
 
-	public ColorPicker(final Color c)
-	{
-		setColor(c);
-	}
+    public ColorPicker(final Color c)
+    {
+        setColor(c);
+    }
 
-	@Override
-	protected Skin<?> createDefaultSkin()
-	{
-		return new ColorPickerSkin(this);
-	}
+    @Override
+    protected Skin<?> createDefaultSkin()
+    {
+        return new ColorPickerSkin(this);
+    }
 
-	public final ObjectProperty<Color> colorProperty()
-	{
-		return color;
-	}
+    public final ObjectProperty<Color> colorProperty()
+    {
+        return color;
+    }
 
-	public final Color getColor()
-	{
-		return colorProperty().get();
-	}
+    public final Color getColor()
+    {
+        return colorProperty().get();
+    }
 
-	public final void setColor(final Color color)
-	{
-		colorProperty().set(color);
-	}
+    public final void setColor(final Color color)
+    {
+        colorProperty().set(color);
+    }
 
 }
