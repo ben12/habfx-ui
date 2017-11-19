@@ -1,21 +1,15 @@
 language: java
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer
-  sonarcloud:
-    organization: ben12-github
-    token:
-      secure: "${SONAR_TOKEN}"
 sudo: false
 install: true
+jdk:
+  - oraclejdk8
 script:
-- mvn install sonar:sonar
+- mvn clean install sonar:sonar
+      -Dsonar.host.url=https://sonarcloud.io
+      -Dsonar.organization=ben12-github
+      -Dsonar.login=${SONAR_TOKEN}
       -Dsonar.branch.name=${TRAVIS_BRANCH}
 cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
-env:
-  global:
-  - secure: XRHD4hPQtO80SaGwi4ooO/17fYC44a+/AqQw9etc73I/CCimgb3GFTFR99HCPKM0sxLlUxnOFy39GRU02XGs+urcM5ymU1hYl2sD9En3GWLquDBtLJeTnNh+pE9P8gxYt4p/11Mbt31cQnw8AdCIK2xZixZ48BGzEIjVGhhhj03IAqlbc54GuJ0G9BfpaRkGaEyzdZPVWboUOZko5qZbFB/VlElUZVmnkbHP3YzP4qTjC4Eq6AI3KqtwYyAR8KETw+5IxgPFe3cr2zTyIaRKCO01GGlueeut0hXVNz2/LsJgqKfAMt87Hdy/49FAZpQw/HTWYVuEG+gEAmNEBJuLktk9rWD6feexnJQhu3PBSzrzlXZojF075sxVMpLZn9ivbwdu1iaU1PtVdGEkkwhskF6CQQSOb04LlA9nBFdd9MA4EZoCMLGKAuVREWX3m2oHB72ie5bawZSVP/dREY/tMLRtgB/i5uEPKUfJH2Dg5l7ZmFYlSgrgTUogr5NVfOjIYs6LJ5FiBaOLhkZOdMTa0K8546k/3x3N4xPCuGE/8UzUh7wYXtI5e/guf6MvqmGbQXUogV7jeUzJtyel8rP+Ly2fNodCglKuwJ4CDhmAGFVJqZt71Nh//L+YaFBLM6ZxpWflpAwttttc4XGmw/pjAfxWlvmAWBqH7HGprvZ0olY=
