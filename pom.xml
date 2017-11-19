@@ -107,4 +107,25 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<site>
+			<id>habfx-ui</id>
+			<url>https://github.com/ben12/habfx-ui</url>
+		</site>
+	</distributionManagement>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/ben12/habfx-ui/issues</url>
+	</issueManagement>
+	<scm>
+		<url>https://github.com/ben12/habfx-ui</url>
+		<connection>scm:git:git://github.com/ben12/habfx-ui.git</connection>
+		<developerConnection>scm:git:git@github.com:ben12/habfx-ui.git</developerConnection>
+	</scm>
+	<licenses>
+		<license>
+			<name>GPLv3 License</name>
+			<url>${project.basedir}/LICENSE</url>
+		</license>
+	</licenses>
 </project>

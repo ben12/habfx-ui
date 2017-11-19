@@ -298,7 +298,10 @@ public class ChartController extends WidgetController
         }
         else
         {
-            members.setAll(getWidget().getItem());
+            synchronized (members)
+            {
+                members.setAll(getWidget().getItem());
+            }
         }
 
         if (getWidget().getRefresh() >= 1000)

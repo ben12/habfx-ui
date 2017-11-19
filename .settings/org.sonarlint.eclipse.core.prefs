@@ -1,3 +1,5 @@
 autoEnabled=true
 eclipse.preferences.version=1
 extraProperties=
+moduleKey=com.ben12\:habfx-ui
+serverId=SonarCloud/ben12-github
