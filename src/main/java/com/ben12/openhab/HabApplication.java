@@ -40,57 +40,57 @@ import javafx.stage.WindowEvent;
  */
 public class HabApplication extends Application
 {
-	private static final String	FULLSCREEN_CFG		= "fullscreen";
+    private static final String FULLSCREEN_CFG    = "fullscreen";
 
-	private static final String	HIDE_CURSOR_CFG		= "hide.cursor";
+    private static final String HIDE_CURSOR_CFG   = "hide.cursor";
 
-	private static final String	ALWAYS_ON_TOP_CFG	= "always.on.top";
+    private static final String ALWAYS_ON_TOP_CFG = "always.on.top";
 
-	@Override
-	public void start(final Stage primaryStage) throws Exception
-	{
-		final MainController mainController = new MainController();
-		final Properties config = mainController.getConfig();
+    @Override
+    public void start(final Stage primaryStage) throws Exception
+    {
+        final MainController mainController = new MainController();
+        final Properties config = mainController.getConfig();
 
-		final FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(HabApplication.class.getResource("ui/Main.fxml"));
-		loader.setControllerFactory(c -> mainController);
-		final Parent root = loader.load();
-		final Scene scene = new Scene(root);
+        final FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(HabApplication.class.getResource("ui/Main.fxml"));
+        loader.setControllerFactory(c -> mainController);
+        final Parent root = loader.load();
+        final Scene scene = new Scene(root);
 
-		if (Boolean.valueOf(config.getProperty(FULLSCREEN_CFG, Boolean.FALSE.toString())))
-		{
-			primaryStage.initStyle(StageStyle.UNDECORATED);
-			primaryStage.setX(0);
-			primaryStage.setY(0);
-			primaryStage.setFullScreen(true);
-			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-		}
+        if (Boolean.valueOf(config.getProperty(FULLSCREEN_CFG, Boolean.FALSE.toString())))
+        {
+            primaryStage.initStyle(StageStyle.UNDECORATED);
+            primaryStage.setX(0);
+            primaryStage.setY(0);
+            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        }
 
-		if (Boolean.valueOf(config.getProperty(HIDE_CURSOR_CFG, Boolean.FALSE.toString())))
-		{
-			scene.setCursor(Cursor.NONE);
-		}
+        if (Boolean.valueOf(config.getProperty(HIDE_CURSOR_CFG, Boolean.FALSE.toString())))
+        {
+            scene.setCursor(Cursor.NONE);
+        }
 
-		primaryStage.setAlwaysOnTop(Boolean.valueOf(config.getProperty(ALWAYS_ON_TOP_CFG, Boolean.FALSE.toString())));
-		primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> System.exit(0));
-		primaryStage.setScene(scene);
-		primaryStage.show();
+        primaryStage.setAlwaysOnTop(Boolean.valueOf(config.getProperty(ALWAYS_ON_TOP_CFG, Boolean.FALSE.toString())));
+        primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> System.exit(0));
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-		// Starts plugins
-		final ServiceLoader<HabApplicationPlugin> serviceLoader = ServiceLoader.load(HabApplicationPlugin.class);
-		for (final HabApplicationPlugin plugin : serviceLoader)
-		{
-			plugin.init(primaryStage);
-		}
-	}
+        // Starts plugins
+        final ServiceLoader<HabApplicationPlugin> serviceLoader = ServiceLoader.load(HabApplicationPlugin.class);
+        for (final HabApplicationPlugin plugin : serviceLoader)
+        {
+            plugin.init(primaryStage);
+        }
+    }
 
-	/**
-	 * @param args
-	 *            application arguments
-	 */
-	public static void main(final String[] args)
-	{
-		Application.launch(HabApplication.class, args);
-	}
+    /**
+     * @param args
+     *            application arguments
+     */
+    public static void main(final String[] args)
+    {
+        Application.launch(HabApplication.class, args);
+    }
 }

@@ -3,8 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ben12</groupId>
 	<artifactId>habfx-ui</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<name>OpenHab JavaFX UI</name>
+	<url>https://github.com/ben12/habfx-ui</url>
+	<description>JavaFX OpenHAB2 client</description>
 	<contributors>
 		<contributor>
 			<name>ben.12</name>
@@ -23,6 +25,7 @@
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>ben12-github</sonar.organization>
+		<assembleDirectory>${project.build.directory}/${project.artifactId}-${project.version}-bin</assembleDirectory>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -103,6 +106,70 @@
 					</programs>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>appassembler-extra</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${assembleDirectory}/bin</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/bin</directory>
+									<includes>
+										<include>check-env</include>
+										<include>check-env.bat</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<site>
+			<id>habfx-ui</id>
+			<url>https://github.com/ben12/habfx-ui</url>
+		</site>
+	</distributionManagement>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/ben12/habfx-ui/issues</url>
+	</issueManagement>
+	<scm>
+		<url>https://github.com/ben12/habfx-ui</url>
+		<connection>scm:git:git://github.com/ben12/habfx-ui.git</connection>
+		<developerConnection>scm:git:git@github.com:ben12/habfx-ui.git</developerConnection>
+	</scm>
+	<licenses>
+		<license>
+			<name>GPLv3 License</name>
+			<url>${project.basedir}/LICENSE</url>
+		</license>
+	</licenses>
 </project>

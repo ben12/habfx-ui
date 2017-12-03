@@ -26,29 +26,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class OpenHabEvent
 {
-	private String	topic;
+    private String topic;
 
-	private String	type;
+    private String type;
 
-	@XmlElement
-	public String getTopic()
-	{
-		return topic;
-	}
+    @XmlElement
+    public String getTopic()
+    {
+        return topic;
+    }
 
-	public void setTopic(final String topic)
-	{
-		this.topic = topic;
-	}
+    public void setTopic(final String topic)
+    {
+        this.topic = topic;
+    }
 
-	@XmlElement
-	public String getType()
-	{
-		return type;
-	}
+    @XmlElement
+    public String getType()
+    {
+        return type;
+    }
 
-	public void setType(final String type)
-	{
-		this.type = type;
-	}
+    public void setType(final String type)
+    {
+        this.type = type;
+    }
 }

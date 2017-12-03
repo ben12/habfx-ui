@@ -151,8 +151,11 @@
 
 .chart {
     -fx-padding: 0px;
-    -fx-legend-visible: false;
     -fx-create-symbols: false;
+}
+
+.chart-legend {
+	-fx-font-size: 70%;
 }
 
 .chart-content {

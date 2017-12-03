@@ -40,138 +40,140 @@ import javafx.util.StringConverter;
 
 public class SetpointController extends WidgetController
 {
-	private VBox content;
+    private VBox content;
 
-	public SetpointController(final Page parent)
-	{
-		super(parent);
-	}
+    public SetpointController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget pWidget, final MainViewController pMainViewController)
-	{
-		super.init(pWidget, pMainViewController);
+    @Override
+    public void init(final Widget pWidget, final MainViewController pMainViewController)
+    {
+        super.init(pWidget, pMainViewController);
 
-		final Node iconImage = createIconNode();
+        final Node iconImage = createIconNode();
 
-		final Spinner<?> spinner = new Spinner<>();
-		spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
+        final Spinner<?> spinner = new Spinner<>();
+        spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_VERTICAL);
 
-		if (pWidget.getMappings().isEmpty())
-		{
-			initSpinnerWithoutMapping(spinner);
-		}
-		else
-		{
-			initSpinnerWithMapping(spinner, pWidget.mappingsProperty());
-		}
+        if (pWidget.getMappings().isEmpty())
+        {
+            initSpinnerWithoutMapping(spinner);
+        }
+        else
+        {
+            initSpinnerWithMapping(spinner, pWidget.mappingsProperty());
+        }
 
-		content = new VBox(iconImage, spinner);
-		content.setAlignment(Pos.CENTER);
-		content.setMinSize(Region.USE_PREF_SIZE, 50);
-		content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		content.prefWidth(0);
-		content.setPadding(new Insets(0, 5, 0, 5));
-	}
+        content = new VBox(iconImage, spinner);
+        content.setAlignment(Pos.CENTER);
+        content.setMinSize(Region.USE_PREF_SIZE, 50);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        content.prefWidth(0);
+        content.setPadding(new Insets(0, 5, 0, 5));
+    }
 
-	private void initSpinnerWithoutMapping(final Spinner<?> spinner)
-	{
-		final BigDecimal minValue = getWidget().getMinValue();
-		final BigDecimal maxValue = getWidget().getMaxValue();
-		final BigDecimal stepValue = getWidget().getStep();
+    private void initSpinnerWithoutMapping(final Spinner<?> spinner)
+    {
+        final BigDecimal minValue = getWidget().getMinValue();
+        final BigDecimal maxValue = getWidget().getMaxValue();
+        final BigDecimal stepValue = getWidget().getStep();
 
-		final SpinnerValueFactory<Double> spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(
-				(minValue != null ? minValue.doubleValue() : Double.NEGATIVE_INFINITY), //
-				(maxValue != null ? maxValue.doubleValue() : Double.POSITIVE_INFINITY), //
-				doubleFromState(itemStateProperty().get()), //
-				(stepValue != null ? stepValue.doubleValue() : 1.0));
+        final SpinnerValueFactory<Double> spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(
+                (minValue != null ? minValue.doubleValue() : Double.NEGATIVE_INFINITY), //
+                (maxValue != null ? maxValue.doubleValue() : Double.POSITIVE_INFINITY), //
+                doubleFromState(itemStateProperty().get()), //
+                (stepValue != null ? stepValue.doubleValue() : 1.0));
 
-		((Spinner<Double>) spinner).setValueFactory(spinnerValueFactory);
+        ((Spinner<Double>) spinner).setValueFactory(spinnerValueFactory);
 
-		final Timeline submitState = new Timeline(
-				new KeyFrame(Duration.millis(1000), ea -> getMainViewController().getRestClient() //
-						.submit(getWidget().getItem(), Double.toString((Double) spinner.getValue()))));
+        final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(1000),
+                ea -> getMainViewController().getRestClient() //
+                                             .submit(getWidget().getItem(),
+                                                     Double.toString((Double) spinner.getValue()))));
 
-		final ChangeListener<Number> spinnerListener = (i, oldState, newState) -> submitState.play();
+        final ChangeListener<Number> spinnerListener = (i, oldState, newState) -> submitState.play();
 
-		itemStateProperty().addListener((i, oldState, newState) -> {
-			if (submitState.getStatus() != Status.RUNNING)
-			{
-				spinnerValueFactory.valueProperty().removeListener(spinnerListener);
-				spinnerValueFactory.setValue(doubleFromState(newState));
-				spinnerValueFactory.valueProperty().addListener(spinnerListener);
-			}
-		});
+        itemStateProperty().addListener((i, oldState, newState) -> {
+            if (submitState.getStatus() != Status.RUNNING)
+            {
+                spinnerValueFactory.valueProperty().removeListener(spinnerListener);
+                spinnerValueFactory.setValue(doubleFromState(newState));
+                spinnerValueFactory.valueProperty().addListener(spinnerListener);
+            }
+        });
 
-		spinnerValueFactory.valueProperty().addListener(spinnerListener);
-	}
+        spinnerValueFactory.valueProperty().addListener(spinnerListener);
+    }
 
-	private void initSpinnerWithMapping(final Spinner<?> spinner, final ObservableList<Mapping> mappings)
-	{
-		final SpinnerValueFactory<Mapping> spinnerValueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<>(
-				mappings);
-		spinnerValueFactory.setValue(mappingFromState(itemStateProperty().get()));
-		spinnerValueFactory.setConverter(new StringConverter<Mapping>()
-		{
-			@Override
-			public String toString(final Mapping mapping)
-			{
-				return mapping != null ? mapping.getLabel() : null;
-			}
+    private void initSpinnerWithMapping(final Spinner<?> spinner, final ObservableList<Mapping> mappings)
+    {
+        final SpinnerValueFactory<Mapping> spinnerValueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<>(
+                mappings);
+        spinnerValueFactory.setValue(mappingFromState(itemStateProperty().get()));
+        spinnerValueFactory.setConverter(new StringConverter<Mapping>()
+        {
+            @Override
+            public String toString(final Mapping mapping)
+            {
+                return mapping != null ? mapping.getLabel() : null;
+            }
 
-			@Override
-			public Mapping fromString(final String label)
-			{
-				return mappingFromLabel(label);
-			}
-		});
+            @Override
+            public Mapping fromString(final String label)
+            {
+                return mappingFromLabel(label);
+            }
+        });
 
-		((Spinner<Mapping>) spinner).setValueFactory(spinnerValueFactory);
+        ((Spinner<Mapping>) spinner).setValueFactory(spinnerValueFactory);
 
-		final Timeline submitState = new Timeline(
-				new KeyFrame(Duration.millis(1000), ea -> getMainViewController().getRestClient() //
-						.submit(getWidget().getItem(), ((Mapping) spinner.getValue()).getCommand())));
+        final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(1000),
+                ea -> getMainViewController().getRestClient() //
+                                             .submit(getWidget().getItem(),
+                                                     ((Mapping) spinner.getValue()).getCommand())));
 
-		final ChangeListener<Mapping> spinnerListener = (i, oldState, newState) -> submitState.play();
+        final ChangeListener<Mapping> spinnerListener = (i, oldState, newState) -> submitState.play();
 
-		itemStateProperty().addListener((i, oldState, newState) -> {
-			if (submitState.getStatus() != Status.RUNNING)
-			{
-				spinnerValueFactory.valueProperty().removeListener(spinnerListener);
-				spinnerValueFactory.setValue(mappingFromState(newState));
-				spinnerValueFactory.valueProperty().addListener(spinnerListener);
-			}
-		});
+        itemStateProperty().addListener((i, oldState, newState) -> {
+            if (submitState.getStatus() != Status.RUNNING)
+            {
+                spinnerValueFactory.valueProperty().removeListener(spinnerListener);
+                spinnerValueFactory.setValue(mappingFromState(newState));
+                spinnerValueFactory.valueProperty().addListener(spinnerListener);
+            }
+        });
 
-		spinnerValueFactory.valueProperty().addListener(spinnerListener);
-	}
+        spinnerValueFactory.valueProperty().addListener(spinnerListener);
+    }
 
-	private double doubleFromState(final String state)
-	{
-		final BigDecimal minValue = getWidget().getMinValue();
+    private double doubleFromState(final String state)
+    {
+        final BigDecimal minValue = getWidget().getMinValue();
 
-		double value = (minValue != null ? minValue.doubleValue() : 0.0);
-		if (state != null && !state.isEmpty())
-		{
-			value = Double.valueOf(state);
-		}
+        double value = (minValue != null ? minValue.doubleValue() : 0.0);
+        if (state != null && !state.isEmpty())
+        {
+            value = Double.valueOf(state);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	private Mapping mappingFromState(final String state)
-	{
-		return getWidget().getMappings().stream().filter(m -> m.getCommand().equals(state)).findFirst().orElse(null);
-	}
+    private Mapping mappingFromState(final String state)
+    {
+        return getWidget().getMappings().stream().filter(m -> m.getCommand().equals(state)).findFirst().orElse(null);
+    }
 
-	private Mapping mappingFromLabel(final String label)
-	{
-		return getWidget().getMappings().stream().filter(m -> m.getLabel().equals(label)).findFirst().orElse(null);
-	}
+    private Mapping mappingFromLabel(final String label)
+    {
+        return getWidget().getMappings().stream().filter(m -> m.getLabel().equals(label)).findFirst().orElse(null);
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return content;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return content;
+    }
 }

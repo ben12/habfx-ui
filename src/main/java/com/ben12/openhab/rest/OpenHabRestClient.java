@@ -62,267 +62,268 @@ import javafx.scene.image.Image;
 
 public class OpenHabRestClient
 {
-	private static final Logger						LOGGER				= Logger
-			.getLogger(OpenHabRestClient.class.getName());
+    private static final Logger                     LOGGER           = Logger.getLogger(OpenHabRestClient.class.getName());
 
-	private static final String						REST				= "rest";
+    private static final String                     REST             = "rest";
 
-	private static final String						SITEMAPS			= "sitemaps";
+    private static final String                     SITEMAPS         = "sitemaps";
 
-	private static final String						ITEMS				= "items";
+    private static final String                     ITEMS            = "items";
 
-	private static final String						IMAGES				= "icon";
+    private static final String                     IMAGES           = "icon";
 
-	private static final String						PERSISTENCE			= "persistence";
+    private static final String                     PERSISTENCE      = "persistence";
 
-	private static final String						STARTTIME			= "starttime";
+    private static final String                     STARTTIME        = "starttime";
 
-	private static final String						ENDTIME				= "endtime";
+    private static final String                     ENDTIME          = "endtime";
 
-	private static final String						SERVICE_ID			= "serviceId";
+    private static final String                     SERVICE_ID       = "serviceId";
 
-	private static final String						EVENT_KEY			= "smarthome/items/%s/state";
+    private static final String                     EVENT_KEY        = "smarthome/items/%s/state";
 
-	private static final String						ITEM_STATE_EVENT	= "ItemStateEvent";
+    private static final String                     ITEM_STATE_EVENT = "ItemStateEvent";
 
-	private final URI								uri;
+    private final URI                               uri;
 
-	private final Client							client;
+    private final Client                            client;
 
-	private final EventSource						eventSource;
+    private final EventSource                       eventSource;
 
-	private final Map<String, List<ChangeListener>>	listeners;
+    private final Map<String, List<ChangeListener>> listeners;
 
-	public OpenHabRestClient(final URI pUri, final String username, final String password, final double imgMinSize,
-			final double imgMaxSize)
-	{
-		listeners = Collections.synchronizedMap(new HashMap<>());
-		uri = pUri;
+    public OpenHabRestClient(final URI pUri, final String username, final String password, final double imgMinSize,
+            final double imgMaxSize)
+    {
+        listeners = Collections.synchronizedMap(new HashMap<>());
+        uri = pUri;
 
-		final ImageProvider imageProvider = new ImageProvider(imgMinSize, imgMaxSize);
+        final ImageProvider imageProvider = new ImageProvider(imgMinSize, imgMaxSize);
 
-		client = ClientBuilder.newClient() //
-				.register(imageProvider);
+        client = ClientBuilder.newClient() //
+                              .register(imageProvider);
 
-		if (username != null && !username.isEmpty())
-		{
-			final HttpAuthenticationFeature authentication = HttpAuthenticationFeature.universalBuilder() //
-					.credentials(username, password)
-					.build();
-			client.register(authentication);
-		}
+        if (username != null && !username.isEmpty())
+        {
+            final HttpAuthenticationFeature authentication = HttpAuthenticationFeature.universalBuilder() //
+                                                                                      .credentials(username, password)
+                                                                                      .build();
+            client.register(authentication);
+        }
 
-		final WebTarget eventsTarget = client.target(uri) //
-				.path(REST)
-				.path("events");
-		eventSource = EventSource.target(eventsTarget).build();
-		eventSource.register(new EventHandler());
+        final WebTarget eventsTarget = client.target(uri) //
+                                             .path(REST)
+                                             .path("events");
+        eventSource = EventSource.target(eventsTarget).build();
+        eventSource.register(new EventHandler());
 
-		final Thread async = new Thread(eventSource::open, "Open SSE");
-		async.start();
-	}
+        final Thread async = new Thread(eventSource::open, "Open SSE");
+        async.start();
+    }
 
-	public void sitemaps(final InvocationCallback<Sitemap[]> callback)
-	{
-		final WebTarget sitemapsTarget = client.target(uri) //
-				.path(REST)
-				.path(SITEMAPS);
-		sitemapsTarget.request(MediaType.APPLICATION_JSON) //
-				.buildGet()
-				.submit(callback);
-	}
+    public void sitemaps(final InvocationCallback<Sitemap[]> callback)
+    {
+        final WebTarget sitemapsTarget = client.target(uri) //
+                                               .path(REST)
+                                               .path(SITEMAPS);
+        sitemapsTarget.request(MediaType.APPLICATION_JSON) //
+                      .buildGet()
+                      .submit(callback);
+    }
 
-	public void item(final String itemName, final InvocationCallback<Item> callback)
-	{
-		final WebTarget sitemapsTarget = client.target(uri) //
-				.path(REST)
-				.path(ITEMS)
-				.path(itemName);
-		sitemapsTarget.request(MediaType.APPLICATION_JSON) //
-				.buildGet()
-				.submit(callback);
-	}
+    public void item(final String itemName, final InvocationCallback<Item> callback)
+    {
+        final WebTarget sitemapsTarget = client.target(uri) //
+                                               .path(REST)
+                                               .path(ITEMS)
+                                               .path(itemName);
+        sitemapsTarget.request(MediaType.APPLICATION_JSON) //
+                      .buildGet()
+                      .submit(callback);
+    }
 
-	public void homepage(final String sitemapName, final InvocationCallback<Page> callback)
-	{
-		final InvocationCallback<Sitemap[]> sitemapListCallback = new InvocationCallback<Sitemap[]>()
-		{
-			@Override
-			public void failed(final Throwable throwable)
-			{
-				callback.failed(throwable);
-			}
+    public void homepage(final String sitemapName, final InvocationCallback<Page> callback)
+    {
+        final InvocationCallback<Sitemap[]> sitemapListCallback = new InvocationCallback<Sitemap[]>()
+        {
+            @Override
+            public void failed(final Throwable throwable)
+            {
+                callback.failed(throwable);
+            }
 
-			@Override
-			public void completed(final Sitemap[] sitemapList)
-			{
-				final Optional<Page> homepage = Arrays.stream(sitemapList == null ? new Sitemap[0] : sitemapList) //
-						.filter(e -> Objects.equals(e.getName(), sitemapName))
-						.map(Sitemap::getHomepage)
-						.findFirst();
+            @Override
+            public void completed(final Sitemap[] sitemapList)
+            {
+                final Optional<Page> homepage = Arrays.stream(sitemapList == null ? new Sitemap[0] : sitemapList) //
+                                                      .filter(e -> Objects.equals(e.getName(), sitemapName))
+                                                      .map(Sitemap::getHomepage)
+                                                      .findFirst();
 
-				if (homepage.isPresent())
-				{
-					update(homepage.get(), callback);
-				}
-				else
-				{
-					callback.failed(new IllegalArgumentException("Sitemap '" + sitemapName + "' not found."));
-				}
-			}
-		};
+                if (homepage.isPresent())
+                {
+                    update(homepage.get(), callback);
+                }
+                else
+                {
+                    callback.failed(new IllegalArgumentException("Sitemap '" + sitemapName + "' not found."));
+                }
+            }
+        };
 
-		sitemaps(sitemapListCallback);
-	}
+        sitemaps(sitemapListCallback);
+    }
 
-	public void persistence(final String itemName, final String service, final LocalDateTime start,
-			final LocalDateTime end, final InvocationCallback<Persistence> callback)
-	{
-		final WebTarget sitemapsTarget = client.target(uri) //
-				.path(REST)
-				.path(PERSISTENCE)
-				.path(ITEMS)
-				.path(itemName)
-				.queryParam(SERVICE_ID, service)
-				.queryParam(STARTTIME, start == null ? null : DateTimeFormatter.ISO_DATE_TIME.format(start))
-				.queryParam(ENDTIME, end == null ? null : DateTimeFormatter.ISO_DATE_TIME.format(end));
-		sitemapsTarget.request(MediaType.APPLICATION_JSON) //
-				.buildGet()
-				.submit(callback);
-	}
+    public void persistence(final String itemName, final String service, final LocalDateTime start,
+            final LocalDateTime end, final InvocationCallback<Persistence> callback)
+    {
+        final WebTarget sitemapsTarget = client.target(uri) //
+                                               .path(REST)
+                                               .path(PERSISTENCE)
+                                               .path(ITEMS)
+                                               .path(itemName)
+                                               .queryParam(SERVICE_ID, service)
+                                               .queryParam(STARTTIME, start == null ? null
+                                                       : DateTimeFormatter.ISO_DATE_TIME.format(start))
+                                               .queryParam(ENDTIME, end == null ? null
+                                                       : DateTimeFormatter.ISO_DATE_TIME.format(end));
+        sitemapsTarget.request(MediaType.APPLICATION_JSON) //
+                      .buildGet()
+                      .submit(callback);
+    }
 
-	public <T extends Linked> void update(final T data)
-	{
-		final String link = data.getLink();
-		if (link != null && !link.isEmpty())
-		{
-			final GenericType<T> genericType = new GenericType<>(data.getClass());
-			final WebTarget dataTarget = client.target(data.getLink());
-			final Future<T> future = dataTarget.request(MediaType.APPLICATION_JSON) //
-					.buildGet()
-					.submit(genericType);
+    public <T extends Linked> void update(final T data)
+    {
+        final String link = data.getLink();
+        if (link != null && !link.isEmpty())
+        {
+            final GenericType<T> genericType = new GenericType<>(data.getClass());
+            final WebTarget dataTarget = client.target(data.getLink());
+            final Future<T> future = dataTarget.request(MediaType.APPLICATION_JSON) //
+                                               .buildGet()
+                                               .submit(genericType);
 
-			new Thread()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						final T response = future.get();
-						if (response != null)
-						{
-							BeanCopy.copy(response, data);
-						}
-					}
-					catch (final Exception e)
-					{
-						LOGGER.log(Level.SEVERE, "Cannot update data", e);
-					}
-				}
-			}.start();
-		}
-	}
+            new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        final T response = future.get();
+                        if (response != null)
+                        {
+                            BeanCopy.copy(response, data);
+                        }
+                    }
+                    catch (final Exception e)
+                    {
+                        LOGGER.log(Level.SEVERE, "Cannot update data", e);
+                    }
+                }
+            }.start();
+        }
+    }
 
-	public <T extends Linked> void update(final T data, final InvocationCallback<T> callback)
-	{
-		final WebTarget dataTarget = client.target(data.getLink());
-		dataTarget.request(MediaType.APPLICATION_JSON) //
-				.buildGet()
-				.submit(callback);
-	}
+    public <T extends Linked> void update(final T data, final InvocationCallback<T> callback)
+    {
+        final WebTarget dataTarget = client.target(data.getLink());
+        dataTarget.request(MediaType.APPLICATION_JSON) //
+                  .buildGet()
+                  .submit(callback);
+    }
 
-	public void getImage(final Widget widget, final InvocationCallback<Image> callback)
-	{
-		final String icon = widget.getIcon();
-		if (icon != null && !icon.isEmpty())
-		{
-			WebTarget imgTarget = client.target(uri) //
-					.path(IMAGES)
-					.path(icon)
-					.queryParam("format", "PNG");
-			final Item item = widget.getItem();
-			if (item != null)
-			{
-				imgTarget = imgTarget.queryParam("state", item.getState());
-			}
-			imgTarget.request("image/*") //
-					.buildGet()
-					.submit(callback);
-		}
-		else
-		{
-			callback.failed(new NullPointerException("No image"));
-		}
-	}
+    public void getImage(final Widget widget, final InvocationCallback<Image> callback)
+    {
+        final String icon = widget.getIcon();
+        if (icon != null && !icon.isEmpty())
+        {
+            WebTarget imgTarget = client.target(uri) //
+                                        .path(IMAGES)
+                                        .path(icon)
+                                        .queryParam("format", "PNG");
+            final Item item = widget.getItem();
+            if (item != null)
+            {
+                imgTarget = imgTarget.queryParam("state", item.getState());
+            }
+            imgTarget.request("image/*") //
+                     .buildGet()
+                     .submit(callback);
+        }
+        else
+        {
+            callback.failed(new NullPointerException("No image"));
+        }
+    }
 
-	public void submit(final Item item, final String state)
-	{
-		final WebTarget target = client.target(uri) //
-				.path(REST)
-				.path(ITEMS)
-				.path(item.getName());
-		target.request() //
-				.accept(MediaType.WILDCARD)
-				.buildPost(Entity.entity(state, MediaType.TEXT_PLAIN))
-				.submit(new InvocationCallback<Response>()
-				{
-					@Override
-					public void failed(final Throwable t)
-					{
-						LOGGER.log(Level.SEVERE, "Cannot submit item", t);
-					}
+    public void submit(final Item item, final String state)
+    {
+        final WebTarget target = client.target(uri) //
+                                       .path(REST)
+                                       .path(ITEMS)
+                                       .path(item.getName());
+        target.request() //
+              .accept(MediaType.WILDCARD)
+              .buildPost(Entity.entity(state, MediaType.TEXT_PLAIN))
+              .submit(new InvocationCallback<Response>()
+              {
+                  @Override
+                  public void failed(final Throwable t)
+                  {
+                      LOGGER.log(Level.SEVERE, "Cannot submit item", t);
+                  }
 
-					@Override
-					public void completed(final Response response)
-					{
-						if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
-						{
-							LOGGER.log(Level.SEVERE, () -> response.getStatusInfo().getStatusCode() + ": "
-									+ response.getStatusInfo().getReasonPhrase());
-						}
-					}
-				});
-	}
+                  @Override
+                  public void completed(final Response response)
+                  {
+                      if (response.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL)
+                      {
+                          LOGGER.log(Level.SEVERE, () -> response.getStatusInfo().getStatusCode() + ": "
+                                  + response.getStatusInfo().getReasonPhrase());
+                      }
+                  }
+              });
+    }
 
-	public void addItemStateChangeListener(final String itemName, final ChangeListener l)
-	{
-		final String key = String.format(EVENT_KEY, itemName);
-		listeners.computeIfAbsent(key, k -> new ArrayList<>(1)).add(l);
-	}
+    public void addItemStateChangeListener(final String itemName, final ChangeListener l)
+    {
+        final String key = String.format(EVENT_KEY, itemName);
+        listeners.computeIfAbsent(key, k -> new ArrayList<>(1)).add(l);
+    }
 
-	public void removeItemStateChangeListener(final String itemName, final ChangeListener l)
-	{
-		final String key = String.format(EVENT_KEY, itemName);
+    public void removeItemStateChangeListener(final String itemName, final ChangeListener l)
+    {
+        final String key = String.format(EVENT_KEY, itemName);
 
-		listeners.computeIfPresent(key, (k, v) -> {
-			v.remove(l);
-			if (v.isEmpty())
-			{
-				v = null;
-			}
-			return v;
-		});
-	}
+        listeners.computeIfPresent(key, (k, v) -> {
+            v.remove(l);
+            if (v.isEmpty())
+            {
+                v = null;
+            }
+            return v;
+        });
+    }
 
-	private class EventHandler implements EventListener
-	{
-		@Override
-		public void onEvent(final InboundEvent inboundEvent)
-		{
-			final OpenHabEvent event = inboundEvent.readData(OpenHabEvent.class);
-			if (ITEM_STATE_EVENT.equals(event.getType()))
-			{
-				final List<ChangeListener> changeListeners = listeners.get(event.getTopic());
-				if (changeListeners != null)
-				{
-					final ChangeEvent e = new ChangeEvent(OpenHabRestClient.this);
-					for (final ChangeListener l : changeListeners)
-					{
-						l.stateChanged(e);
-					}
-				}
-			}
-		}
-	}
+    private class EventHandler implements EventListener
+    {
+        @Override
+        public void onEvent(final InboundEvent inboundEvent)
+        {
+            final OpenHabEvent event = inboundEvent.readData(OpenHabEvent.class);
+            if (ITEM_STATE_EVENT.equals(event.getType()))
+            {
+                final List<ChangeListener> changeListeners = listeners.get(event.getTopic());
+                if (changeListeners != null)
+                {
+                    final ChangeEvent e = new ChangeEvent(OpenHabRestClient.this);
+                    for (final ChangeListener l : changeListeners)
+                    {
+                        l.stateChanged(e);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -23,13 +23,13 @@ import javafx.scene.layout.Region;
  */
 public interface ContentAccessor
 {
-	void reload();
+    void reload();
 
-	void hiding();
+    void hiding();
 
-	Region getInfosView();
+    Region getInfosView();
 
-	Region getAccessView();
+    Region getAccessView();
 
-	Region getContentView();
+    Region getContentView();
 }

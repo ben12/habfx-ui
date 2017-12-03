@@ -33,56 +33,56 @@ import javafx.beans.property.StringProperty;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Persistence
 {
-	private final StringProperty	name		= new SimpleStringProperty();
+    private final StringProperty  name       = new SimpleStringProperty();
 
-	private final IntegerProperty	datapoints	= new SimpleIntegerProperty();
+    private final IntegerProperty datapoints = new SimpleIntegerProperty();
 
-	private final List<Measure>		data		= new ArrayList<>();
+    private final List<Measure>   data       = new ArrayList<>();
 
-	public final StringProperty nameProperty()
-	{
-		return name;
-	}
+    public final StringProperty nameProperty()
+    {
+        return name;
+    }
 
-	@XmlElement
-	public final String getName()
-	{
-		return nameProperty().get();
-	}
+    @XmlElement
+    public final String getName()
+    {
+        return nameProperty().get();
+    }
 
-	public final void setName(final String name)
-	{
-		nameProperty().set(name);
-	}
+    public final void setName(final String name)
+    {
+        nameProperty().set(name);
+    }
 
-	public final IntegerProperty datapointsProperty()
-	{
-		return datapoints;
-	}
+    public final IntegerProperty datapointsProperty()
+    {
+        return datapoints;
+    }
 
-	@XmlElement
-	public final int getDatapoints()
-	{
-		return datapointsProperty().get();
-	}
+    @XmlElement
+    public final int getDatapoints()
+    {
+        return datapointsProperty().get();
+    }
 
-	public final void setDatapoints(final int datapoints)
-	{
-		datapointsProperty().set(datapoints);
-	}
+    public final void setDatapoints(final int datapoints)
+    {
+        datapointsProperty().set(datapoints);
+    }
 
-	@XmlElement(name = "data")
-	public List<Measure> getData()
-	{
-		return data;
-	}
+    @XmlElement(name = "data")
+    public List<Measure> getData()
+    {
+        return data;
+    }
 
-	public void setData(final List<Measure> pData)
-	{
-		if (data != pData)
-		{
-			data.clear();
-			data.addAll(pData);
-		}
-	}
+    public void setData(final List<Measure> pData)
+    {
+        if (data != pData)
+        {
+            data.clear();
+            data.addAll(pData);
+        }
+    }
 }

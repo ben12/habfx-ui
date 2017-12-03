@@ -26,13 +26,13 @@ import javafx.scene.layout.Region;
 
 public interface MainViewController
 {
-	Region getDefaultInfosView();
+    Region getDefaultInfosView();
 
-	void display(ContentController<?> contentController);
+    void display(ContentController<?> contentController);
 
-	OpenHabRestClient getRestClient();
+    OpenHabRestClient getRestClient();
 
-	Properties getConfig();
+    Properties getConfig();
 
-	Page getHomepage();
+    Page getHomepage();
 }

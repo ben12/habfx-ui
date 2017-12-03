@@ -36,39 +36,39 @@ import javafx.beans.property.StringProperty;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Mapping
 {
-	private final StringProperty	command	= new SimpleStringProperty();
+    private final StringProperty command = new SimpleStringProperty();
 
-	private final StringProperty	label	= new SimpleStringProperty();
+    private final StringProperty label   = new SimpleStringProperty();
 
-	public final StringProperty commandProperty()
-	{
-		return command;
-	}
+    public final StringProperty commandProperty()
+    {
+        return command;
+    }
 
-	@XmlElement
-	public final String getCommand()
-	{
-		return commandProperty().get();
-	}
+    @XmlElement
+    public final String getCommand()
+    {
+        return commandProperty().get();
+    }
 
-	public final void setCommand(final String command)
-	{
-		commandProperty().set(command);
-	}
+    public final void setCommand(final String command)
+    {
+        commandProperty().set(command);
+    }
 
-	public final StringProperty labelProperty()
-	{
-		return label;
-	}
+    public final StringProperty labelProperty()
+    {
+        return label;
+    }
 
-	@XmlElement
-	public final String getLabel()
-	{
-		return labelProperty().get();
-	}
+    @XmlElement
+    public final String getLabel()
+    {
+        return labelProperty().get();
+    }
 
-	public final void setLabel(final String label)
-	{
-		labelProperty().set(label);
-	}
+    public final void setLabel(final String label)
+    {
+        labelProperty().set(label);
+    }
 }

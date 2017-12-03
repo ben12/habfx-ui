@@ -19,7 +19,7 @@ package com.ben12.openhab.model;
 
 public interface Linked
 {
-	String getLink();
+    String getLink();
 
-	void setLink(final String link);
+    void setLink(final String link);
 }

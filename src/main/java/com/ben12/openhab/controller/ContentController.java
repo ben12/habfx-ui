@@ -19,5 +19,5 @@ package com.ben12.openhab.controller;
 
 public interface ContentController<T> extends ContentAccessor
 {
-	void init(T data, MainViewController mainViewController);
+    void init(T data, MainViewController mainViewController);
 }

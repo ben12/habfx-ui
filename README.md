@@ -3,7 +3,7 @@ openHAB2 javaFX User Interface
 
 [![GitHub license](https://img.shields.io/github/license/ben12/habfx-ui.svg)](https://github.com/ben12/habfx-ui/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/ben12/habfx-ui.svg?branch=master)](https://travis-ci.org/ben12/habfx-ui)
-[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=com.ben12:habfx-ui&metric=coverage)](https://sonarcloud.io/dashboard?id=com.ben12%3Ahabfx-ui)
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=com.ben12:habfx-ui)](https://sonarcloud.io/dashboard?id=com.ben12%3Ahabfx-ui)
 [![GitHub version](https://badge.fury.io/gh/ben12%2Fhabfx-ui.svg)](https://github.com/ben12/habfx-ui/releases)
 
 HABFX-UI is an OpenHAB2 client.<br />
@@ -22,7 +22,7 @@ Supported sitemap widgets :
 * Slider
 * Colorpicker
 * Webview
-* Chart (for 'Number' item)
+* Chart (for 'Number' item and 'Group' items containing 'Number' items)
 
 ## Build HABFX-UI with Maven :
 
@@ -33,9 +33,9 @@ Execute the command line :<br />
 
 ## Launch HABFX-UI :
 
-* Go to _target/appassembler/conf_
+* Go to _target/habfx-ui-&lt;version&gt;-bin/conf_
 * Configure the application using _config.properties_ file.
-* Go to _target/appassembler/bin_
+* Go to _target/habfx-ui-&lt;version&gt;-bin/bin_
 * Execute _habfx-ui_
 
 ## Screenshots :

@@ -51,437 +51,437 @@ import javafx.collections.ObservableList;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Widget
 {
-	private final StringProperty				widgetId		= new SimpleStringProperty();
+    private final StringProperty             widgetId      = new SimpleStringProperty();
 
-	private final StringProperty				type			= new SimpleStringProperty();
+    private final StringProperty             type          = new SimpleStringProperty();
 
-	private final StringProperty				name			= new SimpleStringProperty();
+    private final StringProperty             name          = new SimpleStringProperty();
 
-	private final StringProperty				label			= new SimpleStringProperty();
+    private final StringProperty             label         = new SimpleStringProperty();
 
-	private final StringProperty				icon			= new SimpleStringProperty();
+    private final StringProperty             icon          = new SimpleStringProperty();
 
-	private final StringProperty				labelcolor		= new SimpleStringProperty();
+    private final StringProperty             labelcolor    = new SimpleStringProperty();
 
-	private final StringProperty				valuecolor		= new SimpleStringProperty();
+    private final StringProperty             valuecolor    = new SimpleStringProperty();
 
-	private final ObservableList<Mapping>		mappings		= FXCollections.observableArrayList();
+    private final ObservableList<Mapping>    mappings      = FXCollections.observableArrayList();
 
-	private final BooleanProperty				switchSupport	= new SimpleBooleanProperty();
+    private final BooleanProperty            switchSupport = new SimpleBooleanProperty();
 
-	private final IntegerProperty				sendFrequency	= new SimpleIntegerProperty();
+    private final IntegerProperty            sendFrequency = new SimpleIntegerProperty();
 
-	private final StringProperty				separator		= new SimpleStringProperty();
+    private final StringProperty             separator     = new SimpleStringProperty();
 
-	private final IntegerProperty				refresh			= new SimpleIntegerProperty();
+    private final IntegerProperty            refresh       = new SimpleIntegerProperty();
 
-	private final IntegerProperty				height			= new SimpleIntegerProperty();
+    private final IntegerProperty            height        = new SimpleIntegerProperty();
 
-	private final ObjectProperty<BigDecimal>	minValue		= new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> minValue      = new SimpleObjectProperty<>();
 
-	private final ObjectProperty<BigDecimal>	maxValue		= new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> maxValue      = new SimpleObjectProperty<>();
 
-	private final ObjectProperty<BigDecimal>	step			= new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> step          = new SimpleObjectProperty<>();
 
-	private final StringProperty				url				= new SimpleStringProperty();
+    private final StringProperty             url           = new SimpleStringProperty();
 
-	private final StringProperty				encoding		= new SimpleStringProperty();
+    private final StringProperty             encoding      = new SimpleStringProperty();
 
-	private final StringProperty				service			= new SimpleStringProperty();
+    private final StringProperty             service       = new SimpleStringProperty();
 
-	private final StringProperty				period			= new SimpleStringProperty();
+    private final StringProperty             period        = new SimpleStringProperty();
 
-	private final ObjectProperty<Item>			item			= new SimpleObjectProperty<>();
+    private final ObjectProperty<Item>       item          = new SimpleObjectProperty<>();
 
-	private final ObjectProperty<Page>			linkedPage		= new SimpleObjectProperty<>();
+    private final ObjectProperty<Page>       linkedPage    = new SimpleObjectProperty<>();
 
-	private final ObservableList<Widget>		widgets			= FXCollections.observableArrayList();
+    private final ObservableList<Widget>     widgets       = FXCollections.observableArrayList();
 
-	public final StringProperty widgetIdProperty()
-	{
-		return widgetId;
-	}
+    public final StringProperty widgetIdProperty()
+    {
+        return widgetId;
+    }
 
-	@XmlElement
-	public final String getWidgetId()
-	{
-		return widgetIdProperty().get();
-	}
+    @XmlElement
+    public final String getWidgetId()
+    {
+        return widgetIdProperty().get();
+    }
 
-	public final void setWidgetId(final String widgetId)
-	{
-		widgetIdProperty().set(widgetId);
-	}
+    public final void setWidgetId(final String widgetId)
+    {
+        widgetIdProperty().set(widgetId);
+    }
 
-	public final StringProperty typeProperty()
-	{
-		return type;
-	}
+    public final StringProperty typeProperty()
+    {
+        return type;
+    }
 
-	@XmlElement
-	public final String getType()
-	{
-		return typeProperty().get();
-	}
+    @XmlElement
+    public final String getType()
+    {
+        return typeProperty().get();
+    }
 
-	public final void setType(final String type)
-	{
-		typeProperty().set(type);
-	}
+    public final void setType(final String type)
+    {
+        typeProperty().set(type);
+    }
 
-	public final StringProperty nameProperty()
-	{
-		return name;
-	}
+    public final StringProperty nameProperty()
+    {
+        return name;
+    }
 
-	@XmlElement
-	public final String getName()
-	{
-		return nameProperty().get();
-	}
+    @XmlElement
+    public final String getName()
+    {
+        return nameProperty().get();
+    }
 
-	public final void setName(final String name)
-	{
-		nameProperty().set(name);
-	}
+    public final void setName(final String name)
+    {
+        nameProperty().set(name);
+    }
 
-	public final StringProperty labelProperty()
-	{
-		return label;
-	}
+    public final StringProperty labelProperty()
+    {
+        return label;
+    }
 
-	@XmlElement
-	public final String getLabel()
-	{
-		return labelProperty().get();
-	}
-
-	public final void setLabel(final String label)
-	{
-		labelProperty().set(label);
-	}
-
-	public final StringProperty iconProperty()
-	{
-		return icon;
-	}
-
-	@XmlElement
-	public final String getIcon()
-	{
-		return iconProperty().get();
-	}
-
-	public final void setIcon(final String icon)
-	{
-		iconProperty().set(icon);
-	}
-
-	public final StringProperty labelcolorProperty()
-	{
-		return labelcolor;
-	}
-
-	@XmlElement
-	public final String getLabelcolor()
-	{
-		return labelcolorProperty().get();
-	}
-
-	public final void setLabelcolor(final String labelcolor)
-	{
-		labelcolorProperty().set(labelcolor);
-	}
-
-	public final StringProperty valuecolorProperty()
-	{
-		return valuecolor;
-	}
-
-	@XmlElement
-	public final String getValuecolor()
-	{
-		return valuecolorProperty().get();
-	}
-
-	public final void setValuecolor(final String valuecolor)
-	{
-		valuecolorProperty().set(valuecolor);
-	}
-
-	public final BooleanProperty switchSupportProperty()
-	{
-		return switchSupport;
-	}
-
-	@XmlElement
-	public final boolean isSwitchSupport()
-	{
-		return switchSupportProperty().get();
-	}
-
-	public final void setSwitchSupport(final boolean switchSupport)
-	{
-		switchSupportProperty().set(switchSupport);
-	}
-
-	public final IntegerProperty sendFrequencyProperty()
-	{
-		return sendFrequency;
-	}
-
-	@XmlElement
-	public final int getSendFrequency()
-	{
-		return sendFrequencyProperty().get();
-	}
-
-	public final void setSendFrequency(final int sendFrequency)
-	{
-		sendFrequencyProperty().set(sendFrequency);
-	}
-
-	public final StringProperty separatorProperty()
-	{
-		return separator;
-	}
-
-	@XmlElement
-	public final String getSeparator()
-	{
-		return separatorProperty().get();
-	}
-
-	public final void setSeparator(final String separator)
-	{
-		separatorProperty().set(separator);
-	}
-
-	public final IntegerProperty refreshProperty()
-	{
-		return refresh;
-	}
-
-	@XmlElement
-	public final int getRefresh()
-	{
-		return refreshProperty().get();
-	}
-
-	public final void setRefresh(final int refresh)
-	{
-		refreshProperty().set(refresh);
-	}
-
-	public final IntegerProperty heightProperty()
-	{
-		return height;
-	}
-
-	@XmlElement
-	public final int getHeight()
-	{
-		return heightProperty().get();
-	}
-
-	public final void setHeight(final int height)
-	{
-		heightProperty().set(height);
-	}
-
-	public final ObjectProperty<BigDecimal> minValueProperty()
-	{
-		return minValue;
-	}
-
-	@XmlElement
-	public final BigDecimal getMinValue()
-	{
-		return minValueProperty().get();
-	}
-
-	public final void setMinValue(final BigDecimal minValue)
-	{
-		minValueProperty().set(minValue);
-	}
-
-	public final ObjectProperty<BigDecimal> maxValueProperty()
-	{
-		return maxValue;
-	}
-
-	@XmlElement
-	public final BigDecimal getMaxValue()
-	{
-		return maxValueProperty().get();
-	}
-
-	public final void setMaxValue(final BigDecimal maxValue)
-	{
-		maxValueProperty().set(maxValue);
-	}
-
-	public final ObjectProperty<BigDecimal> stepProperty()
-	{
-		return step;
-	}
-
-	@XmlElement
-	public final BigDecimal getStep()
-	{
-		return stepProperty().get();
-	}
-
-	public final void setStep(final BigDecimal step)
-	{
-		stepProperty().set(step);
-	}
-
-	public final StringProperty urlProperty()
-	{
-		return url;
-	}
-
-	@XmlElement
-	public final String getUrl()
-	{
-		return urlProperty().get();
-	}
-
-	public final void setUrl(final String url)
-	{
-		urlProperty().set(url);
-	}
-
-	public final StringProperty encodingProperty()
-	{
-		return encoding;
-	}
-
-	@XmlElement
-	public final String getEncoding()
-	{
-		return encodingProperty().get();
-	}
-
-	public final void setEncoding(final String encoding)
-	{
-		encodingProperty().set(encoding);
-	}
-
-	public final StringProperty serviceProperty()
-	{
-		return service;
-	}
-
-	@XmlElement
-	public final String getService()
-	{
-		return serviceProperty().get();
-	}
-
-	public final void setService(final String service)
-	{
-		serviceProperty().set(service);
-	}
-
-	public final StringProperty periodProperty()
-	{
-		return period;
-	}
-
-	@XmlElement
-	public final String getPeriod()
-	{
-		return periodProperty().get();
-	}
-
-	public final void setPeriod(final String period)
-	{
-		periodProperty().set(period);
-	}
-
-	public final ObjectProperty<Item> itemProperty()
-	{
-		return item;
-	}
-
-	@XmlElement
-	public final Item getItem()
-	{
-		return itemProperty().get();
-	}
-
-	public final void setItem(final Item item)
-	{
-		itemProperty().set(item);
-	}
-
-	public final ObjectProperty<Page> linkedPageProperty()
-	{
-		return linkedPage;
-	}
-
-	@XmlElement
-	public final Page getLinkedPage()
-	{
-		return linkedPageProperty().get();
-	}
-
-	public final void setLinkedPage(final Page linkedPage)
-	{
-		linkedPageProperty().set(linkedPage);
-	}
-
-	public ObservableList<Mapping> mappingsProperty()
-	{
-		return mappings;
-	}
-
-	@XmlElement(name = "mappings")
-	public List<Mapping> getMappings()
-	{
-		return mappings;
-	}
-
-	public void setMappings(final List<Mapping> pMappings)
-	{
-		if (mappings != pMappings)
-		{
-			BeanCopy.copy(pMappings, mappings, Mapping::getCommand);
-		}
-	}
-
-	public ObservableList<Widget> widgetsProperty()
-	{
-		return widgets;
-	}
-
-	@XmlElement(name = "widgets")
-	public List<Widget> getWidgets()
-	{
-		return widgets;
-	}
-
-	public Widget getWidgets(final String id)
-	{
-		Widget widget = null;
-		for (final Widget w : widgets)
-		{
-			if (Objects.equals(w.getWidgetId(), id))
-			{
-				widget = w;
-				break;
-			}
-		}
-		return widget;
-	}
-
-	public void setWidgets(final List<Widget> pWidgets)
-	{
-		if (widgets != pWidgets)
-		{
-			BeanCopy.copy(pWidgets, widgets, Widget::getWidgetId);
-		}
-	}
+    @XmlElement
+    public final String getLabel()
+    {
+        return labelProperty().get();
+    }
+
+    public final void setLabel(final String label)
+    {
+        labelProperty().set(label);
+    }
+
+    public final StringProperty iconProperty()
+    {
+        return icon;
+    }
+
+    @XmlElement
+    public final String getIcon()
+    {
+        return iconProperty().get();
+    }
+
+    public final void setIcon(final String icon)
+    {
+        iconProperty().set(icon);
+    }
+
+    public final StringProperty labelcolorProperty()
+    {
+        return labelcolor;
+    }
+
+    @XmlElement
+    public final String getLabelcolor()
+    {
+        return labelcolorProperty().get();
+    }
+
+    public final void setLabelcolor(final String labelcolor)
+    {
+        labelcolorProperty().set(labelcolor);
+    }
+
+    public final StringProperty valuecolorProperty()
+    {
+        return valuecolor;
+    }
+
+    @XmlElement
+    public final String getValuecolor()
+    {
+        return valuecolorProperty().get();
+    }
+
+    public final void setValuecolor(final String valuecolor)
+    {
+        valuecolorProperty().set(valuecolor);
+    }
+
+    public final BooleanProperty switchSupportProperty()
+    {
+        return switchSupport;
+    }
+
+    @XmlElement
+    public final boolean isSwitchSupport()
+    {
+        return switchSupportProperty().get();
+    }
+
+    public final void setSwitchSupport(final boolean switchSupport)
+    {
+        switchSupportProperty().set(switchSupport);
+    }
+
+    public final IntegerProperty sendFrequencyProperty()
+    {
+        return sendFrequency;
+    }
+
+    @XmlElement
+    public final int getSendFrequency()
+    {
+        return sendFrequencyProperty().get();
+    }
+
+    public final void setSendFrequency(final int sendFrequency)
+    {
+        sendFrequencyProperty().set(sendFrequency);
+    }
+
+    public final StringProperty separatorProperty()
+    {
+        return separator;
+    }
+
+    @XmlElement
+    public final String getSeparator()
+    {
+        return separatorProperty().get();
+    }
+
+    public final void setSeparator(final String separator)
+    {
+        separatorProperty().set(separator);
+    }
+
+    public final IntegerProperty refreshProperty()
+    {
+        return refresh;
+    }
+
+    @XmlElement
+    public final int getRefresh()
+    {
+        return refreshProperty().get();
+    }
+
+    public final void setRefresh(final int refresh)
+    {
+        refreshProperty().set(refresh);
+    }
+
+    public final IntegerProperty heightProperty()
+    {
+        return height;
+    }
+
+    @XmlElement
+    public final int getHeight()
+    {
+        return heightProperty().get();
+    }
+
+    public final void setHeight(final int height)
+    {
+        heightProperty().set(height);
+    }
+
+    public final ObjectProperty<BigDecimal> minValueProperty()
+    {
+        return minValue;
+    }
+
+    @XmlElement
+    public final BigDecimal getMinValue()
+    {
+        return minValueProperty().get();
+    }
+
+    public final void setMinValue(final BigDecimal minValue)
+    {
+        minValueProperty().set(minValue);
+    }
+
+    public final ObjectProperty<BigDecimal> maxValueProperty()
+    {
+        return maxValue;
+    }
+
+    @XmlElement
+    public final BigDecimal getMaxValue()
+    {
+        return maxValueProperty().get();
+    }
+
+    public final void setMaxValue(final BigDecimal maxValue)
+    {
+        maxValueProperty().set(maxValue);
+    }
+
+    public final ObjectProperty<BigDecimal> stepProperty()
+    {
+        return step;
+    }
+
+    @XmlElement
+    public final BigDecimal getStep()
+    {
+        return stepProperty().get();
+    }
+
+    public final void setStep(final BigDecimal step)
+    {
+        stepProperty().set(step);
+    }
+
+    public final StringProperty urlProperty()
+    {
+        return url;
+    }
+
+    @XmlElement
+    public final String getUrl()
+    {
+        return urlProperty().get();
+    }
+
+    public final void setUrl(final String url)
+    {
+        urlProperty().set(url);
+    }
+
+    public final StringProperty encodingProperty()
+    {
+        return encoding;
+    }
+
+    @XmlElement
+    public final String getEncoding()
+    {
+        return encodingProperty().get();
+    }
+
+    public final void setEncoding(final String encoding)
+    {
+        encodingProperty().set(encoding);
+    }
+
+    public final StringProperty serviceProperty()
+    {
+        return service;
+    }
+
+    @XmlElement
+    public final String getService()
+    {
+        return serviceProperty().get();
+    }
+
+    public final void setService(final String service)
+    {
+        serviceProperty().set(service);
+    }
+
+    public final StringProperty periodProperty()
+    {
+        return period;
+    }
+
+    @XmlElement
+    public final String getPeriod()
+    {
+        return periodProperty().get();
+    }
+
+    public final void setPeriod(final String period)
+    {
+        periodProperty().set(period);
+    }
+
+    public final ObjectProperty<Item> itemProperty()
+    {
+        return item;
+    }
+
+    @XmlElement
+    public final Item getItem()
+    {
+        return itemProperty().get();
+    }
+
+    public final void setItem(final Item item)
+    {
+        itemProperty().set(item);
+    }
+
+    public final ObjectProperty<Page> linkedPageProperty()
+    {
+        return linkedPage;
+    }
+
+    @XmlElement
+    public final Page getLinkedPage()
+    {
+        return linkedPageProperty().get();
+    }
+
+    public final void setLinkedPage(final Page linkedPage)
+    {
+        linkedPageProperty().set(linkedPage);
+    }
+
+    public ObservableList<Mapping> mappingsProperty()
+    {
+        return mappings;
+    }
+
+    @XmlElement(name = "mappings")
+    public List<Mapping> getMappings()
+    {
+        return mappings;
+    }
+
+    public void setMappings(final List<Mapping> pMappings)
+    {
+        if (mappings != pMappings)
+        {
+            BeanCopy.copy(pMappings, mappings, Mapping::getCommand);
+        }
+    }
+
+    public ObservableList<Widget> widgetsProperty()
+    {
+        return widgets;
+    }
+
+    @XmlElement(name = "widgets")
+    public List<Widget> getWidgets()
+    {
+        return widgets;
+    }
+
+    public Widget getWidgets(final String id)
+    {
+        Widget widget = null;
+        for (final Widget w : widgets)
+        {
+            if (Objects.equals(w.getWidgetId(), id))
+            {
+                widget = w;
+                break;
+            }
+        }
+        return widget;
+    }
+
+    public void setWidgets(final List<Widget> pWidgets)
+    {
+        if (widgets != pWidgets)
+        {
+            BeanCopy.copy(pWidgets, widgets, Widget::getWidgetId);
+        }
+    }
 }

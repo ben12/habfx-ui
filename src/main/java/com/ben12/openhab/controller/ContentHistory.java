@@ -19,35 +19,35 @@ package com.ben12.openhab.controller;
 
 public class ContentHistory
 {
-	private final ContentHistory	previous;
+    private final ContentHistory  previous;
 
-	private ContentHistory			next;
+    private ContentHistory        next;
 
-	private final ContentAccessor	page;
+    private final ContentAccessor page;
 
-	public ContentHistory(final ContentHistory previous, final ContentAccessor page)
-	{
-		this.previous = previous;
-		this.page = page;
-	}
+    public ContentHistory(final ContentHistory previous, final ContentAccessor page)
+    {
+        this.previous = previous;
+        this.page = page;
+    }
 
-	public ContentHistory getPrevious()
-	{
-		return previous;
-	}
+    public ContentHistory getPrevious()
+    {
+        return previous;
+    }
 
-	public ContentHistory getNext()
-	{
-		return next;
-	}
+    public ContentHistory getNext()
+    {
+        return next;
+    }
 
-	public void setNext(final ContentHistory next)
-	{
-		this.next = next;
-	}
+    public void setNext(final ContentHistory next)
+    {
+        this.next = next;
+    }
 
-	public ContentAccessor getPage()
-	{
-		return page;
-	}
+    public ContentAccessor getPage()
+    {
+        return page;
+    }
 }

@@ -25,5 +25,5 @@ import com.ben12.openhab.rest.OpenHabRestClient;
 @FunctionalInterface
 public interface OpenHabRestClientPlugin
 {
-	void init(OpenHabRestClient restClient);
+    void init(OpenHabRestClient restClient);
 }

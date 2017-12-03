@@ -48,248 +48,249 @@ import javafx.scene.layout.Region;
 
 public class MainController implements Initializable, MainViewController
 {
-	private static final Logger	LOGGER					= Logger.getLogger(MainController.class.getName());
+    private static final Logger LOGGER               = Logger.getLogger(MainController.class.getName());
 
-	private static final String	CONFIG_FILE				= "config.properties";
+    private static final String CONFIG_FILE          = "config.properties";
 
-	private static final String	OPENHAB_URL_CFG			= "openhab.url";
+    private static final String OPENHAB_URL_CFG      = "openhab.url";
 
-	private static final String	OPENHAB_USER_CFG		= "openhab.user";
+    private static final String OPENHAB_USER_CFG     = "openhab.user";
 
-	private static final String	OPENHAB_PASSWORD_CFG	= "openhab.password";
+    private static final String OPENHAB_PASSWORD_CFG = "openhab.password";
 
-	private static final String	SITEMAP_CFG				= "sitemap";
+    private static final String SITEMAP_CFG          = "sitemap";
 
-	private static final String	IMAGE_MIN_SIZE_CFG		= "image.min.size";
+    private static final String IMAGE_MIN_SIZE_CFG   = "image.min.size";
 
-	private static final String	IMAGE_MAX_SIZE_CFG		= "image.max.size";
+    private static final String IMAGE_MAX_SIZE_CFG   = "image.max.size";
 
-	private final Properties	configuration			= new Properties();
+    private final Properties    configuration        = new Properties();
 
-	private Page				homepage;
+    private Page                homepage;
 
-	private OpenHabRestClient	openhabClient;
+    private OpenHabRestClient   openhabClient;
 
-	private ContentHistory		currentPage;
+    private ContentHistory      currentPage;
 
-	@FXML
-	private AnchorPane			infosPane;
+    @FXML
+    private AnchorPane          infosPane;
 
-	@FXML
-	private ScrollPane			contentPane;
+    @FXML
+    private ScrollPane          contentPane;
 
-	private TopItemsController	topItemsController;
+    private TopItemsController  topItemsController;
 
-	@Override
-	public void initialize(final URL location, final ResourceBundle resources)
-	{
-		String config = System.getProperty("config.file");
-		if (config == null || config.isEmpty())
-		{
-			config = CONFIG_FILE;
-		}
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources)
+    {
+        String config = System.getProperty("config.file");
+        if (config == null || config.isEmpty())
+        {
+            config = CONFIG_FILE;
+        }
 
-		if (Paths.get(config).toFile().exists())
-		{
-			try (FileReader reader = new FileReader(config))
-			{
-				configuration.load(reader);
-			}
-			catch (final IOException e)
-			{
-				LOGGER.log(Level.WARNING, "Cannot read config file", e);
-			}
-		}
+        if (Paths.get(config).toFile().exists())
+        {
+            try (FileReader reader = new FileReader(config))
+            {
+                configuration.load(reader);
+            }
+            catch (final IOException e)
+            {
+                LOGGER.log(Level.WARNING, "Cannot read config file", e);
+            }
+        }
 
-		final String uriCfg = configuration.getProperty(OPENHAB_URL_CFG);
-		try
-		{
-			final URI uri = new URI(uriCfg);
-			final String user = configuration.getProperty(OPENHAB_USER_CFG);
-			final String password = configuration.getProperty(OPENHAB_PASSWORD_CFG);
-			double imgMinSize;
-			double imgMaxSize;
-			try
-			{
-				imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE_CFG, "20"));
-				imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE_CFG, "100"));
-			}
-			catch (final Exception e)
-			{
-				LOGGER.log(Level.WARNING, "Cannot read image sizing, use defaults 20 < size < 100", e);
+        final String uriCfg = configuration.getProperty(OPENHAB_URL_CFG);
+        try
+        {
+            final URI uri = new URI(uriCfg);
+            final String user = configuration.getProperty(OPENHAB_USER_CFG);
+            final String password = configuration.getProperty(OPENHAB_PASSWORD_CFG);
+            double imgMinSize;
+            double imgMaxSize;
+            try
+            {
+                imgMinSize = Double.parseDouble(configuration.getProperty(IMAGE_MIN_SIZE_CFG, "20"));
+                imgMaxSize = Double.parseDouble(configuration.getProperty(IMAGE_MAX_SIZE_CFG, "100"));
+            }
+            catch (final Exception e)
+            {
+                LOGGER.log(Level.WARNING, "Cannot read image sizing, use defaults 20 < size < 100", e);
 
-				imgMinSize = 20;
-				imgMaxSize = 100;
-			}
+                imgMinSize = 20;
+                imgMaxSize = 100;
+            }
 
-			openhabClient = new OpenHabRestClient(uri, user, password, imgMinSize, imgMaxSize);
+            openhabClient = new OpenHabRestClient(uri, user, password, imgMinSize, imgMaxSize);
 
-			final FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(HabApplication.class.getResource("ui/TopItems.fxml"));
-			loader.load();
-			topItemsController = loader.getController();
-			topItemsController.init(null, this);
+            final FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(HabApplication.class.getResource("ui/TopItems.fxml"));
+            loader.load();
+            topItemsController = loader.getController();
+            topItemsController.init(null, this);
 
-			final String sitemap = configuration.getProperty(SITEMAP_CFG, "default");
+            final String sitemap = configuration.getProperty(SITEMAP_CFG, "default");
 
-			final InvocationCallback<Page> homepageCallback = new InvocationCallback<Page>()
-			{
-				@Override
-				public void failed(final Throwable t)
-				{
-					LOGGER.log(Level.WARNING, "Cannot load homepage", t);
-					Platform.runLater(() -> {
-						final ErrorController errorController = new ErrorController();
-						errorController.init(t, MainController.this);
+            final InvocationCallback<Page> homepageCallback = new InvocationCallback<Page>()
+            {
+                @Override
+                public void failed(final Throwable t)
+                {
+                    LOGGER.log(Level.WARNING, "Cannot load homepage", t);
+                    Platform.runLater(() -> {
+                        final ErrorController errorController = new ErrorController();
+                        errorController.init(t, MainController.this);
 
-						display(errorController);
-					});
-				}
+                        display(errorController);
+                    });
+                }
 
-				@Override
-				public void completed(final Page page)
-				{
-					homepage = page;
-					Platform.runLater(() -> {
-						final PageController homepageController = new PageController();
-						homepageController.init(homepage, MainController.this);
+                @Override
+                public void completed(final Page page)
+                {
+                    homepage = page;
+                    Platform.runLater(() -> {
+                        final PageController homepageController = new PageController();
+                        homepageController.init(homepage, MainController.this);
 
-						display(homepageController);
-					});
-				}
-			};
+                        display(homepageController);
+                    });
+                }
+            };
 
-			openhabClient.homepage(sitemap, homepageCallback);
+            openhabClient.homepage(sitemap, homepageCallback);
 
-			// Starts plugins
-			final ServiceLoader<OpenHabRestClientPlugin> serviceLoader = ServiceLoader
-					.load(OpenHabRestClientPlugin.class);
-			for (final OpenHabRestClientPlugin plugin : serviceLoader)
-			{
-				plugin.init(openhabClient);
-			}
-		}
-		catch (final Exception e)
-		{
-			LOGGER.log(Level.SEVERE, "Cannot start the client", e);
-			Platform.runLater(() -> {
-				final ErrorController errorController = new ErrorController();
-				errorController.init(e, MainController.this);
+            // Starts plugins
+            final ServiceLoader<OpenHabRestClientPlugin> serviceLoader = ServiceLoader.load(OpenHabRestClientPlugin.class);
+            for (final OpenHabRestClientPlugin plugin : serviceLoader)
+            {
+                plugin.init(openhabClient);
+            }
+        }
+        catch (final Exception e)
+        {
+            LOGGER.log(Level.SEVERE, "Cannot start the client", e);
+            Platform.runLater(() -> {
+                final ErrorController errorController = new ErrorController();
+                errorController.init(e, MainController.this);
 
-				display(errorController);
-			});
-		}
-	}
+                display(errorController);
+            });
+        }
+    }
 
-	@Override
-	public Region getDefaultInfosView()
-	{
-		return topItemsController.getInfosView();
-	}
+    @Override
+    public Region getDefaultInfosView()
+    {
+        return topItemsController.getInfosView();
+    }
 
-	@Override
-	public void display(final ContentController<?> contentController)
-	{
-		final ContentHistory previous = currentPage;
-		currentPage = new ContentHistory(currentPage, contentController);
-		if (previous != null)
-		{
-			previous.setNext(currentPage);
-			previous.getPage().hiding();
-		}
-		displayCurrentPage();
-	}
+    @Override
+    public void display(final ContentController<?> contentController)
+    {
+        final ContentHistory previous = currentPage;
+        currentPage = new ContentHistory(currentPage, contentController);
+        if (previous != null)
+        {
+            previous.setNext(currentPage);
+            previous.getPage().hiding();
+        }
+        displayCurrentPage();
+    }
 
-	public void displayCurrentPage()
-	{
-		final ContentAccessor contentAccessor = currentPage.getPage();
-		if (currentPage.getPrevious() == null && !topItemsController.isEmpty())
-		{
-			topItemsController.reload();
-			setInfos(topItemsController.getInfosView());
-		}
-		else
-		{
-			setInfos(contentAccessor.getInfosView());
-		}
-		setContent(contentAccessor.getContentView());
-		contentAccessor.reload();
-	}
+    public void displayCurrentPage()
+    {
+        final ContentAccessor contentAccessor = currentPage.getPage();
+        if (currentPage.getPrevious() == null && !topItemsController.isEmpty())
+        {
+            topItemsController.reload();
+            setInfos(topItemsController.getInfosView());
+        }
+        else
+        {
+            setInfos(contentAccessor.getInfosView());
+        }
+        setContent(contentAccessor.getContentView());
+        contentAccessor.reload();
+    }
 
-	private void setInfos(final Region content)
-	{
-		infosPane.getChildren().clear();
-		if (content != null)
-		{
-			AnchorPane.setBottomAnchor(content, 0.0);
-			AnchorPane.setLeftAnchor(content, 0.0);
-			AnchorPane.setTopAnchor(content, 0.0);
-			AnchorPane.setRightAnchor(content, 0.0);
-			infosPane.getChildren().add(content);
-		}
-	}
+    private void setInfos(final Region content)
+    {
+        infosPane.getChildren().clear();
+        if (content != null)
+        {
+            AnchorPane.setBottomAnchor(content, 0.0);
+            AnchorPane.setLeftAnchor(content, 0.0);
+            AnchorPane.setTopAnchor(content, 0.0);
+            AnchorPane.setRightAnchor(content, 0.0);
+            infosPane.getChildren().add(content);
+        }
+    }
 
-	private void setContent(final Region content)
-	{
-		content.minWidthProperty().bind(contentPane.widthProperty()
-				.subtract(contentPane.getInsets().getLeft() + contentPane.getInsets().getRight()));
-		content.maxWidthProperty().bind(contentPane.widthProperty()
-				.subtract(contentPane.getInsets().getLeft() + contentPane.getInsets().getRight()));
-		contentPane.setContent(content);
-	}
+    private void setContent(final Region content)
+    {
+        content.minWidthProperty()
+               .bind(contentPane.widthProperty()
+                                .subtract(contentPane.getInsets().getLeft() + contentPane.getInsets().getRight()));
+        content.maxWidthProperty()
+               .bind(contentPane.widthProperty()
+                                .subtract(contentPane.getInsets().getLeft() + contentPane.getInsets().getRight()));
+        contentPane.setContent(content);
+    }
 
-	@Override
-	public OpenHabRestClient getRestClient()
-	{
-		return openhabClient;
-	}
+    @Override
+    public OpenHabRestClient getRestClient()
+    {
+        return openhabClient;
+    }
 
-	@FXML
-	protected void goHomepage(final ActionEvent event)
-	{
-		currentPage.getPage().hiding();
-		ContentHistory prev = currentPage.getPrevious();
-		while (prev != null)
-		{
-			currentPage = prev;
-			prev = currentPage.getPrevious();
-		}
-		displayCurrentPage();
-	}
+    @FXML
+    protected void goHomepage(final ActionEvent event)
+    {
+        currentPage.getPage().hiding();
+        ContentHistory prev = currentPage.getPrevious();
+        while (prev != null)
+        {
+            currentPage = prev;
+            prev = currentPage.getPrevious();
+        }
+        displayCurrentPage();
+    }
 
-	@FXML
-	protected void goPrev(final ActionEvent event)
-	{
-		currentPage.getPage().hiding();
-		final ContentHistory prev = currentPage.getPrevious();
-		if (prev != null)
-		{
-			currentPage = prev;
-		}
-		displayCurrentPage();
-	}
+    @FXML
+    protected void goPrev(final ActionEvent event)
+    {
+        currentPage.getPage().hiding();
+        final ContentHistory prev = currentPage.getPrevious();
+        if (prev != null)
+        {
+            currentPage = prev;
+        }
+        displayCurrentPage();
+    }
 
-	@FXML
-	protected void goNext(final ActionEvent event)
-	{
-		currentPage.getPage().hiding();
-		final ContentHistory next = currentPage.getNext();
-		if (next != null)
-		{
-			currentPage = next;
-		}
-		displayCurrentPage();
-	}
+    @FXML
+    protected void goNext(final ActionEvent event)
+    {
+        currentPage.getPage().hiding();
+        final ContentHistory next = currentPage.getNext();
+        if (next != null)
+        {
+            currentPage = next;
+        }
+        displayCurrentPage();
+    }
 
-	@Override
-	public Properties getConfig()
-	{
-		return configuration;
-	}
+    @Override
+    public Properties getConfig()
+    {
+        return configuration;
+    }
 
-	@Override
-	public Page getHomepage()
-	{
-		return homepage;
-	}
+    @Override
+    public Page getHomepage()
+    {
+        return homepage;
+    }
 }

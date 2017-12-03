@@ -40,142 +40,142 @@ import javafx.scene.text.Text;
 
 public class PageController implements ContentController<Page>
 {
-	private MainViewController	mainViewController;
+    private MainViewController mainViewController;
 
-	private Label				title;
+    private Label              title;
 
-	private StringBinding		titleProperty;
+    private StringBinding      titleProperty;
 
-	private Page				page;
+    private Page               page;
 
-	private Pane				pane;
+    private Pane               pane;
 
-	@Override
-	public void init(final Page data, final MainViewController pMainViewController)
-	{
-		page = data;
-		mainViewController = pMainViewController;
+    @Override
+    public void init(final Page data, final MainViewController pMainViewController)
+    {
+        page = data;
+        mainViewController = pMainViewController;
 
-		title = new Label();
-		title.getStyleClass().add("title");
-		title.textProperty().bind(titleProperty());
+        title = new Label();
+        title.getStyleClass().add("title");
+        title.textProperty().bind(titleProperty());
 
-		title.heightProperty().addListener((e, o, n) -> {
-			final Text textUtil = new Text(title.getText());
-			textUtil.setFont(title.getFont());
-			final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
-			final Node text = title.lookup(".text");
-			text.setScaleX(scale);
-			text.setScaleY(scale);
-		});
-		title.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
-		{
-			@Override
-			public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
-					final Bounds newValue)
-			{
-				title.boundsInLocalProperty().removeListener(this);
-				final Text textUtil = new Text(title.getText());
-				textUtil.setFont(title.getFont());
-				final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
-				final Node text = title.lookup(".text");
-				text.setScaleX(scale);
-				text.setScaleY(scale);
-				title.boundsInLocalProperty().addListener(this);
-			}
-		});
+        title.heightProperty().addListener((e, o, n) -> {
+            final Text textUtil = new Text(title.getText());
+            textUtil.setFont(title.getFont());
+            final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+            final Node text = title.lookup(".text");
+            text.setScaleX(scale);
+            text.setScaleY(scale);
+        });
+        title.boundsInLocalProperty().addListener(new javafx.beans.value.ChangeListener<Bounds>()
+        {
+            @Override
+            public void changed(final ObservableValue<? extends Bounds> observable, final Bounds oldValue,
+                    final Bounds newValue)
+            {
+                title.boundsInLocalProperty().removeListener(this);
+                final Text textUtil = new Text(title.getText());
+                textUtil.setFont(title.getFont());
+                final double scale = title.getHeight() / textUtil.getBoundsInLocal().getHeight();
+                final Node text = title.lookup(".text");
+                text.setScaleX(scale);
+                text.setScaleY(scale);
+                title.boundsInLocalProperty().addListener(this);
+            }
+        });
 
-		pane = new FullWidthTilePane();
+        pane = new FullWidthTilePane();
 
-		final Function<Widget, Node> mapper = widget -> {
-			final Node view;
-			final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(), page);
-			if (controller != null)
-			{
-				controller.init(widget, mainViewController);
-				view = controller.getAccessView();
-			}
-			else
-			{
-				view = new Pane();
-			}
-			return view;
-		};
+        final Function<Widget, Node> mapper = widget -> {
+            final Node view;
+            final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(), page);
+            if (controller != null)
+            {
+                controller.init(widget, mainViewController);
+                view = controller.getAccessView();
+            }
+            else
+            {
+                view = new Pane();
+            }
+            return view;
+        };
 
-		page.widgetsProperty().addListener((final Change<? extends Widget> c) -> {
-			while (c.next())
-			{
-				final int from = c.getFrom();
+        page.widgetsProperty().addListener((final Change<? extends Widget> c) -> {
+            while (c.next())
+            {
+                final int from = c.getFrom();
 
-				if (c.wasRemoved())
-				{
-					pane.getChildren().remove(from, from + c.getRemovedSize());
-				}
-				if (c.wasAdded())
-				{
-					pane.getChildren().addAll(from, c.getAddedSubList() //
-							.stream()
-							.map(mapper)
-							.collect(Collectors.toList()));
-				}
-			}
-		});
+                if (c.wasRemoved())
+                {
+                    pane.getChildren().remove(from, from + c.getRemovedSize());
+                }
+                if (c.wasAdded())
+                {
+                    pane.getChildren().addAll(from, c.getAddedSubList() //
+                                                     .stream()
+                                                     .map(mapper)
+                                                     .collect(Collectors.toList()));
+                }
+            }
+        });
 
-		pane.getChildren().addAll(page.widgetsProperty() //
-				.stream()
-				.map(mapper)
-				.collect(Collectors.toList()));
-	}
+        pane.getChildren().addAll(page.widgetsProperty() //
+                                      .stream()
+                                      .map(mapper)
+                                      .collect(Collectors.toList()));
+    }
 
-	protected StringBinding titleProperty()
-	{
-		if (titleProperty == null)
-		{
-			titleProperty = Bindings.createStringBinding(() -> {
-				String label = page.getTitle();
-				label = label.replaceFirst("\\[(.*?)\\]$", "$1");
-				return label;
-			}, page.titleProperty());
-		}
-		return titleProperty;
-	}
+    protected StringBinding titleProperty()
+    {
+        if (titleProperty == null)
+        {
+            titleProperty = Bindings.createStringBinding(() -> {
+                String label = page.getTitle();
+                label = label.replaceFirst("\\[(.*?)\\]$", "$1");
+                return label;
+            }, page.titleProperty());
+        }
+        return titleProperty;
+    }
 
-	@Override
-	public void reload()
-	{
-		mainViewController.getRestClient().update(page);
-	}
+    @Override
+    public void reload()
+    {
+        mainViewController.getRestClient().update(page);
+    }
 
-	@Override
-	public void hiding()
-	{
-		// Nothing to do when hiding
-	}
+    @Override
+    public void hiding()
+    {
+        // Nothing to do when hiding
+    }
 
-	@Override
-	public Region getAccessView()
-	{
-		return null;
-	}
+    @Override
+    public Region getAccessView()
+    {
+        return null;
+    }
 
-	@Override
-	public Region getInfosView()
-	{
-		Region infosView = null;
-		if (page == null)
-		{
-			infosView = mainViewController.getDefaultInfosView();
-		}
-		if (infosView == null)
-		{
-			infosView = title;
-		}
-		return infosView;
-	}
+    @Override
+    public Region getInfosView()
+    {
+        Region infosView = null;
+        if (page == null)
+        {
+            infosView = mainViewController.getDefaultInfosView();
+        }
+        if (infosView == null)
+        {
+            infosView = title;
+        }
+        return infosView;
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return pane;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return pane;
+    }
 }

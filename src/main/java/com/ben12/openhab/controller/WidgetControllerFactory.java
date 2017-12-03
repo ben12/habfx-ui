@@ -36,46 +36,45 @@ import com.ben12.openhab.model.Page;
 
 public final class WidgetControllerFactory
 {
-	private static final Logger														LOGGER	= Logger
-			.getLogger(WidgetControllerFactory.class.getName());
+    private static final Logger                                                  LOGGER = Logger.getLogger(WidgetControllerFactory.class.getName());
 
-	private static final Map<String, Function<Page, ? extends WidgetController>>	CONTROLLERS;
+    private static final Map<String, Function<Page, ? extends WidgetController>> CONTROLLERS;
 
-	static
-	{
-		CONTROLLERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-		CONTROLLERS.put("Frame", FrameController::new);
-		CONTROLLERS.put("Group", GroupController::new);
-		CONTROLLERS.put("Text", TextController::new);
-		CONTROLLERS.put("Switch", SwitchController::new);
-		CONTROLLERS.put("Setpoint", SetpointController::new);
-		CONTROLLERS.put("Selection", SetpointController::new);
-		CONTROLLERS.put("Slider", SliderController::new);
-		CONTROLLERS.put("Colorpicker", ColorpickerController::new);
-		CONTROLLERS.put("Webview", WebviewController::new);
-		CONTROLLERS.put("Chart", ChartController::new);
+    static
+    {
+        CONTROLLERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        CONTROLLERS.put("Frame", FrameController::new);
+        CONTROLLERS.put("Group", GroupController::new);
+        CONTROLLERS.put("Text", TextController::new);
+        CONTROLLERS.put("Switch", SwitchController::new);
+        CONTROLLERS.put("Setpoint", SetpointController::new);
+        CONTROLLERS.put("Selection", SetpointController::new);
+        CONTROLLERS.put("Slider", SliderController::new);
+        CONTROLLERS.put("Colorpicker", ColorpickerController::new);
+        CONTROLLERS.put("Webview", WebviewController::new);
+        CONTROLLERS.put("Chart", ChartController::new);
 
-		// TODO ...
-		CONTROLLERS.put("Image", null);
-		CONTROLLERS.put("Video", null);
-	}
+        // TODO ...
+        CONTROLLERS.put("Image", null);
+        CONTROLLERS.put("Video", null);
+    }
 
-	private WidgetControllerFactory()
-	{
-	}
+    private WidgetControllerFactory()
+    {
+    }
 
-	public static WidgetController createWidgetController(final String type, final Page page)
-	{
-		WidgetController controller = null;
-		final Function<Page, ? extends WidgetController> constructor = CONTROLLERS.get(type);
-		if (constructor != null)
-		{
-			controller = constructor.apply(page);
-		}
-		else
-		{
-			LOGGER.log(Level.WARNING, "Not yet implemented widget type {0}", type);
-		}
-		return controller;
-	}
+    public static WidgetController createWidgetController(final String type, final Page page)
+    {
+        WidgetController controller = null;
+        final Function<Page, ? extends WidgetController> constructor = CONTROLLERS.get(type);
+        if (constructor != null)
+        {
+            controller = constructor.apply(page);
+        }
+        else
+        {
+            LOGGER.log(Level.WARNING, "Not yet implemented widget type {0}", type);
+        }
+        return controller;
+    }
 }

@@ -33,105 +33,105 @@ import jfxtras.util.PlatformUtil;
 
 public class BeanCopy extends WrapDynaBean
 {
-	private static final long	serialVersionUID	= 365623528334534437L;
+    private static final long   serialVersionUID = 365623528334534437L;
 
-	private static final Logger	LOGGER				= Logger.getLogger(BeanCopy.class.getName());
+    private static final Logger LOGGER           = Logger.getLogger(BeanCopy.class.getName());
 
-	private BeanCopy(final Object instance)
-	{
-		super(instance);
-	}
+    private BeanCopy(final Object instance)
+    {
+        super(instance);
+    }
 
-	public static <T> void copy(final List<T> source, final List<T> destination, final Function<T, String> idGetter)
-	{
-		for (int i = 0; i < source.size(); i++)
-		{
-			final T newWidget = source.get(i);
+    public static <T> void copy(final List<T> source, final List<T> destination, final Function<T, String> idGetter)
+    {
+        for (int i = 0; i < source.size(); i++)
+        {
+            final T newWidget = source.get(i);
 
-			boolean found = false;
-			int j = i;
+            boolean found = false;
+            int j = i;
 
-			while (j < destination.size()
-					&& !(found = Objects.equals(idGetter.apply(newWidget), idGetter.apply(destination.get(j)))))
-			{
-				j++;
-			}
+            while (j < destination.size()
+                    && !(found = Objects.equals(idGetter.apply(newWidget), idGetter.apply(destination.get(j)))))
+            {
+                j++;
+            }
 
-			if (found)
-			{
-				BeanCopy.copy(newWidget, destination.get(j));
-				if (i != j)
-				{
-					destination.add(i, destination.remove(j));
-				}
-			}
-			else
-			{
-				destination.add(i, newWidget);
-			}
-		}
+            if (found)
+            {
+                BeanCopy.copy(newWidget, destination.get(j));
+                if (i != j)
+                {
+                    destination.add(i, destination.remove(j));
+                }
+            }
+            else
+            {
+                destination.add(i, newWidget);
+            }
+        }
 
-		if (destination.size() > source.size())
-		{
-			destination.subList(source.size(), destination.size()).clear();
-		}
-	}
+        if (destination.size() > source.size())
+        {
+            destination.subList(source.size(), destination.size()).clear();
+        }
+    }
 
-	public static void copy(final Object source, final Object destination)
-	{
-		PlatformUtil.runAndWait(() -> {
-			try
-			{
-				BeanUtils.copyProperties(wrap(destination), source);
-			}
-			catch (final Exception e)
-			{
-				LOGGER.log(Level.SEVERE, "Cannot copy bean", e);
-			}
-		});
-	}
+    public static void copy(final Object source, final Object destination)
+    {
+        PlatformUtil.runAndWait(() -> {
+            try
+            {
+                BeanUtils.copyProperties(wrap(destination), source);
+            }
+            catch (final Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Cannot copy bean", e);
+            }
+        });
+    }
 
-	private static BeanCopy wrap(final Object value)
-	{
-		return new BeanCopy(value);
-	}
+    private static BeanCopy wrap(final Object value)
+    {
+        return new BeanCopy(value);
+    }
 
-	private boolean isCopyable(final Object value)
-	{
-		boolean copyable = false;
-		if (value != null)
-		{
-			final Class<?> type = value.getClass();
-			final XmlRootElement xmlElement = type.getAnnotation(XmlRootElement.class);
-			copyable = Objects.nonNull(xmlElement);
-		}
-		return copyable;
-	}
+    private boolean isCopyable(final Object value)
+    {
+        boolean copyable = false;
+        if (value != null)
+        {
+            final Class<?> type = value.getClass();
+            final XmlRootElement xmlElement = type.getAnnotation(XmlRootElement.class);
+            copyable = Objects.nonNull(xmlElement);
+        }
+        return copyable;
+    }
 
-	@Override
-	public void set(final String name, final Object value)
-	{
-		try
-		{
-			final Object target = get(name);
-			if (isCopyable(target))
-			{
-				BeanUtils.copyProperties(wrap(target), value);
-			}
-			else
-			{
-				super.set(name, value);
-			}
-		}
-		catch (final InvocationTargetException ite)
-		{
-			final Throwable cause = ite.getTargetException();
-			throw new IllegalArgumentException("Error setting property '" + name + "' nested exception - " + cause,
-					ite);
-		}
-		catch (final Exception e)
-		{
-			throw new IllegalArgumentException("Error setting property '" + name + "', exception - " + e, e);
-		}
-	}
+    @Override
+    public void set(final String name, final Object value)
+    {
+        try
+        {
+            final Object target = get(name);
+            if (isCopyable(target))
+            {
+                BeanUtils.copyProperties(wrap(target), value);
+            }
+            else
+            {
+                super.set(name, value);
+            }
+        }
+        catch (final InvocationTargetException ite)
+        {
+            final Throwable cause = ite.getTargetException();
+            throw new IllegalArgumentException("Error setting property '" + name + "' nested exception - " + cause,
+                    ite);
+        }
+        catch (final Exception e)
+        {
+            throw new IllegalArgumentException("Error setting property '" + name + "', exception - " + e, e);
+        }
+    }
 }

@@ -40,92 +40,92 @@ import javafx.scene.layout.Region;
 
 public class GroupController extends WidgetController
 {
-	private PageController			pageController;
+    private PageController       pageController;
 
-	private ObservableList<Item>	members;
+    private ObservableList<Item> members;
 
-	public GroupController(final Page parent)
-	{
-		super(parent);
-	}
+    public GroupController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget widget, final MainViewController pMainViewController)
-	{
-		super.init(widget, pMainViewController);
+    @Override
+    public void init(final Widget widget, final MainViewController pMainViewController)
+    {
+        super.init(widget, pMainViewController);
 
-		pageController = new PageController();
-		pageController.init(getWidget().getLinkedPage(), getMainViewController());
+        pageController = new PageController();
+        pageController.init(getWidget().getLinkedPage(), getMainViewController());
 
-		final ChangeListener memberChangeHandler = e -> reload();
+        final ChangeListener memberChangeHandler = e -> reload();
 
-		final OpenHabRestClient restClient = getMainViewController().getRestClient();
-		final Map<String, ItemChangeHandler> itemChangeHandlers = new HashMap<>();
+        final OpenHabRestClient restClient = getMainViewController().getRestClient();
+        final Map<String, ItemChangeHandler> itemChangeHandlers = new HashMap<>();
 
-		members = FXCollections.observableArrayList();
-		members.addListener((ListChangeListener<Item>) c -> {
-			while (c.next())
-			{
-				if (c.wasRemoved())
-				{
-					for (final Item item : c.getRemoved())
-					{
-						final ItemChangeHandler handler = itemChangeHandlers.remove(item.getName());
-						if (handler != null)
-						{
-							handler.release();
-						}
-					}
-				}
-				if (c.wasAdded())
-				{
-					for (final Item item : c.getAddedSubList())
-					{
-						itemChangeHandlers.computeIfAbsent(item.getName(),
-								itemName -> new ItemChangeHandler(restClient, itemName, memberChangeHandler));
-					}
-				}
-			}
-		});
+        members = FXCollections.observableArrayList();
+        members.addListener((ListChangeListener<Item>) c -> {
+            while (c.next())
+            {
+                if (c.wasRemoved())
+                {
+                    for (final Item item : c.getRemoved())
+                    {
+                        final ItemChangeHandler handler = itemChangeHandlers.remove(item.getName());
+                        if (handler != null)
+                        {
+                            handler.release();
+                        }
+                    }
+                }
+                if (c.wasAdded())
+                {
+                    for (final Item item : c.getAddedSubList())
+                    {
+                        itemChangeHandlers.computeIfAbsent(item.getName(), itemName -> new ItemChangeHandler(restClient,
+                                itemName, memberChangeHandler));
+                    }
+                }
+            }
+        });
 
-		loadMembers();
-	}
+        loadMembers();
+    }
 
-	public void loadMembers()
-	{
-		final OpenHabRestClient restClient = getMainViewController().getRestClient();
-		restClient.item(getWidget().getItem().getName(), new InvocationCallback<Item>()
-		{
-			@Override
-			public void failed(final Throwable throwable)
-			{
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Cannot load group members", throwable);
-			}
+    public void loadMembers()
+    {
+        final OpenHabRestClient restClient = getMainViewController().getRestClient();
+        restClient.item(getWidget().getItem().getName(), new InvocationCallback<Item>()
+        {
+            @Override
+            public void failed(final Throwable throwable)
+            {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Cannot load group members", throwable);
+            }
 
-			@Override
-			public void completed(final Item response)
-			{
-				Platform.runLater(() -> BeanCopy.copy(response.getMembers(), members, Item::getName));
-			}
-		});
-	}
+            @Override
+            public void completed(final Item response)
+            {
+                Platform.runLater(() -> BeanCopy.copy(response.getMembers(), members, Item::getName));
+            }
+        });
+    }
 
-	@Override
-	public void reload()
-	{
-		super.reload();
-		loadMembers();
-	}
+    @Override
+    public void reload()
+    {
+        super.reload();
+        loadMembers();
+    }
 
-	@Override
-	protected void display()
-	{
-		getMainViewController().display(pageController);
-	}
+    @Override
+    protected void display()
+    {
+        getMainViewController().display(pageController);
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return null;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return null;
+    }
 }

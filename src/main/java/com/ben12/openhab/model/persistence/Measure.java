@@ -28,29 +28,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Measure
 {
-	private long	time;
+    private long   time;
 
-	private String	state;
+    private String state;
 
-	@XmlElement
-	public long getTime()
-	{
-		return time;
-	}
+    @XmlElement
+    public long getTime()
+    {
+        return time;
+    }
 
-	public void setTime(final long time)
-	{
-		this.time = time;
-	}
+    public void setTime(final long time)
+    {
+        this.time = time;
+    }
 
-	@XmlElement
-	public String getState()
-	{
-		return state;
-	}
+    @XmlElement
+    public String getState()
+    {
+        return state;
+    }
 
-	public void setState(final String state)
-	{
-		this.state = state;
-	}
+    public void setState(final String state)
+    {
+        this.state = state;
+    }
 }

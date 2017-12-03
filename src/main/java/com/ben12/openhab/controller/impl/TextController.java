@@ -26,50 +26,50 @@ import javafx.scene.layout.Region;
 
 public class TextController extends WidgetController
 {
-	private ContentController<?> controller;
+    private ContentController<?> controller;
 
-	public TextController(final Page parent)
-	{
-		super(parent);
-	}
+    public TextController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget pWidget, final MainViewController pMainViewController)
-	{
-		super.init(pWidget, pMainViewController);
+    @Override
+    public void init(final Widget pWidget, final MainViewController pMainViewController)
+    {
+        super.init(pWidget, pMainViewController);
 
-		if (pWidget.getLinkedPage() != null)
-		{
-			final Page linkedPage = pWidget.getLinkedPage();
-			final String url = linkedPage.getLink();
-			if (url != null && !url.isEmpty())
-			{
-				final PageController pageController = new PageController();
-				pageController.init(linkedPage, pMainViewController);
-				controller = pageController;
-			}
-		}
+        if (pWidget.getLinkedPage() != null)
+        {
+            final Page linkedPage = pWidget.getLinkedPage();
+            final String url = linkedPage.getLink();
+            if (url != null && !url.isEmpty())
+            {
+                final PageController pageController = new PageController();
+                pageController.init(linkedPage, pMainViewController);
+                controller = pageController;
+            }
+        }
 
-		if (controller == null && !pWidget.getWidgets().isEmpty())
-		{
-			final FrameController frameController = new FrameController(getParent());
-			frameController.init(pWidget, pMainViewController);
-			controller = frameController;
-		}
-	}
+        if (controller == null && !pWidget.getWidgets().isEmpty())
+        {
+            final FrameController frameController = new FrameController(getParent());
+            frameController.init(pWidget, pMainViewController);
+            controller = frameController;
+        }
+    }
 
-	@Override
-	protected void display()
-	{
-		if (controller != null)
-		{
-			getMainViewController().display(controller);
-		}
-	}
+    @Override
+    protected void display()
+    {
+        if (controller != null)
+        {
+            getMainViewController().display(controller);
+        }
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return null;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return null;
+    }
 }

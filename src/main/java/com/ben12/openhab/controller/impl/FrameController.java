@@ -33,64 +33,64 @@ import javafx.scene.layout.Region;
 
 public class FrameController extends WidgetController
 {
-	private Pane pane;
+    private Pane pane;
 
-	public FrameController(final Page parent)
-	{
-		super(parent);
-	}
+    public FrameController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget pWidget, final MainViewController pMainViewController)
-	{
-		super.init(pWidget, pMainViewController);
+    @Override
+    public void init(final Widget pWidget, final MainViewController pMainViewController)
+    {
+        super.init(pWidget, pMainViewController);
 
-		pane = new FullWidthTilePane();
+        pane = new FullWidthTilePane();
 
-		final Function<Widget, Node> mapper = widget -> {
-			final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(),
-					getParent());
-			final Node view;
-			if (controller != null)
-			{
-				controller.init(widget, getMainViewController());
-				view = controller.getAccessView();
-			}
-			else
-			{
-				view = new Pane();
-			}
-			return view;
-		};
+        final Function<Widget, Node> mapper = widget -> {
+            final WidgetController controller = WidgetControllerFactory.createWidgetController(widget.getType(),
+                                                                                               getParent());
+            final Node view;
+            if (controller != null)
+            {
+                controller.init(widget, getMainViewController());
+                view = controller.getAccessView();
+            }
+            else
+            {
+                view = new Pane();
+            }
+            return view;
+        };
 
-		getWidget().widgetsProperty().addListener((final Change<? extends Widget> c) -> {
-			while (c.next())
-			{
-				final int from = c.getFrom();
+        getWidget().widgetsProperty().addListener((final Change<? extends Widget> c) -> {
+            while (c.next())
+            {
+                final int from = c.getFrom();
 
-				if (c.wasRemoved())
-				{
-					pane.getChildren().remove(from, from + c.getRemovedSize());
-				}
-				if (c.wasAdded())
-				{
-					pane.getChildren().addAll(from, c.getAddedSubList() //
-							.stream()
-							.map(mapper)
-							.collect(Collectors.toList()));
-				}
-			}
-		});
+                if (c.wasRemoved())
+                {
+                    pane.getChildren().remove(from, from + c.getRemovedSize());
+                }
+                if (c.wasAdded())
+                {
+                    pane.getChildren().addAll(from, c.getAddedSubList() //
+                                                     .stream()
+                                                     .map(mapper)
+                                                     .collect(Collectors.toList()));
+                }
+            }
+        });
 
-		pane.getChildren().addAll(getWidget().widgetsProperty() //
-				.stream()
-				.map(mapper)
-				.collect(Collectors.toList()));
-	}
+        pane.getChildren().addAll(getWidget().widgetsProperty() //
+                                             .stream()
+                                             .map(mapper)
+                                             .collect(Collectors.toList()));
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return pane;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return pane;
+    }
 }

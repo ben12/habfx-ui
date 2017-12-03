@@ -35,82 +35,82 @@ import javafx.util.Duration;
  */
 public class ErrorController implements ContentController<Throwable>
 {
-	private VBox		content;
+    private VBox     content;
 
-	private Timeline	blink;
+    private Timeline blink;
 
-	@Override
-	public void init(final Throwable t, final MainViewController mainViewController)
-	{
-		content = new VBox(2);
-		content.setFillWidth(true);
+    @Override
+    public void init(final Throwable t, final MainViewController mainViewController)
+    {
+        content = new VBox(2);
+        content.setFillWidth(true);
 
-		final Label infoLabel = new Label("ERROR: Check your configuration file");
-		infoLabel.getStyleClass().add("error");
-		infoLabel.setWrapText(true);
-		infoLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        final Label infoLabel = new Label("ERROR: Check your configuration file");
+        infoLabel.getStyleClass().add("error");
+        infoLabel.setWrapText(true);
+        infoLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-		blink = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> infoLabel.setOpacity(0.7)),
-				new KeyFrame(Duration.seconds(1.0), e -> infoLabel.setOpacity(1.0)));
-		blink.setCycleCount(Animation.INDEFINITE);
+        blink = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> infoLabel.setOpacity(0.7)),
+                new KeyFrame(Duration.seconds(1.0), e -> infoLabel.setOpacity(1.0)));
+        blink.setCycleCount(Animation.INDEFINITE);
 
-		final Label errorLabel = new Label(t.getLocalizedMessage());
-		errorLabel.getStyleClass().add("widget");
-		errorLabel.setWrapText(true);
-		errorLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        final Label errorLabel = new Label(t.getLocalizedMessage());
+        errorLabel.getStyleClass().add("widget");
+        errorLabel.setWrapText(true);
+        errorLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-		if ((t instanceof ProcessingException || t instanceof InvocationTargetException) && t.getCause() != null)
-		{
-			errorLabel.setText(t.getCause().getLocalizedMessage());
-		}
-		else
-		{
-			errorLabel.setText(t.getLocalizedMessage());
-		}
+        if ((t instanceof ProcessingException || t instanceof InvocationTargetException) && t.getCause() != null)
+        {
+            errorLabel.setText(t.getCause().getLocalizedMessage());
+        }
+        else
+        {
+            errorLabel.setText(t.getLocalizedMessage());
+        }
 
-		final StringWriter writer = new StringWriter();
-		final PrintWriter printWriter = new PrintWriter(writer);
-		t.printStackTrace(printWriter);
+        final StringWriter writer = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(writer);
+        t.printStackTrace(printWriter);
 
-		final Label detailsLabel = new Label(writer.toString());
-		detailsLabel.getStyleClass().add("error-details");
-		detailsLabel.setWrapText(true);
-		detailsLabel.setVisible(false);
-		detailsLabel.managedProperty().bind(detailsLabel.visibleProperty());
-		detailsLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        final Label detailsLabel = new Label(writer.toString());
+        detailsLabel.getStyleClass().add("error-details");
+        detailsLabel.setWrapText(true);
+        detailsLabel.setVisible(false);
+        detailsLabel.managedProperty().bind(detailsLabel.visibleProperty());
+        detailsLabel.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-		errorLabel.setOnMouseClicked(e -> detailsLabel.setVisible(!detailsLabel.isVisible()));
+        errorLabel.setOnMouseClicked(e -> detailsLabel.setVisible(!detailsLabel.isVisible()));
 
-		content.getChildren().setAll(infoLabel, errorLabel, detailsLabel);
-	}
+        content.getChildren().setAll(infoLabel, errorLabel, detailsLabel);
+    }
 
-	@Override
-	public void reload()
-	{
-		blink.play();
-	}
+    @Override
+    public void reload()
+    {
+        blink.play();
+    }
 
-	@Override
-	public void hiding()
-	{
-		blink.stop();
-	}
+    @Override
+    public void hiding()
+    {
+        blink.stop();
+    }
 
-	@Override
-	public Region getInfosView()
-	{
-		return new Label("ERROR!");
-	}
+    @Override
+    public Region getInfosView()
+    {
+        return new Label("ERROR!");
+    }
 
-	@Override
-	public Region getAccessView()
-	{
-		return null;
-	}
+    @Override
+    public Region getAccessView()
+    {
+        return null;
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return content;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return content;
+    }
 }

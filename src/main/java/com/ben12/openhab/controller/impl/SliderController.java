@@ -38,56 +38,57 @@ import javafx.util.Duration;
  */
 public class SliderController extends WidgetController
 {
-	private VBox content;
+    private VBox content;
 
-	/**
-	 * @param parent
-	 */
-	public SliderController(final Page parent)
-	{
-		super(parent);
-	}
+    /**
+     * @param parent
+     */
+    public SliderController(final Page parent)
+    {
+        super(parent);
+    }
 
-	@Override
-	public void init(final Widget pWidget, final MainViewController pMainViewController)
-	{
-		super.init(pWidget, pMainViewController);
+    @Override
+    public void init(final Widget pWidget, final MainViewController pMainViewController)
+    {
+        super.init(pWidget, pMainViewController);
 
-		final Node iconImage = createIconNode();
+        final Node iconImage = createIconNode();
 
-		final Slider slider = new Slider(0.0, 100.0, 0.0);
+        final Slider slider = new Slider(0.0, 100.0, 0.0);
 
-		final Timeline submitState = new Timeline(
-				new KeyFrame(Duration.millis(200), ea -> getMainViewController().getRestClient() //
-						.submit(getWidget().getItem(), Integer.toString((int) slider.getValue()))));
+        final Timeline submitState = new Timeline(new KeyFrame(Duration.millis(200),
+                ea -> getMainViewController().getRestClient() //
+                                             .submit(getWidget().getItem(),
+                                                     Integer.toString((int) slider.getValue()))));
 
-		final ChangeListener<Number> sliderListener = (i, oldState, newState) -> submitState.play();
+        final ChangeListener<Number> sliderListener = (i, oldState, newState) -> submitState.play();
 
-		itemStateProperty().addListener((i, oldState, newState) -> {
-			if (submitState.getStatus() != Status.RUNNING && !slider.isValueChanging())
-			{
-				slider.valueProperty().removeListener(sliderListener);
-				slider.setValue(newState == null ? 0.0 : Double.valueOf(newState));
-				slider.valueProperty().addListener(sliderListener);
-			}
-		});
+        itemStateProperty().addListener((i, oldState, newState) -> {
+            if (submitState.getStatus() != Status.RUNNING && !slider.isValueChanging())
+            {
+                slider.valueProperty().removeListener(sliderListener);
+                slider.setValue(newState == null ? 0.0 : Double.valueOf(newState));
+                slider.valueProperty().addListener(sliderListener);
+            }
+        });
 
-		slider.setValue(itemStateProperty().get() == null ? 0.0 : Double.valueOf(itemStateProperty().get()));
-		slider.valueProperty().addListener(sliderListener);
-		slider.setShowTickMarks(true);
-		slider.setShowTickLabels(true);
+        slider.setValue(itemStateProperty().get() == null ? 0.0 : Double.valueOf(itemStateProperty().get()));
+        slider.valueProperty().addListener(sliderListener);
+        slider.setShowTickMarks(true);
+        slider.setShowTickLabels(true);
 
-		content = new VBox(iconImage, slider);
-		content.setAlignment(Pos.CENTER);
-		content.setMinSize(Region.USE_PREF_SIZE, 50);
-		content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-		content.prefWidth(0);
-		content.setPadding(new Insets(0, 5, 0, 5));
-	}
+        content = new VBox(iconImage, slider);
+        content.setAlignment(Pos.CENTER);
+        content.setMinSize(Region.USE_PREF_SIZE, 50);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        content.prefWidth(0);
+        content.setPadding(new Insets(0, 5, 0, 5));
+    }
 
-	@Override
-	public Region getContentView()
-	{
-		return content;
-	}
+    @Override
+    public Region getContentView()
+    {
+        return content;
+    }
 }
