@@ -26,7 +26,7 @@ Supported sitemap widgets :
 
 ## Install HABFX-UI
 
-* [Download last released](https://github.com/ben12/habfx-ui/releases/latest) bin archive _habfx-ui-&lt;version&gt;-bin.zip_
+* [Download last released](https://bintray.com/ben12/HABFX-UI/habfx-ui) bin archive _habfx-ui-&lt;version&gt;-bin.zip_
 * Unzip the archive
 * Launch _habfx-ui/bin/habfx-ui_ on Linux, or _habfx-ui/bin/habfx-ui.bat_ on Windows
 
