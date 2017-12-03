@@ -17,11 +17,13 @@
 
 package com.ben12.openhab.controller.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.InvocationCallback;
 
@@ -154,7 +156,33 @@ public class TopItemsController implements ContentController<Void>
         StringExpression stateProperty = item.stateProperty();
         if (itemPattern != null && !itemPattern.isEmpty())
         {
-            stateProperty = Bindings.format(itemPattern, item.stateProperty());
+            stateProperty = Bindings.format(itemPattern, Bindings.createObjectBinding(() -> {
+                Object state = null;
+                try
+                {
+                    if (Pattern.compile("([^%]|^)%[^\\s]*s").matcher(itemPattern).find())
+                    {
+                        state = item.getState();
+                    }
+                    else if (Pattern.compile("([^%]|^)%[^\\s]*t").matcher(itemPattern).find()
+                            && "DateTime".equals(item.getType()) && item.getState() != null
+                            && !item.getState().isEmpty())
+                    {
+                        state = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(item.getState());
+                    }
+                    else if (Pattern.compile("([^%]|^)%[^\\s]*f").matcher(itemPattern).find()
+                            && "Number".equals(item.getType()) && item.getState() != null && !item.getState().isEmpty())
+                    {
+                        state = Double.parseDouble(item.getState());
+                    }
+                }
+                catch (final Exception e)
+                {
+                    LOGGER.log(Level.WARNING, "Top item parsing error", e);
+                    state = null;
+                }
+                return state;
+            }, item.typeProperty(), item.stateProperty()));
             stateProperties.add(stateProperty);
         }
 
