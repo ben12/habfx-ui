@@ -22,7 +22,7 @@ Supported sitemap widgets :
 * Slider
 * Colorpicker
 * Webview
-* Chart (for 'Number' item)
+* Chart (for 'Number' item and 'Group' items containing 'Number' items)
 
 ## Build HABFX-UI with Maven :
 
@@ -33,9 +33,9 @@ Execute the command line :<br />
 
 ## Launch HABFX-UI :
 
-* Go to _target/appassembler/conf_
+* Go to _target/habfx-ui-<version>-bin/conf_
 * Configure the application using _config.properties_ file.
-* Go to _target/appassembler/bin_
+* Go to _target/habfx-ui-<version>-bin/bin_
 * Execute _habfx-ui_
 
 ## Screenshots :

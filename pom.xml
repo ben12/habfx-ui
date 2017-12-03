@@ -25,6 +25,7 @@
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>ben12-github</sonar.organization>
+		<assembleDirectory>${project.build.directory}/${project.artifactId}-${project.version}-bin</assembleDirectory>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -104,6 +105,49 @@
 						</program>
 					</programs>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>appassembler-extra</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${assembleDirectory}/bin</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/bin</directory>
+									<includes>
+										<include>check-env</include>
+										<include>check-env.bat</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/bin.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
