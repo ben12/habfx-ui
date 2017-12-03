@@ -17,6 +17,7 @@
 
 package com.ben12.openhab.rest;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,10 +37,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.client.ClientResponseContext;
+import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -108,7 +117,11 @@ public class OpenHabRestClient
             final HttpAuthenticationFeature authentication = HttpAuthenticationFeature.universalBuilder() //
                                                                                       .credentials(username, password)
                                                                                       .build();
-            client.register(authentication);
+            // Fix Jersey bug with universal credentials
+            client.register((Feature) context -> {
+                final FeatureContext hookContext = new HookFeatureContext(context);
+                return authentication.configure(hookContext);
+            });
         }
 
         final WebTarget eventsTarget = client.target(uri) //
@@ -183,8 +196,9 @@ public class OpenHabRestClient
                                                .path(ITEMS)
                                                .path(itemName)
                                                .queryParam(SERVICE_ID, service)
-                                               .queryParam(STARTTIME, start == null ? null
-                                                       : DateTimeFormatter.ISO_DATE_TIME.format(start))
+                                               .queryParam(STARTTIME,
+                                                           start == null ? null
+                                                                   : DateTimeFormatter.ISO_DATE_TIME.format(start))
                                                .queryParam(ENDTIME, end == null ? null
                                                        : DateTimeFormatter.ISO_DATE_TIME.format(end));
         sitemapsTarget.request(MediaType.APPLICATION_JSON) //
@@ -324,6 +338,119 @@ public class OpenHabRestClient
                     }
                 }
             }
+        }
+    }
+
+    private class HookFeatureContext implements FeatureContext
+    {
+        private final FeatureContext context;
+
+        public HookFeatureContext(final FeatureContext pContext)
+        {
+            context = pContext;
+        }
+
+        @Override
+        public FeatureContext register(final Object component, final Map<Class<?>, Integer> contracts)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Object component, final Class<?>... contracts)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Object component, final int priority)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Class<?> componentClass, final Map<Class<?>, Integer> contracts)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Class<?> componentClass, final Class<?>... contracts)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Class<?> componentClass, final int priority)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext register(final Object component)
+        {
+            return context.register(new FixHttpAuthenticationFilter((ClientRequestFilter) component));
+        }
+
+        @Override
+        public FeatureContext register(final Class<?> componentClass)
+        {
+            return null;
+        }
+
+        @Override
+        public FeatureContext property(final String name, final Object value)
+        {
+            return context.property(name, value);
+        }
+
+        @Override
+        public Configuration getConfiguration()
+        {
+            return context.getConfiguration();
+        }
+    }
+
+    private class FixHttpAuthenticationFilter<F extends ClientRequestFilter & ClientResponseFilter>
+            implements ClientRequestFilter, ClientResponseFilter
+    {
+        private final F defaultFilter;
+
+        public FixHttpAuthenticationFilter(final F pDefaultFilter)
+        {
+            defaultFilter = pDefaultFilter;
+        }
+
+        @Override
+        public void filter(final ClientRequestContext requestContext) throws IOException
+        {
+            defaultFilter.filter(requestContext);
+        }
+
+        @Override
+        public void filter(final ClientRequestContext requestContext, final ClientResponseContext responseContext)
+                throws IOException
+        {
+            // Jersey check only the first auth string, so we move the good one to the first position
+            if (responseContext.getStatus() == Response.Status.UNAUTHORIZED.getStatusCode())
+            {
+                final List<String> authStrings = responseContext.getHeaders().get(HttpHeaders.WWW_AUTHENTICATE);
+                for (final String authString : authStrings)
+                {
+                    if (authString != null)
+                    {
+                        final String upperCaseAuth = authString.trim().toUpperCase();
+                        if (upperCaseAuth.startsWith("BASIC") || upperCaseAuth.startsWith("DIGEST"))
+                        {
+                            authStrings.remove(authString);
+                            authStrings.set(0, authString);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            defaultFilter.filter(requestContext, responseContext);
         }
     }
 }
