@@ -36,6 +36,7 @@ Supported sitemap widgets :
 * Change the value of _openhab.url_ with your openHAB 2 URL (example: https://myopenhab.org)
 * Change the value of _openhab.user_ with your openHAB 2 user name (example: your e-mail)
 * Change the value of _openhab.password_ with your openHAB 2 password
+* Change the value of _sitemap_ with your favorite openHAB 2 sitemap name
 
 ## Build HABFX-UI with Maven :
 
