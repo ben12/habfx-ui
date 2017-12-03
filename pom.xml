@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ben12</groupId>
 	<artifactId>habfx-ui</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<name>OpenHab JavaFX UI</name>
 	<url>https://github.com/ben12/habfx-ui</url>
 	<description>JavaFX OpenHAB2 client</description>

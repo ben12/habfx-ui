@@ -9,7 +9,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>${assembleDirectory}</directory>
-			<outputDirectory>/${project.artifactId}/</outputDirectory>
+			<outputDirectory>${project.artifactId}/</outputDirectory>
 			<fileMode>0644</fileMode>
 			<excludes>
 				<exclude>bin/*</exclude>
@@ -17,7 +17,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${assembleDirectory}/bin</directory>
-			<outputDirectory>/${project.artifactId}/bin/</outputDirectory>
+			<outputDirectory>${project.artifactId}/bin/</outputDirectory>
 			<fileMode>0754</fileMode>
 		</fileSet>
 	</fileSets>

@@ -33,9 +33,9 @@ Execute the command line :<br />
 
 ## Launch HABFX-UI :
 
-* Go to _target/habfx-ui-<version>-bin/conf_
+* Go to _target/habfx-ui-&lt;version&gt;-bin/conf_
 * Configure the application using _config.properties_ file.
-* Go to _target/habfx-ui-<version>-bin/bin_
+* Go to _target/habfx-ui-&lt;version&gt;-bin/bin_
 * Execute _habfx-ui_
 
 ## Screenshots :
