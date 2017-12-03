@@ -24,6 +24,19 @@ Supported sitemap widgets :
 * Webview
 * Chart (for 'Number' item and 'Group' items containing 'Number' items)
 
+## Install HABFX-UI
+
+* [Download last released](https://github.com/ben12/habfx-ui/releases/latest) bin archive _habfx-ui-&lt;version&gt;-bin.zip_
+* Unzip the archive
+* Launch _habfx-ui/bin/habfx-ui_ on Linux, or _habfx-ui/bin/habfx-ui.bat_ on Windows
+
+## Configuration
+
+* Edit _habfx-ui/conf/config.properties_ file
+* Change the value of _openhab.url_ with your openHAB 2 URL (example: https://myopenhab.org)
+* Change the value of _openhab.user_ with your openHAB 2 user name (example: your e-mail)
+* Change the value of _openhab.password_ with your openHAB 2 password
+
 ## Build HABFX-UI with Maven :
 
 Execute the command line :<br />
