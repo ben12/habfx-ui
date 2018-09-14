@@ -53,7 +53,7 @@ Execute the command line :<br />
 * Execute _habfx-ui_
 
 ## Demo :
-[![HABFX-UI Demo](http://img.youtube.com/vi/8xlThwPW1MQ/0.jpg)](https://youtu.be/8xlThwPW1MQ)
+[![HABFX-UI Demo](https://img.youtube.com/vi/8xlThwPW1MQ/0.jpg)](https://youtu.be/8xlThwPW1MQ)
 
 ## Screenshots :
 ![Screenshot 001](https://raw.githubusercontent.com/ben12/habfx-ui/master/doc/screenshots/001.png)
